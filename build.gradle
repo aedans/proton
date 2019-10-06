@@ -5,8 +5,13 @@ plugins {
 group 'io.github.proton'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.11
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    compile 'com.googlecode.lanterna:lanterna:3.0.1'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
 }
