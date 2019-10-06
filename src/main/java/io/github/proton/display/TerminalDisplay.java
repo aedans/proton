@@ -2,6 +2,7 @@ package io.github.proton.display;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import io.reactivex.rxjava3.core.Completable;
@@ -18,6 +19,10 @@ public final class TerminalDisplay implements Closeable {
 
     public TerminalDisplay() {
 
+    }
+
+    public Single<KeyStroke> read() {
+        return Single.fromSupplier(screen::readInput);
     }
 
     public Completable write(TerminalPosition position, TextCharacter character) {
