@@ -18,22 +18,31 @@ public final class TerminalDisplay implements Closeable {
             .createScreen()).blockingGet();
 
     public TerminalDisplay() {
-
+        start().blockingAwait();
+        screen.setCursorPosition(null);
     }
 
     public Single<KeyStroke> read() {
         return Single.fromSupplier(screen::readInput);
     }
 
-    public Completable write(TerminalPosition position, TextCharacter character) {
+    public Completable writeChar(TerminalPosition position, TextCharacter character) {
         return Completable.fromAction(() -> screen.setCharacter(position.getColumn(), position.getRow(), character));
     }
 
-    public Completable write(TerminalPosition position, Observable<TextCharacter> characters) {
+    public Completable writeChars(TerminalPosition position, Observable<TextCharacter> characters) {
         return characters.count()
                 .flatMapObservable(count -> Observable.range(0, count.intValue()))
                 .map(position::withRelativeColumn)
-                .zipWith(characters, this::write)
+                .zipWith(characters, this::writeChar)
+                .concatMapCompletable(x -> x);
+    }
+
+    public Completable writeCharss(TerminalPosition position, Observable<Observable<TextCharacter>> characterss) {
+        return characterss.count()
+                .flatMapObservable(count -> Observable.range(0, count.intValue()))
+                .map(position::withRelativeRow)
+                .zipWith(characterss, this::writeChars)
                 .concatMapCompletable(x -> x);
     }
 
@@ -46,11 +55,11 @@ public final class TerminalDisplay implements Closeable {
     }
 
     public Completable start() {
-        return Completable.fromAction(screen::startScreen);
+        return Completable.fromAction(screen::startScreen).andThen(refresh());
     }
 
     public Completable stop() {
-        return Completable.fromAction(screen::stopScreen);
+        return Completable.fromAction(screen::stopScreen).andThen(refresh());
     }
 
     @Override
