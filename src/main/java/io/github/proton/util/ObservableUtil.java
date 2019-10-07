@@ -15,4 +15,13 @@ public class ObservableUtil {
             emitter.onComplete();
         });
     }
+
+    public static Observable<Character> fromString(String string) {
+        return Observable.create(emitter -> {
+            for (int i = 0; i < string.length(); i++) {
+                emitter.onNext(string.charAt(i));
+            }
+            emitter.onComplete();
+        });
+    }
 }
