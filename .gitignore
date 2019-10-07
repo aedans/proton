@@ -3,3 +3,5 @@ build
 
 # Project exclude paths
 /.gradle/
+
+.proton

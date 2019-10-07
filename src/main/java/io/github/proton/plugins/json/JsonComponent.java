@@ -2,10 +2,12 @@ package io.github.proton.plugins.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import io.github.proton.display.Component;
 import io.github.proton.util.ObservableUtil;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 
 public final class JsonComponent implements Component {
@@ -22,7 +24,7 @@ public final class JsonComponent implements Component {
     }
 
     @Override
-    public Render render() {
+    public Render render(TerminalPosition position) {
         Observable<Character> observable = Observable.create(emitter -> {
             gson.toJson(object, new Appendable() {
                 @Override
@@ -48,6 +50,6 @@ public final class JsonComponent implements Component {
         });
         Observable<Observable<TextCharacter>> screen = ObservableUtil.split(observable, x -> x == '\n')
                 .map(x -> x.map(TextCharacter::new));
-        return new Render(screen, null);
+        return new Render(screen, Maybe.empty());
     }
 }
