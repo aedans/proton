@@ -22,7 +22,7 @@ public final class JsonComponent implements Component {
     }
 
     @Override
-    public Observable<Observable<TextCharacter>> render() {
+    public Render render() {
         Observable<Character> observable = Observable.create(emitter -> {
             gson.toJson(object, new Appendable() {
                 @Override
@@ -46,6 +46,8 @@ public final class JsonComponent implements Component {
             });
             emitter.onComplete();
         });
-        return ObservableUtil.split(observable, x -> x == '\n').map(x -> x.map(TextCharacter::new));
+        Observable<Observable<TextCharacter>> screen = ObservableUtil.split(observable, x -> x == '\n')
+                .map(x -> x.map(TextCharacter::new));
+        return new Render(screen, null);
     }
 }

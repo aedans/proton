@@ -3,7 +3,10 @@ package io.github.proton.util;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.functions.Predicate;
 
-public class ObservableUtil {
+public final class ObservableUtil {
+    private ObservableUtil() {
+    }
+
     public static <T> Observable<Observable<T>> split(Observable<T> observable, Predicate<? super T> predicate) {
         return Observable.create(emitter -> {
             Observable<T> observable1 = observable;

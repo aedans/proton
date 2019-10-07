@@ -13,10 +13,12 @@ public final class Main {
     public static void main(String[] args) throws Throwable {
         String home = args.length == 0 ? "." : args[0];
         try (TerminalDisplay display = new TerminalDisplay()) {
-            Component component = new DirectoryComponent(new File(home));
+            Component component = new DirectoryComponent(new File(home), 0);
             while (true) {
                 display.clear().blockingAwait();
-                display.writeCharss(new TerminalPosition(0, 0), component.render()).blockingAwait();
+                Component.Render render = component.render();
+                display.writeCharss(new TerminalPosition(0, 0), render.screen).blockingAwait();
+                display.setCursor(render.cursor).blockingAwait();
                 display.refresh().blockingAwait();
                 KeyStroke keyStroke = display.read().blockingGet();
                 if (keyStroke.getKeyType() == KeyType.EOF) break;

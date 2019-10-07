@@ -19,7 +19,6 @@ public final class TerminalDisplay implements Closeable {
 
     public TerminalDisplay() {
         start().blockingAwait();
-        screen.setCursorPosition(null);
     }
 
     public Single<KeyStroke> read() {
@@ -44,6 +43,10 @@ public final class TerminalDisplay implements Closeable {
                 .map(position::withRelativeRow)
                 .zipWith(characterss, this::writeChars)
                 .concatMapCompletable(x -> x);
+    }
+
+    public Completable setCursor(TerminalPosition position) {
+        return Completable.fromAction(() -> screen.setCursorPosition(position));
     }
 
     public Completable refresh() {
