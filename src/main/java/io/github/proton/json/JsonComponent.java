@@ -3,16 +3,22 @@ package io.github.proton.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.lanterna.TextCharacter;
-import io.github.proton.display.Displayable;
+import com.googlecode.lanterna.input.KeyStroke;
+import io.github.proton.display.Component;
 import io.github.proton.util.ObservableUtil;
 import io.reactivex.rxjava3.core.Observable;
 
-public final class JsonComponent implements Displayable {
+public final class JsonComponent implements Component {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Object object;
 
     public JsonComponent(Object object) {
         this.object = object;
+    }
+
+    @Override
+    public JsonComponent update(KeyStroke keyStroke) {
+        return new JsonComponent(keyStroke);
     }
 
     @Override
