@@ -1,32 +1,17 @@
 package io.github.proton.plugins.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.input.KeyStroke;
-import io.github.proton.display.Component;
+import io.github.proton.display.Renderer;
 import io.github.proton.util.ObservableUtil;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 
-public final class JsonComponent implements Component {
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final Object object;
-
-    public JsonComponent(Object object) {
-        this.object = object;
-    }
-
+public final class JsonTreeRenderer implements Renderer<JsonTree> {
     @Override
-    public JsonComponent update(KeyStroke keyStroke) {
-        return new JsonComponent(keyStroke);
-    }
-
-    @Override
-    public Render render(TerminalPosition position) {
+    public Render render(JsonTree json, TerminalPosition position) {
         Observable<Character> observable = Observable.create(emitter -> {
-            gson.toJson(object, new Appendable() {
+            json.gson.toJson(json.object, new Appendable() {
                 @Override
                 public Appendable append(CharSequence csq) {
                     for (int i = 0; i < csq.length(); i++) {

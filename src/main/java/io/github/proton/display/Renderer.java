@@ -2,14 +2,17 @@ package io.github.proton.display;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.input.KeyStroke;
+import io.github.proton.util.Registry;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 
-public interface Component {
-    Component update(KeyStroke keyStroke);
+public interface Renderer<T> {
+    Render render(T t, TerminalPosition position);
 
-    Render render(TerminalPosition position);
+    Registry<Renderer> registry = new Registry<>("renderer");
+
+    @SuppressWarnings("unchecked")
+    Renderer<Object> renderer = (o, position) -> registry.get(o.getClass()).render(o, position);
 
     class Render {
         public final Observable<Observable<TextCharacter>> screen;
