@@ -1,17 +1,18 @@
 package io.github.proton.plugins.list;
 
-import com.googlecode.lanterna.TextCharacter;
 import io.github.proton.display.Renderer;
 import io.github.proton.display.Screen;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-public final class FocusableObservableRenderer<T> implements Renderer<FocusableObservable<T>> {
-    private final Renderer<T> renderer;
+public abstract class FocusableObservableRenderer<T> implements Renderer<FocusableObservable<T>> {
+    protected final Renderer<T> renderer;
 
     public FocusableObservableRenderer(Renderer<T> renderer) {
         this.renderer = renderer;
     }
+
+    protected abstract Screen combine(Screen a, Screen b);
 
     @Override
     public Screen render(FocusableObservable<T> list) {
@@ -19,7 +20,6 @@ public final class FocusableObservableRenderer<T> implements Renderer<FocusableO
         Observable<Screen> afterScreens = list.after.map(renderer::render);
         Single<Screen> focusScreen = list.focus.map(focus -> renderer.render(focus).inverse());
         Observable<Screen> screens = Observable.concat(beforeScreens, focusScreen.toObservable(), afterScreens);
-        Observable<Observable<TextCharacter>> screen = screens.flatMap(x -> x.chars);
-        return new Screen(screen);
+        return screens.reduce(Screen.empty, this::combine).blockingGet();
     }
 }
