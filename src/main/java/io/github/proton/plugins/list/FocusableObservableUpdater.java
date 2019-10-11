@@ -3,10 +3,10 @@ package io.github.proton.plugins.list;
 import com.googlecode.lanterna.input.KeyStroke;
 import io.github.proton.display.Updater;
 
-public abstract class FocusableObservableUpdater<T> implements Updater<FocusableObservable<T>> {
-    private final Updater<T> updater;
+public abstract class FocusableObservableUpdater<T> implements Updater.Same<FocusableObservable<T>> {
+    private final Updater.Same<T> updater;
 
-    public FocusableObservableUpdater(Updater<T> updater) {
+    public FocusableObservableUpdater(Updater.Same<T> updater) {
         this.updater = updater;
     }
 

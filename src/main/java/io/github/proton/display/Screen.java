@@ -26,7 +26,7 @@ public final class Screen {
 
     public static Observable<Observable<TextCharacter>> extendWidth(Observable<Observable<TextCharacter>> chars, long width) {
         return chars.map(row ->
-                Observable.concat(row, Observable.fromSupplier(() -> new TextCharacter(' ')))
+                Observable.concat(row, Observable.fromSupplier(() -> TextCharacter.DEFAULT_CHARACTER))
                         .take(width));
     }
 
@@ -55,5 +55,10 @@ public final class Screen {
         Observable<Observable<TextCharacter>> chars2 = height.flatMapObservable(h -> extendHeight(screen.chars, h));
         Observable<Observable<TextCharacter>> textChars = chars1.zipWith(chars2, Observable::concat);
         return new Screen(textChars, width, height);
+    }
+
+    public Screen indent(int x) {
+        Observable<TextCharacter> indent = Observable.range(0, x).map(i -> TextCharacter.DEFAULT_CHARACTER);
+        return new Screen(chars.map(line -> Observable.concat(indent, line)));
     }
 }

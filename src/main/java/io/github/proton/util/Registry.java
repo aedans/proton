@@ -13,6 +13,11 @@ public final class Registry<T> {
 
     public T get(Class clazz) {
         T t = map.get(clazz);
+        return t;
+    }
+
+    public T getOrThrow(Class clazz) {
+        T t = get(clazz);
         if (t == null)
             throw new RuntimeException("Could not find " + clazz + " in " + name + " registry");
         return t;
@@ -24,6 +29,6 @@ public final class Registry<T> {
 
     @Override
     public String toString() {
-        return name + super.toString();
+        return name + map;
     }
 }

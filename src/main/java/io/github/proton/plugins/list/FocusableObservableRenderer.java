@@ -15,10 +15,13 @@ public abstract class FocusableObservableRenderer<T> implements Renderer<Focusab
     protected abstract Screen combine(Screen a, Screen b);
 
     @Override
-    public Screen render(FocusableObservable<T> list) {
-        Observable<Screen> beforeScreens = list.before.map(renderer::render);
-        Observable<Screen> afterScreens = list.after.map(renderer::render);
-        Single<Screen> focusScreen = list.focus.map(focus -> renderer.render(focus).inverse());
+    public Screen render(FocusableObservable<T> list, boolean selected) {
+        Observable<Screen> beforeScreens = list.before.map(x -> renderer.render(x, false));
+        Observable<Screen> afterScreens = list.after.map(x -> renderer.render(x, false));
+        Single<Screen> focusScreen = list.focus.map(focus -> {
+            Screen render = renderer.render(focus, selected);
+            return selected ? render.inverse() : render;
+        });
         Observable<Screen> screens = Observable.concat(beforeScreens, focusScreen.toObservable(), afterScreens);
         return screens.reduce(Screen.empty, this::combine).blockingGet();
     }

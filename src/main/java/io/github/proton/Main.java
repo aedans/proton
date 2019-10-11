@@ -7,18 +7,20 @@ import io.github.proton.display.Renderer;
 import io.github.proton.display.Screen;
 import io.github.proton.display.TerminalDisplay;
 import io.github.proton.display.Updater;
-import io.github.proton.plugins.file.VirtualDirectory;
+import io.github.proton.plugins.directory.Directory;
+import io.github.proton.plugins.json.JsonTree;
 
 import java.io.File;
 
 public final class Main {
     public static void main(String[] args) throws Throwable {
         String home = args.length == 0 ? "." : args[0];
+        new JsonTree(null);
         try (TerminalDisplay display = new TerminalDisplay()) {
-            Object component = new VirtualDirectory(new File(home));
+            Object component = new Directory(new File(home));
             while (true) {
                 display.clear().blockingAwait();
-                Screen screen = Renderer.renderer.render(component);
+                Screen screen = Renderer.renderer.render(component, true);
                 display.writeCharss(new TerminalPosition(0, 0), screen.chars).blockingAwait();
                 display.refresh().blockingAwait();
                 KeyStroke keyStroke = display.read().blockingGet();

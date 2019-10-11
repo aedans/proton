@@ -5,7 +5,7 @@ import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.Updater;
 
 public final class FocusableObservableHorizontalUpdater<T> extends FocusableObservableUpdater<T> {
-    public FocusableObservableHorizontalUpdater(Updater<T> updater) {
+    public FocusableObservableHorizontalUpdater(Updater.Same<T> updater) {
         super(updater);
     }
 
