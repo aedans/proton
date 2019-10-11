@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public final class Screen {
+    public static final Screen empty = new Screen(Observable.empty());
     public final Observable<Observable<TextCharacter>> chars;
     public final Single<Long> width;
     public final Single<Long> height;
@@ -19,15 +20,8 @@ public final class Screen {
         this.height = height;
     }
 
-    public static final Screen empty = new Screen(Observable.empty());
-
     public static TextCharacter inverse(TextCharacter character) {
         return character.withForegroundColor(character.getBackgroundColor()).withBackgroundColor(character.getForegroundColor());
-    }
-
-    public Screen inverse() {
-        Observable<Observable<TextCharacter>> text = chars.map(x -> x.map(Screen::inverse));
-        return new Screen(text, width, height);
     }
 
     public static Observable<Observable<TextCharacter>> extendWidth(Observable<Observable<TextCharacter>> chars, long width) {
@@ -38,6 +32,11 @@ public final class Screen {
 
     public static Observable<Observable<TextCharacter>> extendHeight(Observable<Observable<TextCharacter>> chars, long height) {
         return Observable.concat(chars, Observable.fromSupplier(Observable::<TextCharacter>empty)).take(height);
+    }
+
+    public Screen inverse() {
+        Observable<Observable<TextCharacter>> text = chars.map(x -> x.map(Screen::inverse));
+        return new Screen(text, width, height);
     }
 
     public Screen verticalPlus(Screen screen) {

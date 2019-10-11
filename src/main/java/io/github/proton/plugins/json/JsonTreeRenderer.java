@@ -1,13 +1,10 @@
 package io.github.proton.plugins.json;
 
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import io.github.proton.display.Renderer;
 import io.github.proton.display.Screen;
 import io.github.proton.util.ObservableUtil;
-import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
 
 public final class JsonTreeRenderer implements Renderer<JsonTree> {
     @Override

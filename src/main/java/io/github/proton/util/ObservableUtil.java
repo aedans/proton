@@ -1,7 +1,6 @@
 package io.github.proton.util;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.functions.Predicate;
 
 public final class ObservableUtil {
