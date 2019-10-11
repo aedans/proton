@@ -1,10 +1,10 @@
 package io.github.proton.plugins.list;
 
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import io.github.proton.display.Renderer;
-import io.reactivex.rxjava3.core.Maybe;
+import io.github.proton.display.Screen;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public final class FocusableObservableRenderer<T> implements Renderer<FocusableObservable<T>> {
     private final Renderer<T> renderer;
@@ -14,11 +14,12 @@ public final class FocusableObservableRenderer<T> implements Renderer<FocusableO
     }
 
     @Override
-    public Render render(FocusableObservable<T> list, TerminalPosition position) {
-        Observable<TerminalPosition> positions = Observable.range(0, list.length).map(position::withRelativeRow);
-        Observable<Render> renders = list.observable().zipWith(positions, renderer::render);
-        Observable<Observable<TextCharacter>> screen = renders.flatMap(x -> x.screen);
-        Maybe<TerminalPosition> cursor = renders.elementAt(list.index).flatMap(x -> x.cursor);
-        return new Render(screen, cursor);
+    public Screen render(FocusableObservable<T> list) {
+        Observable<Screen> beforeScreens = list.before.map(renderer::render);
+        Observable<Screen> afterScreens = list.after.map(renderer::render);
+        Single<Screen> focusScreen = list.focus.map(focus -> renderer.render(focus).inverse());
+        Observable<Screen> screens = Observable.concat(beforeScreens, focusScreen.toObservable(), afterScreens);
+        Observable<Observable<TextCharacter>> screen = screens.flatMap(x -> x.chars);
+        return new Screen(screen);
     }
 }

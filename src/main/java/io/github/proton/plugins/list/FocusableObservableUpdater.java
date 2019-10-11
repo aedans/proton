@@ -14,9 +14,13 @@ public final class FocusableObservableUpdater<T> implements Updater<FocusableObs
     @Override
     public FocusableObservable<T> update(FocusableObservable<T> observable, KeyStroke keyStroke) {
         if (keyStroke.getKeyType() == KeyType.ArrowDown)
-            return new FocusableObservable<>(observable.before, observable.after, observable.focus, observable.length, observable.index + 1);
+            return observable.next();
         if (keyStroke.getKeyType() == KeyType.ArrowUp)
-            return new FocusableObservable<>(observable.before, observable.after, observable.focus, observable.length, observable.index - 1);
-        return new FocusableObservable<>(observable.before, observable.after, updater.update(observable.focus, keyStroke), observable.length, observable.index);
+            return observable.prev();
+        return new FocusableObservable<>(
+                observable.before,
+                observable.after,
+                observable.focus.map(focus -> updater.update(focus, keyStroke))
+        );
     }
 }

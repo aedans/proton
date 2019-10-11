@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.Renderer;
+import io.github.proton.display.Screen;
 import io.github.proton.display.TerminalDisplay;
 import io.github.proton.display.Updater;
 import io.github.proton.plugins.file.VirtualDirectory;
@@ -17,9 +18,8 @@ public final class Main {
             Object component = new VirtualDirectory(new File(home));
             while (true) {
                 display.clear().blockingAwait();
-                Renderer.Render render = Renderer.renderer.render(component, TerminalPosition.TOP_LEFT_CORNER);
-                display.writeCharss(new TerminalPosition(0, 0), render.screen).blockingAwait();
-                display.setCursor(render.cursor.blockingGet()).blockingAwait();
+                Screen screen = Renderer.renderer.render(component);
+                display.writeCharss(new TerminalPosition(0, 0), screen.chars).blockingAwait();
                 display.refresh().blockingAwait();
                 KeyStroke keyStroke = display.read().blockingGet();
                 if (keyStroke.getKeyType() == KeyType.EOF) break;

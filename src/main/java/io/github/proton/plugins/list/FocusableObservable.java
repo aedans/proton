@@ -1,33 +1,44 @@
 package io.github.proton.plugins.list;
 
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public final class FocusableObservable<T> {
     public final Observable<T> before;
     public final Observable<T> after;
-    public final T focus;
-    public final int length;
-    public final int index;
+    public final Single<T> focus;
 
-    public FocusableObservable(Observable<T> before, Observable<T> after, T focus, int length, int index) {
+    public FocusableObservable(Observable<T> before, Observable<T> after, Single<T> focus) {
         this.before = before;
         this.after = after;
         this.focus = focus;
-        this.length = length;
-        if (index < 0) {
-            this.index = 0;
-        } else if (index >= length) {
-            this.index = length - 1;
-        } else {
-            this.index = index;
-        }
     }
 
     public FocusableObservable(Observable<T> objects) {
-        this(Observable.empty(), objects.skip(1), objects.blockingFirst(), objects.count().blockingGet().intValue(), 0);
+        this(Observable.empty(), objects.skip(1), objects.firstOrError());
     }
 
-    public Observable<T> observable() {
-        return Observable.concat(before, Observable.just(focus), after);
+    public FocusableObservable<T> next() {
+        if (after.isEmpty().blockingGet()) {
+            return this;
+        } else {
+            return new FocusableObservable<>(
+                    Observable.concat(before, focus.toObservable()).cache(),
+                    after.skip(1).cache(),
+                    after.firstOrError()
+            );
+        }
+    }
+
+    public FocusableObservable<T> prev() {
+        if (before.isEmpty().blockingGet()) {
+            return this;
+        } else {
+            return new FocusableObservable<>(
+                    before.skipLast(1).cache(),
+                    Observable.concat(focus.toObservable(), after).cache(),
+                    before.lastOrError()
+            );
+        }
     }
 }
