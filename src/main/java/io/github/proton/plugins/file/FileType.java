@@ -23,6 +23,8 @@ public interface FileType extends Predicate<File> {
             String name = file.getName();
             int index = name.lastIndexOf('.');
             String extension = index == -1 ? "" : name.substring(index + 1);
+            if (file.isDirectory())
+                extension = "";
             return fileTypes.getOrDefault(extension, Collections.emptyList())
                     .stream()
                     .filter(x -> x.test(file))
