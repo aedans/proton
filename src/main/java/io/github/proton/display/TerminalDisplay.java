@@ -46,6 +46,10 @@ public final class TerminalDisplay implements Closeable {
                 .concatMapCompletable(x -> x);
     }
 
+    public Completable resizeIfNecessary() {
+        return Completable.fromAction(screen::doResizeIfNecessary);
+    }
+
     public Completable refresh() {
         return Completable.fromAction(screen::refresh);
     }

@@ -20,6 +20,7 @@ public final class Main {
             Object component = new Directory(new File(home));
             while (true) {
                 display.clear().blockingAwait();
+                display.resizeIfNecessary().blockingAwait();
                 Screen screen = Renderer.renderer.render(component, true);
                 display.writeCharss(new TerminalPosition(0, 0), screen.chars).blockingAwait();
                 display.refresh().blockingAwait();
