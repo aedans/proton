@@ -12,10 +12,7 @@ public final class FileLinkRenderer<T> implements Renderer<FileLink<T>> {
         Observable<Character> name = ObservableUtil.fromString(link.file.getName());
         Observable<TextCharacter> coloredName = name.map(x -> new TextCharacter(x, link.foreground, link.background));
         Screen screen = new Screen(Observable.just(coloredName));
-        Screen preview = link.preview
-                .map(p -> Renderer.renderer.render(p, false).indent(2))
-                .defaultIfEmpty(Screen.empty)
-                .blockingGet();
+        Screen preview = link.preview == null ? Screen.empty : Renderer.renderer.render(link.preview, selected).indent(2);
         return screen.verticalPlus(selected ? preview.inverse() : preview);
     }
 }

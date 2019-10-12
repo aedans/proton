@@ -25,7 +25,7 @@ public final class Main {
                 display.refresh().blockingAwait();
                 KeyStroke keyStroke = display.read().blockingGet();
                 if (keyStroke.getKeyType() == KeyType.EOF) break;
-                component = Updater.updater.update(component, keyStroke).blockingGet();
+                component = Updater.updater.update(component, keyStroke).defaultIfEmpty(component).blockingGet();
             }
         }
     }

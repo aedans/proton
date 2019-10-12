@@ -4,19 +4,29 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.Updater;
 import io.reactivex.rxjava3.core.Maybe;
-import io.reactivex.rxjava3.core.Single;
 
 public final class FileLinkUpdater<T> implements Updater<FileLink<T>, Object> {
+    private final Updater<T, T> updater;
+
+    public FileLinkUpdater(Updater<T, T> updater) {
+        this.updater = updater;
+    }
+
     @Override
-    public Single<Object> update(FileLink<T> link, KeyStroke keyStroke) {
-        if (keyStroke.getKeyType() == KeyType.ArrowRight) {
-            @SuppressWarnings("unchecked")
-            Maybe<T> preview = Maybe.fromCallable(() -> (T) FileOpener.opener.open(link.file));
-            return Single.just(new FileLink<>(link.file, preview, link.foreground, link.background));
-        } else if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
-            return Single.just(new FileLink<>(link.file, link.foreground, link.background));
-        } else {
-            return Single.just(link);
+    public Maybe<Object> update(FileLink<T> link, KeyStroke keyStroke) {
+        Maybe<FileLink<Object>> otherwise = Maybe.empty();
+        if (link.preview == null && keyStroke.getKeyType() == KeyType.ArrowRight)
+            otherwise = Maybe.fromCallable(() -> FileOpener.opener.open(link.file))
+                    .map(preview -> new FileLink<>(link.file, preview, link.foreground, link.background));
+        if (link.preview != null && keyStroke.getKeyType() == KeyType.ArrowLeft)
+            otherwise = Maybe.just(new FileLink<>(link.file, link.foreground, link.background));
+
+        Maybe<Object> preview = Maybe.empty();
+        if (link.preview != null) {
+            preview = updater.update(link.preview, keyStroke)
+                    .map(newPreview -> new FileLink<>(link.file, newPreview, link.foreground, link.background));
         }
+
+        return preview.switchIfEmpty(otherwise);
     }
 }
