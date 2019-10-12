@@ -3,6 +3,7 @@ package io.github.proton.plugins.directory;
 import com.googlecode.lanterna.input.KeyStroke;
 import io.github.proton.display.Updater;
 import io.github.proton.plugins.list.FocusableObservable;
+import io.reactivex.rxjava3.core.Single;
 
 public final class DirectoryUpdater implements Updater.Same<Directory> {
     private final Updater.Same<FocusableObservable<Object>> updater;
@@ -12,7 +13,7 @@ public final class DirectoryUpdater implements Updater.Same<Directory> {
     }
 
     @Override
-    public Directory update(Directory directory, KeyStroke keyStroke) {
-        return new Directory(updater.update(directory.files, keyStroke));
+    public Single<Directory> update(Directory directory, KeyStroke keyStroke) {
+        return updater.update(directory.files, keyStroke).map(Directory::new);
     }
 }

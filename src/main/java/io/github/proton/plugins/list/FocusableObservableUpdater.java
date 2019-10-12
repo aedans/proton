@@ -2,6 +2,7 @@ package io.github.proton.plugins.list;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import io.github.proton.display.Updater;
+import io.reactivex.rxjava3.core.Single;
 
 public abstract class FocusableObservableUpdater<T> implements Updater.Same<FocusableObservable<T>> {
     private final Updater.Same<T> updater;
@@ -15,15 +16,12 @@ public abstract class FocusableObservableUpdater<T> implements Updater.Same<Focu
     protected abstract boolean isPrev(KeyStroke keyStroke);
 
     @Override
-    public FocusableObservable<T> update(FocusableObservable<T> observable, KeyStroke keyStroke) {
+    public Single<FocusableObservable<T>> update(FocusableObservable<T> observable, KeyStroke keyStroke) {
         if (isNext(keyStroke))
-            return observable.next();
+            return Single.just(observable.next());
         if (isPrev(keyStroke))
-            return observable.prev();
-        return new FocusableObservable<>(
-                observable.before,
-                observable.after,
-                observable.focus.map(focus -> updater.update(focus, keyStroke))
-        );
+            return Single.just(observable.prev());
+        return observable.focus.map(focus -> updater.update(focus, keyStroke))
+                .map(newFocus -> new FocusableObservable<>(observable.before, observable.after, newFocus));
     }
 }
