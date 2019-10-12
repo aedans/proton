@@ -59,6 +59,6 @@ public final class Screen {
 
     public Screen indent(int x) {
         Observable<TextCharacter> indent = Observable.range(0, x).map(i -> TextCharacter.DEFAULT_CHARACTER);
-        return new Screen(chars.map(line -> Observable.concat(indent, line)));
+        return new Screen(chars.map(line -> Observable.concat(indent, line).cache()).cache());
     }
 }
