@@ -9,6 +9,6 @@ import java.io.File;
 public final class JsonFileLinker implements FileLinker<FileLink> {
     @Override
     public FileLink link(File file) {
-        return new FileLink(file, TextColor.ANSI.GREEN, TextColor.ANSI.BLACK);
+        return new FileLink(file, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
     }
 }

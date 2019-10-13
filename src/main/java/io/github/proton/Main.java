@@ -8,14 +8,14 @@ import io.github.proton.display.Screen;
 import io.github.proton.display.TerminalDisplay;
 import io.github.proton.display.Updater;
 import io.github.proton.plugins.directory.Directory;
-import io.github.proton.plugins.json.JsonTree;
+import io.github.proton.plugins.json.JsonPlugin;
 
 import java.io.File;
 
 public final class Main {
     public static void main(String[] args) throws Throwable {
+        new JsonPlugin().init();
         String home = args.length == 0 ? "." : args[0];
-        new JsonTree(null);
         try (TerminalDisplay display = new TerminalDisplay()) {
             Object component = new Directory(new File(home));
             while (true) {

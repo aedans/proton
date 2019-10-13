@@ -5,7 +5,7 @@ import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.Updater;
 import io.reactivex.rxjava3.core.Maybe;
 
-public final class FileLinkUpdater<T> implements Updater<FileLink<T>, Object> {
+public final class FileLinkUpdater<T> implements Updater<FileLink<T>, FileLink<Object>> {
     private final Updater<T, T> updater;
 
     public FileLinkUpdater(Updater<T, T> updater) {
@@ -13,7 +13,7 @@ public final class FileLinkUpdater<T> implements Updater<FileLink<T>, Object> {
     }
 
     @Override
-    public Maybe<Object> update(FileLink<T> link, KeyStroke keyStroke) {
+    public Maybe<FileLink<Object>> update(FileLink<T> link, KeyStroke keyStroke) {
         Maybe<FileLink<Object>> otherwise = Maybe.empty();
         if (link.preview == null && keyStroke.getKeyType() == KeyType.ArrowRight)
             otherwise = Maybe.fromCallable(() -> FileOpener.opener.open(link.file))
@@ -21,7 +21,7 @@ public final class FileLinkUpdater<T> implements Updater<FileLink<T>, Object> {
         if (link.preview != null && keyStroke.getKeyType() == KeyType.ArrowLeft)
             otherwise = Maybe.just(new FileLink<>(link.file, link.foreground, link.background));
 
-        Maybe<Object> preview = Maybe.empty();
+        Maybe<FileLink<Object>> preview = Maybe.empty();
         if (link.preview != null) {
             preview = updater.update(link.preview, keyStroke)
                     .map(newPreview -> new FileLink<>(link.file, newPreview, link.foreground, link.background));

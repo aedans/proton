@@ -13,6 +13,19 @@ public final class Registry<T> {
 
     public T get(Class clazz) {
         T t = map.get(clazz);
+        if (t == null && !clazz.equals(Object.class)) {
+            if (clazz.getSuperclass() != null) {
+                t = get(clazz.getSuperclass());
+                if (t != null)
+                    return t;
+            }
+            Class[] interfaces = clazz.getInterfaces();
+            for (Class c : interfaces) {
+                t = get(c);
+                if (t != null)
+                    return t;
+            }
+        }
         return t;
     }
 

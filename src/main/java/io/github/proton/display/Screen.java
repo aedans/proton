@@ -1,60 +1,83 @@
 package io.github.proton.display;
 
 import com.googlecode.lanterna.TextCharacter;
+import io.github.proton.util.ObservableUtil;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
 
 public final class Screen {
     public static final Screen empty = new Screen(Observable.empty());
     public final Observable<Observable<TextCharacter>> chars;
-    public final Single<Long> width;
-    public final Single<Long> height;
+    public final long width;
+    public final long height;
 
     public Screen(Observable<Observable<TextCharacter>> chars) {
-        this(chars, chars.flatMapSingle(Observable::count).reduce(0L, (a, b) -> a > b ? a : b), chars.count());
+        this(
+                chars,
+                chars.flatMapSingle(Observable::count).reduce(0L, (a, b) -> a > b ? a : b).blockingGet(),
+                chars.count().blockingGet()
+        );
     }
 
-    public Screen(Observable<Observable<TextCharacter>> chars, Single<Long> width, Single<Long> height) {
+    public Screen(Observable<Observable<TextCharacter>> chars, long width, long height) {
         this.chars = chars;
         this.width = width;
         this.height = height;
+    }
+
+    public static Screen from(String string, Function<Character, TextCharacter> function) {
+        return from(ObservableUtil.fromString(string).map(function));
+    }
+
+    public static Screen from(Observable<TextCharacter> line) {
+        return new Screen(Observable.just(line));
     }
 
     public static TextCharacter inverse(TextCharacter character) {
         return character.withForegroundColor(character.getBackgroundColor()).withBackgroundColor(character.getForegroundColor());
     }
 
-    public static Observable<Observable<TextCharacter>> extendWidth(Observable<Observable<TextCharacter>> chars, long width) {
-        return chars.map(row ->
-                Observable.concat(row, Observable.fromSupplier(() -> TextCharacter.DEFAULT_CHARACTER))
-                        .take(width));
-    }
-
-    public static Observable<Observable<TextCharacter>> extendHeight(Observable<Observable<TextCharacter>> chars, long height) {
-        return Observable.concat(chars, Observable.fromSupplier(Observable::<TextCharacter>empty)).take(height);
+    public Screen extend(long width, long height) {
+        Observable<Observable<TextCharacter>> lines = chars.count()
+                .flatMapObservable(count -> Observable.range(0, (int) Math.max(0, height - count)))
+                .map(x -> Observable.empty());
+        Observable<Observable<TextCharacter>> chars = Observable.concat(this.chars, lines)
+                .map(row -> {
+                    Observable<TextCharacter> rest = row.count()
+                            .flatMapObservable(count -> Observable.range(0, (int) Math.max(0, width - count)))
+                            .map(x -> TextCharacter.DEFAULT_CHARACTER);
+                    return Observable.concat(row, rest);
+                });
+        return new Screen(chars);
     }
 
     public Screen inverse() {
         Observable<Observable<TextCharacter>> text = chars.map(x -> x.map(Screen::inverse));
-        return new Screen(text, width, height);
+        return new Screen(text);
     }
 
     public Screen verticalPlus(Screen screen) {
-        Single<Long> width = this.width.flatMap(width1 -> screen.width.map(width2 -> width1 > width2 ? width1 : width2));
-        Single<Long> height = this.height.flatMap(height1 -> screen.height.map(height2 -> height1 + height2));
-        Observable<Observable<TextCharacter>> chars1 = width.flatMapObservable(w -> extendWidth(chars, w));
-        Observable<Observable<TextCharacter>> chars2 = width.flatMapObservable(w -> extendWidth(screen.chars, w));
-        Observable<Observable<TextCharacter>> textChars = Observable.concat(chars1, chars2);
-        return new Screen(textChars, width, height);
+        long width = Math.max(this.width, screen.width);
+        Screen screen1 = this.extend(width, this.height);
+        Screen screen2 = screen.extend(width, screen.height);
+        Observable<Observable<TextCharacter>> textChars = Observable.concat(screen1.chars, screen2.chars);
+        return new Screen(textChars);
     }
 
     public Screen horizontalPlus(Screen screen) {
-        Single<Long> width = this.width.flatMap(width1 -> screen.width.map(width2 -> width1 + width2));
-        Single<Long> height = this.height.flatMap(height1 -> screen.height.map(height2 -> height1 > height2 ? height1 : height2));
-        Observable<Observable<TextCharacter>> chars1 = height.flatMapObservable(h -> extendHeight(chars, h));
-        Observable<Observable<TextCharacter>> chars2 = height.flatMapObservable(h -> extendHeight(screen.chars, h));
-        Observable<Observable<TextCharacter>> textChars = chars1.zipWith(chars2, Observable::concat);
-        return new Screen(textChars, width, height);
+        long height = Math.max(this.height, screen.height);
+        Screen screen1 = this.extend(this.width, height);
+        Screen screen2 = screen.extend(screen.width, height);
+        Observable<Observable<TextCharacter>> textChars = screen1.chars.zipWith(screen2.chars, Observable::concat);
+        return new Screen(textChars);
+    }
+
+    public Screen horizontalPlusLeft(Screen screen) {
+        long height = Math.max(this.height, screen.height);
+        Screen screen1 = this.extend(0, height);
+        Screen screen2 = screen.extend(screen.width, height);
+        Observable<Observable<TextCharacter>> textChars = screen1.chars.zipWith(screen2.chars, Observable::concat);
+        return new Screen(textChars);
     }
 
     public Screen indent(int x) {

@@ -1,20 +1,17 @@
 package io.github.proton.plugins.json;
 
 import com.eclipsesource.json.JsonValue;
-import io.github.proton.display.Renderer;
-import io.github.proton.display.Updater;
-import io.github.proton.plugins.file.FileType;
+import io.github.proton.plugins.json.tree.JsonObjectTree;
+import io.github.proton.plugins.json.tree.JsonStringTree;
 
-public final class JsonTree {
-    static {
-        Updater.registry.put(JsonTree.class, new JsonTreeUpdater());
-        Renderer.registry.put(JsonTree.class, new JsonTreeRenderer());
-        FileType.registry.put(new JsonFileType());
-    }
-
-    public final JsonValue object;
-
-    public JsonTree(JsonValue object) {
-        this.object = object;
+public interface JsonTree {
+    static JsonTree from(JsonValue value) {
+        if (value.isObject()) {
+            return JsonObjectTree.from(value.asObject());
+        } else if (value.isString()) {
+            return JsonStringTree.from(value.asString());
+        } else {
+            throw new RuntimeException(value + " cannot be converted to a json tree");
+        }
     }
 }

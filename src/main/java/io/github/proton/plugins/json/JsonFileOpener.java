@@ -10,6 +10,6 @@ import java.io.IOException;
 public final class JsonFileOpener implements FileOpener<JsonTree> {
     @Override
     public JsonTree open(File file) throws IOException {
-        return new JsonTree(Json.parse(new FileReader(file)));
+        return JsonTree.from(Json.parse(new FileReader(file)));
     }
 }

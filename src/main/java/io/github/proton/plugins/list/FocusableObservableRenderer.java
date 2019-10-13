@@ -23,6 +23,6 @@ public abstract class FocusableObservableRenderer<T> implements Renderer<Focusab
             return selected ? render.inverse() : render;
         });
         Observable<Screen> screens = Observable.concat(beforeScreens, focusScreen.toObservable(), afterScreens);
-        return screens.reduce(Screen.empty, this::combine).blockingGet();
+        return screens.reduce(this::combine).blockingGet();
     }
 }
