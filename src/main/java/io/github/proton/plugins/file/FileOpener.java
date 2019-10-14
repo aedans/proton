@@ -1,13 +1,14 @@
 package io.github.proton.plugins.file;
 
 import io.github.proton.util.Registry;
+import io.reactivex.rxjava3.core.Single;
 
 import java.io.File;
-import java.io.IOException;
 
 public interface FileOpener<T> {
     Registry<FileOpener> registry = new Registry<>("file opener");
+    @SuppressWarnings("unchecked")
     FileOpener<Object> opener = file -> registry.getOrThrow(FileType.registry.get(file).getClass()).open(file);
 
-    T open(File file) throws IOException;
+    Single<T> open(File file);
 }

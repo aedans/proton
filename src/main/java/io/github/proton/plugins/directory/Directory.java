@@ -2,7 +2,8 @@ package io.github.proton.plugins.directory;
 
 import io.github.proton.display.Renderer;
 import io.github.proton.display.Updater;
-import io.github.proton.plugins.file.FileLinker;
+import io.github.proton.plugins.file.FileLink;
+import io.github.proton.plugins.file.FileOpener;
 import io.github.proton.plugins.file.FileType;
 import io.github.proton.plugins.list.FocusableObservable;
 import io.github.proton.plugins.list.FocusableObservableVerticalRenderer;
@@ -27,6 +28,6 @@ public final class Directory {
 
     public Directory(File file) {
         this(new FocusableObservable<>(Observable.fromArray(Objects.requireNonNull(file.listFiles()))
-                .map(FileLinker.linker::link)));
+                .map(x -> new FileLink<>(x, FileOpener.opener.open(x)))));
     }
 }

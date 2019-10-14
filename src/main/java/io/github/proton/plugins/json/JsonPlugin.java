@@ -2,7 +2,6 @@ package io.github.proton.plugins.json;
 
 import io.github.proton.display.Renderer;
 import io.github.proton.display.Updater;
-import io.github.proton.plugins.file.FileLinker;
 import io.github.proton.plugins.file.FileOpener;
 import io.github.proton.plugins.file.FileType;
 import io.github.proton.plugins.json.render.JsonObjectMemberRenderer;
@@ -21,7 +20,6 @@ import io.github.proton.util.OptionalUpdater;
 public final class JsonPlugin {
     public void init() {
         FileType.registry.put(new JsonFileType());
-        FileLinker.registry.put(JsonFileType.class, new JsonFileLinker());
         FileOpener.registry.put(JsonFileType.class, new JsonFileOpener());
 
         Renderer.registry.put(JsonObjectTree.class, new JsonObjectTreeRenderer(new FocusableObservableVerticalRenderer<>(new JsonObjectMemberRenderer(Renderer.renderer))));

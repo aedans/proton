@@ -2,14 +2,14 @@ package io.github.proton.plugins.json;
 
 import com.eclipsesource.json.Json;
 import io.github.proton.plugins.file.FileOpener;
+import io.reactivex.rxjava3.core.Single;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 public final class JsonFileOpener implements FileOpener<JsonTree> {
     @Override
-    public JsonTree open(File file) throws IOException {
-        return JsonTree.from(Json.parse(new FileReader(file)));
+    public Single<JsonTree> open(File file) {
+        return Single.fromCallable(() -> JsonTree.from(Json.parse(new FileReader(file))));
     }
 }
