@@ -18,8 +18,13 @@ public final class JsonObjectMemberRenderer implements Renderer<JsonObjectMember
     public Screen render(JsonObjectMemberTree member, boolean selected) {
         Screen name = Screen.from('"' + member.name + '"', x -> new TextCharacter(x, TextColor.ANSI.MAGENTA, TextColor.ANSI.BLACK));
         Screen separator = Screen.from(": ", x -> new TextCharacter(x, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-        Screen value = renderer.render(member.value, selected);
+        Screen value = member.closed
+                ? Screen.from("{...}", x -> new TextCharacter(x, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK))
+                : renderer.render(member.value, selected && !member.focused);
         Screen rest = separator.horizontalPlusLeft(value);
-        return name.horizontalPlusLeft(selected ? rest.inverse() : rest);
+        if (selected && member.focused) {
+            name = name.inverse();
+        }
+        return name.horizontalPlusLeft(rest);
     }
 }

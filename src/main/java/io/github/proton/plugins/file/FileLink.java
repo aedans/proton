@@ -1,9 +1,8 @@
 package io.github.proton.plugins.file;
 
-import com.googlecode.lanterna.TextColor;
 import io.github.proton.display.Renderer;
 import io.github.proton.display.Updater;
-import io.reactivex.rxjava3.annotations.Nullable;
+import io.reactivex.rxjava3.core.Single;
 
 import java.io.File;
 
@@ -13,20 +12,19 @@ public final class FileLink<T> {
         Renderer.registry.put(FileLink.class, new FileLinkRenderer());
     }
 
-    @Nullable
-    public final T preview;
+    public final Single<T> preview;
     public final File file;
-    public final TextColor foreground;
-    public final TextColor background;
+    public final boolean closed;
+    public final boolean focused;
 
-    public FileLink(File file, @Nullable T preview, TextColor foreground, TextColor background) {
+    public FileLink(File file, Single<T> preview, boolean closed, boolean focused) {
         this.file = file;
         this.preview = preview;
-        this.foreground = foreground;
-        this.background = background;
+        this.closed = closed;
+        this.focused = focused;
     }
 
-    public FileLink(File file, TextColor foreground, TextColor background) {
-        this(file, null, foreground, background);
+    public FileLink(File file, Single<T> preview) {
+        this(file, preview, true, true);
     }
 }

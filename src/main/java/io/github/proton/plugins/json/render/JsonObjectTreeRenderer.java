@@ -17,12 +17,13 @@ public final class JsonObjectTreeRenderer implements Renderer<JsonObjectTree> {
 
     @Override
     public Screen render(JsonObjectTree tree, boolean selected) {
-        if (tree.closed)
-            return Screen.from("{...}", x -> new TextCharacter(x, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK));
-
         Screen open = Screen.from("{", x -> new TextCharacter(x, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         Screen close = Screen.from("}", x -> new TextCharacter(x, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-        Screen members = tree.members != null ? renderer.render(tree.members, selected).indent(2) : Screen.empty;
+        Screen members = tree.members.map(m -> renderer.render(m, selected).indent(2)).orElse(Screen.empty);
+        if (selected) {
+            open = open.inverse();
+            close = close.inverse();
+        }
         return open.verticalPlus(members).verticalPlus(close);
     }
 }

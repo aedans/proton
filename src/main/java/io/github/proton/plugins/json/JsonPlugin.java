@@ -16,6 +16,7 @@ import io.github.proton.plugins.json.update.JsonStringTreeUpdater;
 import io.github.proton.plugins.json.update.JsonTreeUpdater;
 import io.github.proton.plugins.list.FocusableObservableVerticalRenderer;
 import io.github.proton.plugins.list.FocusableObservableVerticalUpdater;
+import io.github.proton.util.OptionalUpdater;
 
 public final class JsonPlugin {
     public void init() {
@@ -26,7 +27,7 @@ public final class JsonPlugin {
         Renderer.registry.put(JsonObjectTree.class, new JsonObjectTreeRenderer(new FocusableObservableVerticalRenderer<>(new JsonObjectMemberRenderer(Renderer.renderer))));
         Renderer.registry.put(JsonStringTree.class, new JsonStringTreeRenderer());
 
-        JsonTreeUpdater.registry.put(JsonObjectTree.class, new JsonObjectTreeUpdater(new FocusableObservableVerticalUpdater<>(new JsonObjectMemberTreeUpdater(JsonTreeUpdater.updater))));
+        JsonTreeUpdater.registry.put(JsonObjectTree.class, new JsonObjectTreeUpdater(new OptionalUpdater<>(new FocusableObservableVerticalUpdater<>(new JsonObjectMemberTreeUpdater(JsonTreeUpdater.updater)))));
         JsonTreeUpdater.registry.put(JsonStringTree.class, new JsonStringTreeUpdater());
         Updater.registry.put(JsonTree.class, JsonTreeUpdater.updater);
     }

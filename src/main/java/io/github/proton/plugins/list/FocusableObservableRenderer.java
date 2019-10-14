@@ -18,10 +18,7 @@ public abstract class FocusableObservableRenderer<T> implements Renderer<Focusab
     public Screen render(FocusableObservable<T> list, boolean selected) {
         Observable<Screen> beforeScreens = list.before.map(x -> renderer.render(x, false));
         Observable<Screen> afterScreens = list.after.map(x -> renderer.render(x, false));
-        Single<Screen> focusScreen = list.focus.map(focus -> {
-            Screen render = renderer.render(focus, selected);
-            return selected ? render.inverse() : render;
-        });
+        Single<Screen> focusScreen = list.focus.map(focus -> renderer.render(focus, selected));
         Observable<Screen> screens = Observable.concat(beforeScreens, focusScreen.toObservable(), afterScreens);
         return screens.reduce(this::combine).blockingGet();
     }

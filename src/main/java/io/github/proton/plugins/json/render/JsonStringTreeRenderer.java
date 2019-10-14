@@ -9,6 +9,7 @@ import io.github.proton.plugins.json.tree.JsonStringTree;
 public final class JsonStringTreeRenderer implements Renderer<JsonStringTree> {
     @Override
     public Screen render(JsonStringTree jsonString, boolean selected) {
-        return Screen.from('"' + jsonString.string + '"', x -> new TextCharacter(x, TextColor.ANSI.GREEN, TextColor.ANSI.BLACK));
+        Screen screen = Screen.from('"' + jsonString.string + '"', x -> new TextCharacter(x, TextColor.ANSI.GREEN, TextColor.ANSI.BLACK));
+        return selected ? screen.inverse() : screen;
     }
 }
