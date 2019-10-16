@@ -14,4 +14,11 @@ public interface Updater<T, A> {
     interface Same<T> extends Updater<T, T> {
 
     }
+
+    final class Const<A, B> implements Updater<A, B> {
+        @Override
+        public Maybe<B> update(A a, KeyStroke keyStroke) {
+            return Maybe.empty();
+        }
+    }
 }

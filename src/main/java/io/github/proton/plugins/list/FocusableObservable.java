@@ -18,6 +18,10 @@ public final class FocusableObservable<T> {
         this(Observable.empty(), objects.skip(1), objects.firstOrError());
     }
 
+    public Observable<T> observable() {
+        return Observable.concat(before, focus.toObservable(), after);
+    }
+
     public FocusableObservable<T> next() {
         if (after.isEmpty().blockingGet()) {
             return this;

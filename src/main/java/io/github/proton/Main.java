@@ -9,11 +9,13 @@ import io.github.proton.display.TerminalDisplay;
 import io.github.proton.display.Updater;
 import io.github.proton.plugins.directory.Directory;
 import io.github.proton.plugins.json.JsonPlugin;
+import io.github.proton.plugins.txt.TextPlugin;
 
 import java.io.File;
 
 public final class Main {
     public static void main(String[] args) throws Throwable {
+        new TextPlugin().init();
         new JsonPlugin().init();
         String home = args.length == 0 ? "." : args[0];
         try (TerminalDisplay display = new TerminalDisplay()) {

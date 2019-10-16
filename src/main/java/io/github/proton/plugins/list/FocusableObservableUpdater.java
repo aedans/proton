@@ -6,9 +6,9 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 
 public abstract class FocusableObservableUpdater<T> implements Updater.Same<FocusableObservable<T>> {
-    private final Updater.Same<T> updater;
+    private final Updater<T, T> updater;
 
-    public FocusableObservableUpdater(Updater.Same<T> updater) {
+    public FocusableObservableUpdater(Updater<T, T> updater) {
         this.updater = updater;
     }
 
