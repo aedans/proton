@@ -8,9 +8,9 @@ import io.github.proton.plugins.json.tree.JsonObjectMemberTree;
 import io.reactivex.rxjava3.core.Maybe;
 
 public final class JsonObjectMemberTreeUpdater implements Updater.Same<JsonObjectMemberTree> {
-    public final JsonTreeUpdater<JsonTree> updater;
+    public final Updater.Same<JsonTree> updater;
 
-    public JsonObjectMemberTreeUpdater(JsonTreeUpdater<JsonTree> updater) {
+    public JsonObjectMemberTreeUpdater(Updater.Same<JsonTree> updater) {
         this.updater = updater;
     }
 
