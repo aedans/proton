@@ -1,11 +1,12 @@
 package io.github.proton.plugins.json;
 
 import com.eclipsesource.json.JsonValue;
+import io.github.proton.display.Component;
 import io.github.proton.plugins.json.tree.JsonArrayTree;
 import io.github.proton.plugins.json.tree.JsonObjectTree;
 import io.github.proton.plugins.json.tree.JsonStringTree;
 
-public interface JsonTree {
+public interface JsonTree extends Component {
     static JsonTree from(JsonValue value) {
         if (value.isObject()) {
             return JsonObjectTree.from(value.asObject());

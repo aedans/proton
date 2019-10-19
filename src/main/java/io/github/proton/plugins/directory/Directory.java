@@ -1,34 +1,43 @@
 package io.github.proton.plugins.directory;
 
-import io.github.proton.display.Renderer;
-import io.github.proton.display.Updater;
+import com.googlecode.lanterna.input.KeyStroke;
+import io.github.proton.display.Component;
+import io.github.proton.display.Screen;
 import io.github.proton.plugins.file.FileLink;
 import io.github.proton.plugins.file.FileOpener;
 import io.github.proton.plugins.file.FileType;
-import io.github.proton.plugins.list.FocusableObservable;
-import io.github.proton.plugins.list.FocusableObservableVerticalRenderer;
-import io.github.proton.plugins.list.FocusableObservableVerticalUpdater;
+import io.github.proton.plugins.list.OptionalFocusableObservable;
+import io.github.proton.plugins.list.OptionalFocusableObservableComponent;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.Optional;
 
-public final class Directory {
+public final class Directory implements Component {
     static {
-        Updater.registry.put(Directory.class, new DirectoryUpdater(new FocusableObservableVerticalUpdater<>(Updater.updater)));
-        Renderer.registry.put(Directory.class, new DirectoryRenderer(new FocusableObservableVerticalRenderer<>(Renderer.renderer)));
         FileType.registry.put(new DirectoryFileType());
     }
 
-    public final Optional<FocusableObservable<Object>> files;
+    public final OptionalFocusableObservable<Component> files;
 
-    public Directory(Optional<FocusableObservable<Object>> files) {
+    public Directory(OptionalFocusableObservable<Component> files) {
         this.files = files;
     }
 
     public Directory(File file) {
-        this(FocusableObservable.from(Observable.fromArray(Objects.requireNonNull(file.listFiles()))
-                .map(x -> new FileLink<>(x, FileOpener.opener.open(x)))));
+        this(OptionalFocusableObservable.from(Observable.fromArray(Objects.requireNonNull(file.listFiles()))
+                .map(x -> new FileLink(x, FileOpener.opener.open(x)))));
+    }
+
+    @Override
+    public Maybe<Component> update(KeyStroke keyStroke) {
+        return OptionalFocusableObservableComponent.vertical(files).update(keyStroke)
+                .map(x -> new Directory(x.optional));
+    }
+
+    @Override
+    public Screen render(boolean selected) {
+        return OptionalFocusableObservableComponent.vertical(files).render(selected);
     }
 }
