@@ -20,7 +20,7 @@ public final class JsonObjectTree implements JsonTree {
         } else {
             Observable<JsonObjectMemberTree> members = Observable.fromIterable(object)
                     .map(member -> new JsonObjectMemberTree(member.getName(), JsonTree.from(member.getValue()), false, true));
-            return new JsonObjectTree(Optional.of(new FocusableObservable<>(members)));
+            return new JsonObjectTree(FocusableObservable.from(members));
         }
     }
 }

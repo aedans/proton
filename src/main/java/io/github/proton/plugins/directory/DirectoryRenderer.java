@@ -13,6 +13,6 @@ public final class DirectoryRenderer implements Renderer<Directory> {
 
     @Override
     public Screen render(Directory directory, boolean selected) {
-        return renderer.render(directory.files, selected);
+        return directory.files.map(x -> renderer.render(x, selected)).orElse(Screen.empty);
     }
 }

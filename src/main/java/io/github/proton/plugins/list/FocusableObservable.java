@@ -3,6 +3,8 @@ package io.github.proton.plugins.list;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
+import java.util.Optional;
+
 public final class FocusableObservable<T> {
     public final Observable<T> before;
     public final Observable<T> after;
@@ -14,8 +16,12 @@ public final class FocusableObservable<T> {
         this.focus = focus;
     }
 
-    public FocusableObservable(Observable<T> objects) {
-        this(Observable.empty(), objects.skip(1), objects.firstOrError());
+    public static <T> Optional<FocusableObservable<T>> from(Observable<T> observable) {
+        if (observable.isEmpty().blockingGet()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new FocusableObservable<>(Observable.empty(), observable.skip(1), observable.firstOrError()));
+        }
     }
 
     public Observable<T> observable() {

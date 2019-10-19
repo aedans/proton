@@ -9,7 +9,7 @@ import io.github.proton.plugins.json.tree.JsonObjectTree;
 import io.github.proton.plugins.list.FocusableObservableRenderer;
 
 public final class JsonObjectTreeRenderer implements Renderer<JsonObjectTree> {
-    private final FocusableObservableRenderer<JsonObjectMemberTree> renderer;
+    public final FocusableObservableRenderer<JsonObjectMemberTree> renderer;
 
     public JsonObjectTreeRenderer(FocusableObservableRenderer<JsonObjectMemberTree> renderer) {
         this.renderer = renderer;

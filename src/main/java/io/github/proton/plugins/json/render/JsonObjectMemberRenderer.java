@@ -8,9 +8,9 @@ import io.github.proton.plugins.json.JsonTree;
 import io.github.proton.plugins.json.tree.JsonObjectMemberTree;
 
 public final class JsonObjectMemberRenderer implements Renderer<JsonObjectMemberTree> {
-    public final Renderer<? super JsonTree> renderer;
+    public final Renderer<JsonTree> renderer;
 
-    public JsonObjectMemberRenderer(Renderer<? super JsonTree> renderer) {
+    public JsonObjectMemberRenderer(Renderer<JsonTree> renderer) {
         this.renderer = renderer;
     }
 

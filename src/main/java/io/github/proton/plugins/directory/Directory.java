@@ -12,6 +12,7 @@ import io.reactivex.rxjava3.core.Observable;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class Directory {
     static {
@@ -20,14 +21,14 @@ public final class Directory {
         FileType.registry.put(new DirectoryFileType());
     }
 
-    public final FocusableObservable<Object> files;
+    public final Optional<FocusableObservable<Object>> files;
 
-    public Directory(FocusableObservable<Object> files) {
+    public Directory(Optional<FocusableObservable<Object>> files) {
         this.files = files;
     }
 
     public Directory(File file) {
-        this(new FocusableObservable<>(Observable.fromArray(Objects.requireNonNull(file.listFiles()))
+        this(FocusableObservable.from(Observable.fromArray(Objects.requireNonNull(file.listFiles()))
                 .map(x -> new FileLink<>(x, FileOpener.opener.open(x)))));
     }
 }
