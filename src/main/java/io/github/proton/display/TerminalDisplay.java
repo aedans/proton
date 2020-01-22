@@ -22,11 +22,11 @@ public final class TerminalDisplay implements Closeable {
         screen.setCursorPosition(null);
     }
 
-    public Single<KeyStroke> readChar() {
+    public Single<KeyStroke> read() {
         return Single.fromSupplier(screen::readInput);
     }
 
-    public Completable writeChar(TextCharacter character, TerminalPosition position) {
+    public Completable write(TextCharacter character, TerminalPosition position) {
         return Completable.fromAction(() -> screen.setCharacter(position.getColumn(), position.getRow(), character));
     }
 

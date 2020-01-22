@@ -15,6 +15,7 @@ repositories {
 dependencies {
     compile 'com.googlecode.lanterna:lanterna:3.0.1'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
+    implementation 'com.github.javaparser:javaparser-core:3.15.9'
 }
 
 application {
