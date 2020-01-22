@@ -1,6 +1,7 @@
 package io.github.proton.display.components;
 
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import io.github.proton.display.Component;
 import io.github.proton.display.Screen;
@@ -15,7 +16,7 @@ public final class CharacterComponent implements Component {
     }
 
     public static CharacterComponent of(char character) {
-        return new CharacterComponent(new TextCharacter(character));
+        return new CharacterComponent(new TextCharacter(character, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
     }
 
     public static CharacterComponent of(TextCharacter character) {
@@ -29,6 +30,7 @@ public final class CharacterComponent implements Component {
 
     @Override
     public Single<Screen> render(boolean selected) {
-        return Single.just(Screen.of(character));
+        Screen screen = Screen.of(character);
+        return Single.just(selected ? screen.invert() : screen);
     }
 }

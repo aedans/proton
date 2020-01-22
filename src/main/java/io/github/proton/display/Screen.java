@@ -36,11 +36,19 @@ public final class Screen {
         );
     }
 
+    public static TextCharacter invert(TextCharacter character) {
+        return character.withForegroundColor(character.getBackgroundColor()).withBackgroundColor(character.getForegroundColor());
+    }
+
     public Screen horizontalPlus(Screen screen) {
         return of(
                 characters.concatWith(screen.characters),
                 columns.flatMapObservable(columns ->
                         positions.concatWith(screen.positions.map(x ->
                                 x.withRelativeColumn(columns)))));
+    }
+
+    public Screen invert() {
+        return of(characters.map(Screen::invert), positions);
     }
 }
