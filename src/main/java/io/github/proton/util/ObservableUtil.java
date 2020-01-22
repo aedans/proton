@@ -1,27 +1,19 @@
 package io.github.proton.util;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.functions.Predicate;
+import io.reactivex.rxjava3.core.Single;
 
 public final class ObservableUtil {
     private ObservableUtil() {
     }
 
-    public static <T> Observable<Observable<T>> split(Observable<T> observable, Predicate<? super T> predicate) {
-        return Observable.create(emitter -> {
-            Observable<T> observable1 = observable;
-            while (!observable1.isEmpty().blockingGet()) {
-                Observable<T> value = observable1.takeWhile(x -> !predicate.test(x));
-                emitter.onNext(value);
-                observable1 = observable1.skip(value.count().blockingGet() + 1);
-            }
-            emitter.onComplete();
-        });
+    public static Single<Long> max(Single<Long> a, Single<Long> b) {
+        return a.flatMap(a1 -> b.map(b1 -> Math.max(a1, b1)));
     }
 
     public static Observable<Character> fromString(String string) {
         return Observable.create(emitter -> {
-            for (int i = 0; i < string.length(); i++) {
+            for (int i = 0; i < string.length(); ++i) {
                 emitter.onNext(string.charAt(i));
             }
             emitter.onComplete();

@@ -2,9 +2,10 @@ package io.github.proton.display;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Single;
 
 public interface Component {
-    Maybe<? extends Component> update(KeyStroke keyStroke);
+    Maybe<Component> update(KeyStroke keyStroke);
 
-    Screen render(boolean selected);
+    Single<Screen> render(boolean selected);
 }
