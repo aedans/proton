@@ -5,41 +5,47 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Single;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 public final class TerminalDisplay implements Closeable {
-    private final TerminalScreen screen = Single.fromSupplier(() -> new DefaultTerminalFactory()
+    private TerminalScreen screen = new DefaultTerminalFactory()
             .setTerminalEmulatorTitle("Proton")
             .setPreferTerminalEmulator(false)
-            .createScreen()).blockingGet();
+            .createScreen();
 
     public TerminalDisplay() throws IOException {
         screen.startScreen();
         screen.setCursorPosition(null);
     }
 
-    public Single<KeyStroke> read() {
-        return Single.fromSupplier(screen::readInput);
+    public KeyStroke read() throws IOException {
+        return screen.readInput();
     }
 
-    public Completable write(TextCharacter character, TerminalPosition position) {
-        return Completable.fromAction(() -> screen.setCharacter(position.getColumn(), position.getRow(), character));
+    public void write(TextCharacter character, TerminalPosition position) {
+        screen.setCharacter(position.getColumn(), position.getRow(), character);
     }
 
-    public Completable resizeIfNecessary() {
-        return Completable.fromAction(screen::doResizeIfNecessary);
+    public void background(TextCharacter character) {
+        for (int columns = 0; columns < screen.getTerminalSize().getColumns(); columns++) {
+            for (int rows = 0; rows < screen.getTerminalSize().getRows(); rows++) {
+                write(character, new TerminalPosition(columns, rows));
+            }
+        }
     }
 
-    public Completable refresh() {
-        return Completable.fromAction(screen::refresh);
+    public void resizeIfNecessary() {
+        screen.doResizeIfNecessary();
     }
 
-    public Completable clear() {
-        return Completable.fromAction(screen::clear);
+    public void refresh() throws IOException {
+        screen.refresh();
+    }
+
+    public void clear() {
+        screen.clear();
     }
 
     @Override

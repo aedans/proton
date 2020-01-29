@@ -14,8 +14,11 @@ repositories {
 
 dependencies {
     compile 'com.googlecode.lanterna:lanterna:3.0.1'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
+    compile "io.vavr:vavr:0.9.3"
+    compile "org.slf4j:slf4j-nop:1.7.9"
+    compile 'org.pf4j:pf4j:3.2.0'
     implementation 'com.github.javaparser:javaparser-core:3.15.9'
+    annotationProcessor 'org.pf4j:pf4j:3.2.0'
 }
 
 application {

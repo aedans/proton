@@ -2,35 +2,40 @@ package io.github.proton;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import io.github.proton.display.Editor;
-import io.github.proton.display.Screen;
-import io.github.proton.display.TerminalDisplay;
-import io.github.proton.display.editors.CharacterEditor;
-import io.github.proton.display.editors.ListEditor;
-import io.github.proton.txt.Line;
+import io.github.proton.display.*;
+import io.github.proton.plugin.text.Line;
 
+import java.io.File;
 import java.io.IOException;
 
 public final class Main {
     public static void main(String[] args) throws IOException {
-        String home = args.length == 0 ? "." : args[0];
+        File home = new File(args.length == 0 ? "." : args[0]);
+
+        Plugins.start();
+
+        Object tree = new Line("Hello, world!");
+
+        Component component = Plugins.getExtensions(Projection.class)
+                .flatMap(x -> x.projectGeneric(tree))
+                .get(0);
+
+        Controller controller = Plugins.getExtensions(Controller.class)
+                .foldRight(Controller.unit, Controller::combine);
+
+        Style style = Plugins.getExtensions(Style.class).get(0);
+
         try (TerminalDisplay display = new TerminalDisplay()) {
-            Line line = Line.of("Hello, world!");
-            Editor<?> editor = ListEditor.of(
-                    Screen::horizontalPlus,
-                    line.chars.map(CharacterEditor::of),
-                    Line.listView,
-                    line).blockingGet();
             while (true) {
-                display.clear().blockingAwait();
-                display.resizeIfNecessary().blockingAwait();
-                Screen screen = editor.render(true).blockingGet();
-                screen.characters.zipWith(screen.positions, display::write).flatMapCompletable(x -> x).blockingAwait();
-                display.refresh().blockingAwait();
-                KeyStroke keyStroke = display.read().blockingGet();
+                display.clear();
+                display.resizeIfNecessary();
+                display.background(style.base(' '));
+                Screen screen = component.render(style, true);
+                screen.characters.forEach(t -> display.write(t._1, t._2));
+                display.refresh();
+                KeyStroke keyStroke = display.read();
                 if (keyStroke.getKeyType() == KeyType.EOF) break;
-                Editor<?> editor1 = editor.update(keyStroke).blockingGet();
-                if (editor1 != null) editor = editor1;
+                component = controller.updateGeneric(component, keyStroke).getOrElse(component);
             }
         }
     }
