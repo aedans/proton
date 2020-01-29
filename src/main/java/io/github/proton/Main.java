@@ -3,6 +3,7 @@ package io.github.proton;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.*;
+import io.github.proton.plugin.project.SwitchProjectionComponent;
 import io.github.proton.plugin.text.Line;
 
 import java.io.File;
@@ -16,12 +17,11 @@ public final class Main {
 
         Object tree = new Line("Hello, world!");
 
-        Component component = Plugins.getExtensions(Projection.class)
-                .flatMap(x -> x.projectGeneric(tree))
-                .get(0);
+        Component component = new SwitchProjectionComponent(
+                Plugins.getExtensions(Projection.class).flatMap(x -> x.projectGeneric(tree)),
+                0);
 
-        Controller controller = Plugins.getExtensions(Controller.class)
-                .foldRight(Controller.unit, Controller::combine);
+        Controller controller = Plugins.controller();
 
         Style style = Plugins.getExtensions(Style.class).get(0);
 
