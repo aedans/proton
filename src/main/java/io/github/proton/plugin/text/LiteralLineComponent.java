@@ -7,56 +7,42 @@ import io.github.proton.plugin.character.InlineCharacterComponent;
 import io.vavr.collection.Vector;
 
 public final class LiteralLineComponent implements LineComponent {
-    public final Vector<CharacterComponent> start;
-    public final Vector<CharacterComponent> end;
-    public final CharacterComponent focus;
+    public final Vector<CharacterComponent> components;
+    public final int index;
 
-    public LiteralLineComponent(Vector<CharacterComponent> start,
-                                Vector<CharacterComponent> end,
-                                CharacterComponent focus) {
-        this.start = start;
-        this.end = end;
-        this.focus = focus;
+    public LiteralLineComponent(Vector<CharacterComponent> components, int index) {
+        this.components = components;
+        this.index = index;
     }
 
     public static LiteralLineComponent of(Vector<CharacterComponent> characters) {
         characters = characters.append(new InlineCharacterComponent('"'));
-        return new LiteralLineComponent(Vector.empty(), characters.drop(1), characters.get());
+        return new LiteralLineComponent(characters, 0);
     }
 
     @Override
-    public Vector<CharacterComponent> getStart() {
-        return start;
+    public Vector<CharacterComponent> getComponents() {
+        return components;
     }
 
     @Override
-    public Vector<CharacterComponent> getEnd() {
-        return end;
+    public int getIndex() {
+        return index;
     }
 
     @Override
-    public CharacterComponent getFocus() {
-        return focus;
+    public LineComponent setComponents(Vector<CharacterComponent> components) {
+        return new LiteralLineComponent(components, index);
     }
 
     @Override
-    public LineComponent setStart(Vector<CharacterComponent> start) {
-        return new LiteralLineComponent(start, end, focus);
-    }
-
-    @Override
-    public LineComponent setEnd(Vector<CharacterComponent> end) {
-        return new LiteralLineComponent(start, end, focus);
-    }
-
-    @Override
-    public LineComponent setFocus(CharacterComponent focus) {
-        return new LiteralLineComponent(start, end, focus);
+    public LineComponent setIndex(int index) {
+        return new LiteralLineComponent(components, index);
     }
 
     @Override
     public Screen render(Style style, boolean selected) {
-        Screen screen = new InlineLineComponent(start, end, focus)
+        Screen screen = new InlineLineComponent(components, index)
                 .render(style.withBase("string"), selected);
         Screen quote = Screen.of(style.style("string", '"'));
         return quote.horizontalPlus(screen);

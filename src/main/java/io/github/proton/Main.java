@@ -14,14 +14,12 @@ public final class Main {
         File home = new File(args.length == 0 ? "." : args[0]);
 
         Plugins.start();
+        Projection projection = Plugins.projection();
+        Controller controller = Plugins.controller();
 
         Object tree = new Line("Hello, world!");
 
-        Component component = new SwitchProjectionComponent(
-                Plugins.getExtensions(Projection.class).flatMap(x -> x.projectGeneric(tree)),
-                0);
-
-        Controller controller = Plugins.controller();
+        Component component = SwitchProjectionComponent.of(projection.projectGeneric(tree), 0);
 
         Style style = Plugins.getExtensions(Style.class).get(0);
 

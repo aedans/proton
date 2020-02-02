@@ -18,19 +18,22 @@ public final class SwitchProjectionController implements Controller.Of<SwitchPro
 
     @Override
     public Option<Component> update(SwitchProjectionComponent component, KeyStroke keyStroke) {
-        if (keyStroke.getKeyType() == KeyType.Tab) {
-            if (component.current >= component.projections.size() - 1) {
-                return Option.some(new SwitchProjectionComponent(component.projections, 0));
+        Controller controller = Plugins.controller();
+        Option<Vector<Component>> components = component.getProjections()
+                .map(c -> controller.updateGeneric(c, keyStroke))
+                .foldRight(Option.some(Vector.empty()), (o, v) ->
+                        v.flatMap(vector -> o.map(vector::prepend)));
+        Option<Component> map = components.map(component::setProjections);
+        return map.orElse(() -> {
+            if (keyStroke.getKeyType() == KeyType.Tab) {
+                if (component.getIndex() >= component.getProjections().size() - 1) {
+                    return Option.some(component.setIndex(0));
+                } else {
+                    return Option.some(component.setIndex(component.getIndex() + 1));
+                }
             } else {
-                return Option.some(new SwitchProjectionComponent(component.projections, component.current + 1));
+                return Option.none();
             }
-        } else {
-            Controller controller = Plugins.controller();
-            Option<Vector<Component>> components = component.projections
-                    .map(c -> controller.updateGeneric(c, keyStroke))
-                    .foldRight(Option.some(Vector.empty()), (o, v) ->
-                            v.flatMap(vector -> o.map(vector::prepend)));
-            return components.map(cs -> new SwitchProjectionComponent(cs, component.current));
-        }
+        });
     }
 }

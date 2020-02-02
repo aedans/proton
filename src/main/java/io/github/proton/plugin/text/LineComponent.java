@@ -6,11 +6,8 @@ import io.vavr.collection.Vector;
 
 public interface LineComponent extends ListComponent<CharacterComponent> {
     @Override
-    LineComponent setStart(Vector<CharacterComponent> start);
+    LineComponent setComponents(Vector<CharacterComponent> components);
 
     @Override
-    LineComponent setEnd(Vector<CharacterComponent> end);
-
-    @Override
-    LineComponent setFocus(CharacterComponent focus);
+    LineComponent setIndex(int index);
 }

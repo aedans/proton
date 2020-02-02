@@ -5,17 +5,39 @@ import io.github.proton.display.Screen;
 import io.github.proton.display.Style;
 import io.vavr.collection.Vector;
 
-public final class SwitchProjectionComponent implements Component {
-    public final Vector<Component> projections;
-    public final int current;
+public interface SwitchProjectionComponent extends Component {
+    Vector<Component> getProjections();
+    int getIndex();
 
-    public SwitchProjectionComponent(Vector<Component> projections, int current) {
-        this.projections = projections;
-        this.current = current;
+    SwitchProjectionComponent setProjections(Vector<Component> projections);
+    SwitchProjectionComponent setIndex(int index);
+
+    static SwitchProjectionComponent of(Vector<Component> projections, int index) {
+        return new SwitchProjectionComponent() {
+            @Override
+            public Vector<Component> getProjections() {
+                return projections;
+            }
+
+            @Override
+            public int getIndex() {
+                return index;
+            }
+
+            @Override
+            public SwitchProjectionComponent setProjections(Vector<Component> projections) {
+                return of(projections, index);
+            }
+
+            @Override
+            public SwitchProjectionComponent setIndex(int index) {
+                return of(projections, index);
+            }
+        };
     }
 
     @Override
-    public Screen render(Style style, boolean selected) {
-        return projections.get(current).render(style, selected);
+    default Screen render(Style style, boolean selected) {
+        return getProjections().get(getIndex()).render(style, selected);
     }
 }

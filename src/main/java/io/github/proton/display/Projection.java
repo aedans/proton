@@ -6,7 +6,11 @@ import org.pf4j.ExtensionPoint;
 public interface Projection extends ExtensionPoint {
     Vector<Component> projectGeneric(Object tree);
 
-    Projection empty = tree -> Vector.empty();
+    default Projection combine(Projection projection) {
+        return tree -> Projection.this.projectGeneric(tree).appendAll(projection.projectGeneric(tree));
+    }
+
+    Projection unit = tree -> Vector.empty();
 
     interface Of<T> extends Projection {
         Class<T> clazz();

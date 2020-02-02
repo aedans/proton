@@ -16,8 +16,7 @@ public final class LineProjection implements Projection.Of<Line> {
 
     @Override
     public Vector<Component> project(Line line) {
-        Vector<CharacterComponent> characters = line.characters
-                .map(InlineCharacterComponent::new);
+        Vector<CharacterComponent> characters = line.characters.map(InlineCharacterComponent::new);
         return Vector.of(
                 InlineLineComponent.of(characters),
                 LiteralLineComponent.of(characters)
