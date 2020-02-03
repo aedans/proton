@@ -18,11 +18,19 @@ public final class Plugins {
         return Vector.ofAll(pluginManager.getExtensions(clazz));
     }
 
+    private static Projection projection = null;
     public static Projection projection() {
-        return getExtensions(Projection.class).foldRight(Projection.unit, Projection::combine);
+        if (projection == null) {
+            projection = getExtensions(Projection.class).foldRight(Projection.unit, Projection::combine);
+        }
+        return projection;
     }
 
+    private static Controller controller = null;
     public static Controller controller() {
-        return getExtensions(Controller.class).foldRight(Controller.unit, Controller::combine);
+        if (controller == null) {
+            controller = getExtensions(Controller.class).foldRight(Controller.unit, Controller::combine);
+        }
+        return controller;
     }
 }

@@ -14,15 +14,19 @@ public interface Controller extends ExtensionPoint {
 
     Controller unit = (component, keyStroke) -> Option.none();
 
-    interface Of<T extends Component> extends Controller {
-        Class<T> clazz();
+    abstract class Of<T extends Component> implements Controller {
+        private final Class<T> clazz;
 
-        Option<Component> update(T component, KeyStroke keyStroke);
+        public Of(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        public abstract Option<Component> update(T component, KeyStroke keyStroke);
 
         @Override
-        default Option<Component> updateGeneric(Component component, KeyStroke keyStroke) {
-            if (clazz().isInstance(component)) {
-                return update(clazz().cast(component), keyStroke);
+        public Option<Component> updateGeneric(Component component, KeyStroke keyStroke) {
+            if (clazz.isInstance(component)) {
+                return update(clazz.cast(component), keyStroke);
             } else {
                 return Option.none();
             }

@@ -3,7 +3,7 @@ package io.github.proton;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.*;
-import io.github.proton.plugin.project.SwitchProjectionComponent;
+import io.github.proton.plugin.project.CycleProjectionComponent;
 import io.github.proton.plugin.text.Line;
 
 import java.io.File;
@@ -19,7 +19,7 @@ public final class Main {
 
         Object tree = new Line("Hello, world!");
 
-        Component component = SwitchProjectionComponent.of(projection.projectGeneric(tree), 0);
+        Component component = new CycleProjectionComponent.Impl<>(projection.projectGeneric(tree));
 
         Style style = Plugins.getExtensions(Style.class).get(0);
 

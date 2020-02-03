@@ -6,17 +6,16 @@ import io.vavr.collection.Vector;
 import org.pf4j.Extension;
 
 @Extension
-public final class CharacterProjection implements Projection.Of<Character> {
-    @Override
-    public Class<Character> clazz() {
-        return Character.class;
+public final class CharacterProjection extends Projection.Of<Character> {
+    public CharacterProjection() {
+        super(Character.class);
     }
 
     @Override
     public Vector<Component> project(Character character) {
         return Vector.of(
-                new LiteralCharacterComponent(character),
-                new InlineCharacterComponent(character)
+                new InlineCharacterComponent(character),
+                new LiteralCharacterComponent(character)
         );
     }
 }

@@ -11,10 +11,9 @@ import org.pf4j.Extension;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Extension
-public final class ListController implements Controller.Of<ListComponent> {
-    @Override
-    public Class<ListComponent> clazz() {
-        return ListComponent.class;
+public final class ListController extends Controller.Of<ListComponent> {
+    public ListController() {
+        super(ListComponent.class);
     }
 
     @Override
@@ -38,8 +37,7 @@ public final class ListController implements Controller.Of<ListComponent> {
                         .setIndex(bounded(component.getIndex() - 1, component.getComponents())));
             }
         } else {
-            Controller controller = Plugins.controller();
-            return controller.updateGeneric((Component) component.getComponents().get(component.getIndex()), keyStroke)
+            return Plugins.controller().updateGeneric((Component) component.getComponents().get(component.getIndex()), keyStroke)
                     .map(c -> component.setComponents(component.getComponents().update(component.getIndex(), c)));
         }
     }

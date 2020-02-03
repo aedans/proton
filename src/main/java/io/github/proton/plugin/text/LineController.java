@@ -11,10 +11,9 @@ import io.vavr.control.Option;
 import org.pf4j.Extension;
 
 @Extension
-public final class LineController implements Controller.Of<LineComponent> {
-    @Override
-    public Class<LineComponent> clazz() {
-        return LineComponent.class;
+public final class LineController extends Controller.Of<LineComponent> {
+    public LineController() {
+        super(LineComponent.class);
     }
 
     @Override

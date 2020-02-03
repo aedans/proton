@@ -3,24 +3,39 @@ package io.github.proton.display;
 import io.vavr.collection.Vector;
 import org.pf4j.ExtensionPoint;
 
+@SuppressWarnings("unchecked")
 public interface Projection extends ExtensionPoint {
-    Vector<Component> projectGeneric(Object tree);
+    <T extends Component> Vector<T> projectGeneric(Object tree);
 
     default Projection combine(Projection projection) {
-        return tree -> Projection.this.projectGeneric(tree).appendAll(projection.projectGeneric(tree));
+        return new Projection() {
+            @Override
+            public <T extends Component> Vector<T> projectGeneric(Object tree) {
+                return (Vector<T>) Projection.this.projectGeneric(tree).appendAll(projection.projectGeneric(tree));
+            }
+        };
     }
 
-    Projection unit = tree -> Vector.empty();
+    Projection unit = new Projection() {
+        @Override
+        public <T extends Component> Vector<T> projectGeneric(Object tree) {
+            return Vector.empty();
+        }
+    };
 
-    interface Of<T> extends Projection {
-        Class<T> clazz();
+    abstract class Of<T> implements Projection {
+        public final Class<T> clazz;
 
-        Vector<Component> project(T tree);
+        public Of(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        protected abstract Vector<Component> project(T tree);
 
         @Override
-        default Vector<Component> projectGeneric(Object tree) {
-            if (clazz().isInstance(tree)) {
-                return project(clazz().cast(tree));
+        public  <A extends Component> Vector<A> projectGeneric(Object tree) {
+            if (clazz.isInstance(tree)) {
+                return (Vector<A>) project(clazz.cast(tree));
             } else {
                 return Vector.empty();
             }

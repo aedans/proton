@@ -8,10 +8,9 @@ import io.vavr.control.Option;
 import org.pf4j.Extension;
 
 @Extension
-public final class CharacterController implements Controller.Of<CharacterComponent> {
-    @Override
-    public Class<CharacterComponent> clazz() {
-        return CharacterComponent.class;
+public final class CharacterController extends Controller.Of<CharacterComponent> {
+    public CharacterController() {
+        super(CharacterComponent.class);
     }
 
     @Override

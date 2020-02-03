@@ -14,7 +14,7 @@ public final class InlineLineComponent implements LineComponent {
     }
 
     public static InlineLineComponent of(Vector<CharacterComponent> characters) {
-        characters = characters.append(new InlineCharacterComponent(' '));
+        characters = characters.append(characters.last().setCharacter(' '));
         return new InlineLineComponent(characters, 0);
     }
 
