@@ -29,8 +29,8 @@ public final class CycleProjectionCharacterComponent implements CycleProjectionC
     }
 
     @Override
-    public Option<CycleProjectionCharacterComponent> updateComponent(Function<CharacterComponent, Option<CharacterComponent>> function) {
-        return new Impl<>(components).updateComponent(function).map(x -> new CycleProjectionCharacterComponent(x.components));
+    public Option<CycleProjectionCharacterComponent> updateComponents(Function<CharacterComponent, Option<CharacterComponent>> function) {
+        return new Impl<>(components).updateComponents(function).map(x -> new CycleProjectionCharacterComponent(x.components));
     }
 
     @Override

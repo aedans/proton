@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface CycleProjectionComponent<T extends Component> extends Component {
     T getComponent();
 
-    Option<? extends CycleProjectionComponent<T>> updateComponent(Function<T, Option<T>> function);
+    Option<? extends CycleProjectionComponent<T>> updateComponents(Function<T, Option<T>> function);
 
     CycleProjectionComponent<T> next();
 
@@ -28,7 +28,7 @@ public interface CycleProjectionComponent<T extends Component> extends Component
         }
 
         @Override
-        public Option<CycleProjectionComponent.Impl<T>> updateComponent(Function<T, Option<T>> function) {
+        public Option<CycleProjectionComponent.Impl<T>> updateComponents(Function<T, Option<T>> function) {
             Option<Vector<T>> vectors = components
                     .map(function)
                     .foldRight(Option.some(Vector.empty()), (o, v) -> v.flatMap(vector -> o.map(vector::prepend)));

@@ -17,13 +17,13 @@ public final class CycleProjectionComponentController extends Controller.Of<Cycl
 
     @Override
     public Option<Component> update(CycleProjectionComponent component, KeyStroke keyStroke) {
-        return component.updateComponent(c -> Plugins.controller().updateGeneric((Component) c, keyStroke)
+        return component.updateComponents(c -> Plugins.controller().updateGeneric((Component) c, keyStroke))
                 .orElse(() -> {
                     if (keyStroke.getKeyType() == KeyType.Tab) {
                         return Option.some(component.next());
                     } else {
                         return Option.none();
                     }
-                }));
+                });
     }
 }

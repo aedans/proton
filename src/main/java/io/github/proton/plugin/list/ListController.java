@@ -37,7 +37,8 @@ public final class ListController extends Controller.Of<ListComponent> {
                         .setIndex(bounded(component.getIndex() - 1, component.getComponents())));
             }
         } else {
-            return Plugins.controller().updateGeneric((Component) component.getComponents().get(component.getIndex()), keyStroke)
+            return Plugins.controller()
+                    .updateGeneric((Component) component.getComponents().get(component.getIndex()), keyStroke)
                     .map(c -> component.setComponents(component.getComponents().update(component.getIndex(), c)));
         }
     }
