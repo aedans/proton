@@ -7,6 +7,8 @@ import io.github.proton.display.Controller;
 import io.vavr.control.Option;
 import org.pf4j.Extension;
 
+import static io.github.proton.plugin.list.ListComponent.Orientation.*;
+
 @SuppressWarnings({"rawtypes"})
 @Extension
 public final class NavigableListController extends Controller.Of<NavigableListComponent> {
@@ -16,9 +18,13 @@ public final class NavigableListController extends Controller.Of<NavigableListCo
 
     @Override
     public Option<Component> update(NavigableListComponent component, KeyStroke keyStroke) {
-        if (keyStroke.getKeyType() == KeyType.ArrowRight) {
+        if (component.getOrientation() == HORIZONTAL && keyStroke.getKeyType() == KeyType.ArrowRight) {
             return Option.some(component.next());
-        } else if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
+        } else if (component.getOrientation() == VERTICAL && keyStroke.getKeyType() == KeyType.ArrowDown) {
+            return Option.some(component.next());
+        } else if (component.getOrientation() == HORIZONTAL && keyStroke.getKeyType() == KeyType.ArrowLeft) {
+            return Option.some(component.prev());
+        } else if (component.getOrientation() == VERTICAL && keyStroke.getKeyType() == KeyType.ArrowUp) {
             return Option.some(component.prev());
         } else {
             return Option.none();

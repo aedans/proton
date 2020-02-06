@@ -1,7 +1,6 @@
 package io.github.proton.display;
 
 import io.vavr.collection.Vector;
-import io.vavr.control.Option;
 import org.pf4j.ExtensionPoint;
 
 @SuppressWarnings("unchecked")

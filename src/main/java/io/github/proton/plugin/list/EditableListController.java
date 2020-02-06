@@ -19,7 +19,7 @@ public final class EditableListController extends Controller.Of<EditableListComp
     public Option<Component> update(EditableListComponent component, KeyStroke keyStroke) {
         if (keyStroke.getKeyType() == KeyType.Delete) {
             return component.delete();
-        } else if (keyStroke.getKeyType() == KeyType.Backspace) {
+        } else if (keyStroke.getKeyType() == KeyType.Backspace && component.getIndex() != 0) {
             return component.prev().delete();
         } else {
             return Plugins.controller()

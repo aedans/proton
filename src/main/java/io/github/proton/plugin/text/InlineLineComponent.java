@@ -27,6 +27,11 @@ public final class InlineLineComponent implements LineComponent {
     }
 
     @Override
+    public Orientation getOrientation() {
+        return Orientation.HORIZONTAL;
+    }
+
+    @Override
     public int getIndex() {
         return index;
     }

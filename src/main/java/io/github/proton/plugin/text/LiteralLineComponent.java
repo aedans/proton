@@ -31,6 +31,11 @@ public final class LiteralLineComponent implements LineComponent {
     }
 
     @Override
+    public Orientation getOrientation() {
+        return Orientation.HORIZONTAL;
+    }
+
+    @Override
     public int getIndex() {
         return index;
     }
@@ -67,7 +72,13 @@ public final class LiteralLineComponent implements LineComponent {
 
     @Override
     public Screen render(Style style, boolean selected) {
-        return NavigableListComponent.render(getComponents().prepend(openQuote), index + 1, style.withBase("string"), selected);
+        return NavigableListComponent.render(
+                getComponents().prepend(openQuote),
+                getOrientation(),
+                index + 1,
+                style.withBase("string"),
+                selected
+        );
     }
 
     @Override

@@ -55,6 +55,10 @@ public final class Screen {
         return new Screen(characters.appendAll(screen.characters.map(t -> t.map2(p -> p.withRelativeColumn(columns)))));
     }
 
+    public Screen verticalPlus(Screen screen) {
+        return new Screen(characters.appendAll(screen.characters.map(t -> t.map2(p -> p.withRelativeRow(rows)))));
+    }
+
     public Screen invert() {
         return map(Screen::invert);
     }

@@ -14,14 +14,14 @@ public interface NavigableListComponent<T extends Component> extends ListCompone
 
     @Override
     default Screen render(Style style, boolean selected) {
-        return render(getComponents(), getIndex(), style, selected);
+        return render(getComponents(), getOrientation(), getIndex(), style, selected);
     }
 
-    static <T extends Component> Screen render(Vector<T> components, int index, Style style, boolean selected) {
-        return components
-                .zipWith(Stream.continually(false).update(index, selected),
-                        (c, s) -> c.render(style, s))
-                .foldRight(Screen.empty, Screen::horizontalPlus);
+    static <T extends Component> Screen render(Vector<T> components, Orientation orientation, int index, Style style, boolean selected) {
+        return ListComponent.render(
+                components.zipWith(Stream.continually(false).update(index, selected), (c, s) -> c.render(style, s)),
+                orientation
+        );
     }
 
     static <T> boolean isBounded(int index, Vector<T> vector) {
