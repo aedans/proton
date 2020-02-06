@@ -6,6 +6,8 @@ import io.vavr.collection.Vector;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
 
+import java.util.Comparator;
+
 public final class Plugins {
     private static final PluginManager pluginManager = new DefaultPluginManager();
 
@@ -21,7 +23,9 @@ public final class Plugins {
     private static Projection projection = null;
     public static Projection projection() {
         if (projection == null) {
-            projection = getExtensions(Projection.class).foldRight(Projection.unit, Projection::combine);
+            projection = getExtensions(Projection.class)
+                    .sorted(Comparator.comparingInt(Projection::precedence).reversed())
+                    .foldRight(Projection.unit, Projection::combine);
         }
         return projection;
     }
@@ -29,7 +33,9 @@ public final class Plugins {
     private static Controller controller = null;
     public static Controller controller() {
         if (controller == null) {
-            controller = getExtensions(Controller.class).foldRight(Controller.unit, Controller::combine);
+            controller = getExtensions(Controller.class)
+                    .sorted(Comparator.comparingInt(Controller::precedence).reversed())
+                    .foldRight(Controller.unit, Controller::combine);
         }
         return controller;
     }

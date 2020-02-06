@@ -17,7 +17,7 @@ public final class Main {
         Projection projection = Plugins.projection();
         Controller controller = Plugins.controller();
 
-        Object tree = '!';
+        Object tree = new Line("Hello, world!");
 
         Component component = new CycleProjectionComponent.Impl<>(projection.projectGeneric(tree));
 

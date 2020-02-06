@@ -29,4 +29,11 @@ public final class LiteralCharacterComponent implements CharacterComponent {
         );
         return selected ? screen.invert() : screen;
     }
+
+    @Override
+    public String toString() {
+        return "LiteralCharacterComponent{" +
+                "character=" + character +
+                '}';
+    }
 }

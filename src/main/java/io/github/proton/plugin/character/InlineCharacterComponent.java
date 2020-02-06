@@ -25,4 +25,11 @@ public final class InlineCharacterComponent implements CharacterComponent {
         Screen screen = Screen.of(style.base(character));
         return selected ? screen.invert() : screen;
     }
+
+    @Override
+    public String toString() {
+        return "InlineCharacterComponent{" +
+                "character=" + character +
+                '}';
+    }
 }

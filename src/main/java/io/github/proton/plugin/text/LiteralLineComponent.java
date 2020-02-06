@@ -4,25 +4,30 @@ import io.github.proton.display.Screen;
 import io.github.proton.display.Style;
 import io.github.proton.plugin.character.CharacterComponent;
 import io.github.proton.plugin.character.InlineCharacterComponent;
+import io.github.proton.plugin.list.NavigableListComponent;
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
 public final class LiteralLineComponent implements LineComponent {
     public final Vector<CharacterComponent> components;
+    public final CharacterComponent openQuote;
+    public final CharacterComponent closeQuote;
     public final int index;
 
-    public LiteralLineComponent(Vector<CharacterComponent> components, int index) {
+    public LiteralLineComponent(Vector<CharacterComponent> components, CharacterComponent openQuote, CharacterComponent closeQuote, int index) {
         this.components = components;
+        this.openQuote = openQuote;
+        this.closeQuote = closeQuote;
         this.index = index;
     }
 
     public static LiteralLineComponent of(Vector<CharacterComponent> characters) {
-        characters = characters.append(new InlineCharacterComponent('"'));
-        return new LiteralLineComponent(characters, 0);
+        return new LiteralLineComponent(characters, new InlineCharacterComponent('"'), new InlineCharacterComponent('"'), 0);
     }
 
     @Override
     public Vector<CharacterComponent> getComponents() {
-        return components;
+        return components.append(closeQuote);
     }
 
     @Override
@@ -31,20 +36,45 @@ public final class LiteralLineComponent implements LineComponent {
     }
 
     @Override
-    public LineComponent setComponents(Vector<CharacterComponent> components) {
-        return new LiteralLineComponent(components, index);
+    public LiteralLineComponent next() {
+        return new LiteralLineComponent(components, openQuote, closeQuote, NavigableListComponent.bounded(index + 1, getComponents()));
     }
 
     @Override
-    public LineComponent setIndex(int index) {
-        return new LiteralLineComponent(components, index);
+    public LiteralLineComponent prev() {
+        return new LiteralLineComponent(components, openQuote, closeQuote, NavigableListComponent.bounded(index - 1, getComponents()));
+    }
+
+    @Override
+    public Option<LiteralLineComponent> insert(CharacterComponent component) {
+        if (index == components.size()) {
+            return Option.some(new LiteralLineComponent(components.append(component), openQuote, closeQuote, index));
+        } else if (NavigableListComponent.isBounded(index, components)) {
+            return Option.some(new LiteralLineComponent(components.insert(index, component), openQuote, closeQuote, index));
+        } else {
+            return Option.none();
+        }
+    }
+
+    @Override
+    public Option<LiteralLineComponent> delete() {
+        if (NavigableListComponent.isBounded(index, components)) {
+            return Option.some(new LiteralLineComponent(components.removeAt(index), openQuote, closeQuote, index));
+        } else {
+            return Option.none();
+        }
     }
 
     @Override
     public Screen render(Style style, boolean selected) {
-        Screen screen = new InlineLineComponent(components, index)
-                .render(style.withBase("string"), selected);
-        Screen quote = Screen.of(style.style("string", '"'));
-        return quote.horizontalPlus(screen);
+        return NavigableListComponent.render(getComponents().prepend(openQuote), index + 1, style.withBase("string"), selected);
+    }
+
+    @Override
+    public String toString() {
+        return "LiteralLineComponent{" +
+                "components=" + components +
+                ", index=" + index +
+                '}';
     }
 }

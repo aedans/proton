@@ -37,4 +37,11 @@ public final class CycleProjectionCharacterComponent implements CycleProjectionC
     public CycleProjectionCharacterComponent next() {
         return new CycleProjectionCharacterComponent(new Impl<>(components).next().components);
     }
+
+    @Override
+    public String toString() {
+        return "CycleProjectionCharacterComponent{" +
+                "components=" + components +
+                '}';
+    }
 }

@@ -39,6 +39,13 @@ public interface CycleProjectionComponent<T extends Component> extends Component
         public CycleProjectionComponent.Impl<T> next() {
             return new Impl<>(components.drop(1).append(components.get()));
         }
+
+        @Override
+        public String toString() {
+            return "CycleProjectionComponent{" +
+                    "components=" + components +
+                    '}';
+        }
     }
 
     @Override
