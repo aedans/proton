@@ -51,7 +51,7 @@ public interface Projection extends ExtensionPoint {
             return Controller.Of.precedence(clazz);
         }
 
-        protected abstract Vector<Component> project(T tree);
+        public abstract Vector<Component> project(T tree);
 
         @Override
         public <A extends Component> Vector<A> projectGeneric(Object tree) {

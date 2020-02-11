@@ -1,4 +1,4 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -17,7 +17,7 @@ public final class LineController extends Controller.Of<LineComponent> {
     @Override
     public Option<? extends Component> update(LineComponent line, KeyStroke keyStroke) {
         if (keyStroke.getKeyType() == KeyType.Character) {
-            CharacterComponent character = line.getComponents().get(line.getIndex()).setCharacter(keyStroke.getCharacter());
+            CharacterComponent character = line.getFocus().setCharacter(keyStroke.getCharacter());
             return line.insert(character).map(LineComponent::next);
         } else {
             return Option.none();

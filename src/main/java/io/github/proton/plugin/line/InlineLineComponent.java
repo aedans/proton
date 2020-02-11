@@ -1,5 +1,6 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
+import io.github.proton.Plugins;
 import io.github.proton.plugin.character.CharacterComponent;
 import io.github.proton.plugin.character.InlineCharacterComponent;
 import io.github.proton.plugin.list.NavigableListComponent;
@@ -14,7 +15,7 @@ public final class InlineLineComponent implements LineComponent {
     public InlineLineComponent(Vector<CharacterComponent> components, CharacterComponent trailingSpace, int index) {
         this.components = components;
         this.trailingSpace = trailingSpace;
-        this.index = index;
+        this.index = NavigableListComponent.bounded(index, getComponents());
     }
 
     public static InlineLineComponent of(Vector<CharacterComponent> characters) {
@@ -38,19 +39,19 @@ public final class InlineLineComponent implements LineComponent {
 
     @Override
     public InlineLineComponent next() {
-        return new InlineLineComponent(components, trailingSpace, NavigableListComponent.bounded(index + 1, getComponents()));
+        return new InlineLineComponent(components, trailingSpace, index + 1);
     }
 
     @Override
     public InlineLineComponent prev() {
-        return new InlineLineComponent(components, trailingSpace, NavigableListComponent.bounded(index - 1, getComponents()));
+        return new InlineLineComponent(components, trailingSpace, index - 1);
     }
 
     @Override
     public Option<InlineLineComponent> insert(CharacterComponent component) {
         if (index == components.size()) {
             return Option.some(new InlineLineComponent(components.append(component), trailingSpace, index));
-        } if (NavigableListComponent.isBounded(index, components)) {
+        } else if (NavigableListComponent.isBounded(index, components)) {
             return Option.some(new InlineLineComponent(components.insert(index, component), trailingSpace, index));
         } else {
             return Option.none();

@@ -3,6 +3,7 @@ package io.github.proton.plugin.list;
 import io.github.proton.display.Component;
 import io.github.proton.display.Screen;
 import io.github.proton.display.Style;
+import io.vavr.Tuple2;
 import io.vavr.collection.Stream;
 import io.vavr.collection.Vector;
 
@@ -11,6 +12,14 @@ public interface NavigableListComponent<T extends Component> extends ListCompone
     NavigableListComponent<T> prev();
 
     int getIndex();
+
+    default T getFocus() {
+        return getComponents().get(getIndex());
+    }
+
+    default Tuple2<Vector<T>, Vector<T>> split() {
+        return getComponents().splitAt(getIndex());
+    }
 
     @Override
     default Screen render(Style style, boolean selected) {

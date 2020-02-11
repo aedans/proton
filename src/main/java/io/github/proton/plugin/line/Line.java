@@ -1,4 +1,4 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
 import io.vavr.collection.Vector;
 

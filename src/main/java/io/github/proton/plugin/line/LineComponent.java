@@ -1,10 +1,7 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
 import io.github.proton.plugin.character.CharacterComponent;
 import io.github.proton.plugin.list.EditableListComponent;
-import io.github.proton.plugin.list.ListComponent;
-import io.github.proton.plugin.list.NavigableListComponent;
-import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
 public interface LineComponent extends EditableListComponent<CharacterComponent> {

@@ -3,7 +3,7 @@ package io.github.proton;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import io.github.proton.display.*;
-import io.github.proton.plugin.text.Line;
+import io.github.proton.plugin.line.Line;
 
 import java.io.File;
 import java.io.IOException;

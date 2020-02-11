@@ -17,17 +17,20 @@ public final class EditableListController extends Controller.Of<EditableListComp
 
     @Override
     public Option<Component> update(EditableListComponent component, KeyStroke keyStroke) {
-        if (keyStroke.getKeyType() == KeyType.Delete) {
-            return component.delete();
-        } else if (keyStroke.getKeyType() == KeyType.Backspace && component.getIndex() != 0) {
-            return component.prev().delete();
-        } else {
-            return Plugins.controller()
-                    .updateGeneric((Component) component.getComponents().get(component.getIndex()), keyStroke)
-                    .flatMap(c -> {
-                        Option<EditableListComponent> delete = component.delete();
-                        return delete.flatMap(x -> x.insert(c));
-                    });
-        }
+        return Plugins.controller()
+                .updateGeneric(component.getFocus(), keyStroke)
+                .flatMap(c -> {
+                    Option<EditableListComponent> delete = component.delete();
+                    return delete.flatMap(x -> x.insert(c));
+                })
+                .orElse(() -> {
+                    if (keyStroke.getKeyType() == KeyType.Delete) {
+                        return component.delete();
+                    } else if (keyStroke.getKeyType() == KeyType.Backspace && component.getIndex() != 0) {
+                        return component.prev().delete();
+                    } else {
+                        return Option.none();
+                    }
+                });
     }
 }

@@ -1,4 +1,4 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
 import io.github.proton.Plugins;
 import io.github.proton.display.Component;
@@ -15,8 +15,7 @@ public final class LineProjection extends Projection.Of<Line> {
 
     @Override
     public Vector<Component> project(Line line) {
-        Vector<CharacterComponent> characters = line.characters.map(x ->
-                (CharacterComponent) Plugins.projection().projectGeneric(x).get());
+        Vector<CharacterComponent> characters = line.characters.map(Plugins::projectDefault);
         return Vector.of(
                 InlineLineComponent.of(characters),
                 LiteralLineComponent.of(characters)

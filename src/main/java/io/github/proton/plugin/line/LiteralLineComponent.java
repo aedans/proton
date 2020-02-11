@@ -1,5 +1,6 @@
-package io.github.proton.plugin.text;
+package io.github.proton.plugin.line;
 
+import io.github.proton.Plugins;
 import io.github.proton.display.Screen;
 import io.github.proton.display.Style;
 import io.github.proton.plugin.character.CharacterComponent;
@@ -18,7 +19,7 @@ public final class LiteralLineComponent implements LineComponent {
         this.components = components;
         this.openQuote = openQuote;
         this.closeQuote = closeQuote;
-        this.index = index;
+        this.index = NavigableListComponent.bounded(index, getComponents());
     }
 
     public static LiteralLineComponent of(Vector<CharacterComponent> characters) {
@@ -42,12 +43,12 @@ public final class LiteralLineComponent implements LineComponent {
 
     @Override
     public LiteralLineComponent next() {
-        return new LiteralLineComponent(components, openQuote, closeQuote, NavigableListComponent.bounded(index + 1, getComponents()));
+        return new LiteralLineComponent(components, openQuote, closeQuote, index + 1);
     }
 
     @Override
     public LiteralLineComponent prev() {
-        return new LiteralLineComponent(components, openQuote, closeQuote, NavigableListComponent.bounded(index - 1, getComponents()));
+        return new LiteralLineComponent(components, openQuote, closeQuote, index - 1);
     }
 
     @Override

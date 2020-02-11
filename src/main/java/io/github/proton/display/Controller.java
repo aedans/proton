@@ -41,7 +41,7 @@ public interface Controller extends ExtensionPoint {
     abstract class Of<T extends Component> implements Controller {
         private final Class<T> clazz;
 
-        protected Of(Class<T> clazz) {
+        public Of(Class<T> clazz) {
             this.clazz = clazz;
         }
 

@@ -1,5 +1,6 @@
 package io.github.proton;
 
+import io.github.proton.display.Component;
 import io.github.proton.display.Controller;
 import io.github.proton.display.Projection;
 import io.vavr.collection.Vector;
@@ -18,6 +19,15 @@ public final class Plugins {
 
     public static <T> Vector<T> getExtensions(Class<T> clazz) {
         return Vector.ofAll(pluginManager.getExtensions(clazz));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Component> T projectDefault(Object tree) {
+        return (T) project(tree).get();
+    }
+
+    public static <T extends Component> Vector<T> project(Object tree) {
+        return projection().projectGeneric(tree);
     }
 
     private static Projection projection = null;
