@@ -36,6 +36,10 @@ public final class TerminalDisplay implements Closeable {
         }
     }
 
+    public void setCursor(TerminalPosition position) {
+        screen.setCursorPosition(position);
+    }
+
     public void resizeIfNecessary() {
         screen.doResizeIfNecessary();
     }
