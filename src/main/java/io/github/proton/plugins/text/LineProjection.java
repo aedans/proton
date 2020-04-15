@@ -6,6 +6,7 @@ import io.github.proton.display.Projection;
 import io.github.proton.display.Style;
 import io.vavr.Tuple2;
 import io.vavr.collection.Map;
+import io.vavr.control.Option;
 
 final class LineProjection implements Projection<Line> {
     private final Line line;
@@ -26,18 +27,18 @@ final class LineProjection implements Projection<Line> {
                     }
 
                     @Override
-                    public Line insert(char c) {
-                        return new Line(line.chars.append(c));
+                    public Option<Line> insert(char c) {
+                        return Option.some(new Line(line.chars.append(c)));
                     }
 
                     @Override
-                    public Line delete() {
-                        return line;
+                    public Option<Line> delete() {
+                        return Option.none();
                     }
 
                     @Override
-                    public Line submit() {
-                        return line;
+                    public Option<Line> submit() {
+                        return Option.none();
                     }
                 })
                 .zipWithIndex()
@@ -61,18 +62,18 @@ final class LineProjection implements Projection<Line> {
         }
 
         @Override
-        public Line insert(char c) {
-            return new Line(line.chars.insert(i, c));
+        public Option<Line> insert(char c) {
+            return Option.some(new Line(line.chars.insert(i, c)));
         }
 
         @Override
-        public Line delete() {
-            return new Line(line.chars.removeAt(i));
+        public Option<Line> delete() {
+            return Option.some(new Line(line.chars.removeAt(i)));
         }
 
         @Override
-        public Line submit() {
-            return line;
+        public Option<Line> submit() {
+            return Option.none();
         }
     }
 }

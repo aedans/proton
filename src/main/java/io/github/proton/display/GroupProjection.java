@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TextCharacter;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
 public interface GroupProjection<T, E> extends Projection<T> {
     Projection<E> projectElem(E elem);
@@ -12,6 +13,12 @@ public interface GroupProjection<T, E> extends Projection<T> {
     Vector<E> getElems();
 
     T setElems(Vector<E> elems);
+
+    default Option<E> newElem() {
+        return Option.none();
+    }
+
+    ;
 
     @Override
     default Map<TerminalPosition, Char<T>> characters() {
@@ -24,18 +31,20 @@ public interface GroupProjection<T, E> extends Projection<T> {
                             }
 
                             @Override
-                            public T insert(char w) {
-                                return setElems(getElems().update(i, c.insert(w)));
+                            public Option<T> insert(char w) {
+                                return c.insert(w).map(t -> setElems(getElems().update(i, t)));
                             }
 
                             @Override
-                            public T delete() {
-                                return setElems(getElems().update(i, c.delete()));
+                            public Option<T> delete() {
+                                return c.delete().map(t -> setElems(getElems().update(i, t)))
+                                        .orElse(() -> Option.of(setElems(getElems().removeAt(i))));
                             }
 
                             @Override
-                            public T submit() {
-                                return setElems(getElems().update(i, c.submit()));
+                            public Option<T> submit() {
+                                return c.submit().map(t -> setElems(getElems().update(i, t)))
+                                        .orElse(() -> newElem().map(e -> setElems(getElems().insert(i + 1, e))));
                             }
                         }))
                 .reduceOption(Projection::combineVertical)

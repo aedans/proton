@@ -18,19 +18,18 @@ public final class Editor<T> {
         this.cursor = cursor;
     }
 
-    public static TerminalPosition selected(Projection<?> projection, TerminalPosition cursor) {
+    public static <T> TerminalPosition selected(Projection<T> projection, TerminalPosition cursor) {
         return projection.characters().get(cursor).map(x -> cursor)
                 .orElse(() -> left(projection, cursor))
                 .orElse(() -> right(projection, cursor))
-                .getOrElseThrow(IndexOutOfBoundsException::new);
+                .getOrElse(cursor.withColumn(0));
     }
 
-    public static <T> Projection.Char<T> character(Projection<T> projection, TerminalPosition cursor) {
-        return projection.characters().get(selected(projection, cursor))
-                .getOrElseThrow(IndexOutOfBoundsException::new);
+    public static <T> Option<Projection.Char<T>> character(Projection<T> projection, TerminalPosition selected) {
+        return projection.characters().get(selected);
     }
 
-    public static Option<TerminalPosition> left(Projection<?> projection, TerminalPosition cursor) {
+    public static <T> Option<TerminalPosition> left(Projection<T> projection, TerminalPosition cursor) {
         if (cursor.getColumn() < 0) return Option.none();
         TerminalPosition cursor1 = cursor.withRelativeColumn(-1);
         return projection.characters().get(cursor1)
@@ -38,7 +37,7 @@ public final class Editor<T> {
                 .orElse(() -> left(projection, cursor1));
     }
 
-    public static Option<TerminalPosition> right(Projection<?> projection, TerminalPosition cursor) {
+    public static <T> Option<TerminalPosition> right(Projection<T> projection, TerminalPosition cursor) {
         if (cursor.getColumn() > projection.columns()) return Option.none();
         TerminalPosition cursor1 = cursor.withRelativeColumn(1);
         return projection.characters().get(cursor1)
@@ -60,15 +59,26 @@ public final class Editor<T> {
         } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
             return new Editor<>(style, projector, tree, cursor.withRow(Math.min(projection.rows() - 1, cursor.getRow() + 1)));
         } else if (keyStroke.getKeyType() == KeyType.Character) {
-            T t2 = character(projection, selected).insert(keyStroke.getCharacter());
-            return new Editor<>(style, projector, t2, right(projector.project(t2), selected).getOrElse(cursor));
+            return character(projection, selected).map(character -> {
+                T t2 = character.insert(keyStroke.getCharacter()).getOrElse(tree);
+                return new Editor<>(style, projector, t2, right(projector.project(t2), selected).getOrElse(cursor));
+            }).getOrElse(this);
         } else if (keyStroke.getKeyType() == KeyType.Backspace) {
-            if (selected.getColumn() == 0) return this;
-            T t2 = character(projection, selected.withRelativeColumn(-1)).delete();
-            return new Editor<>(style, projector, t2, left(projector.project(t2), selected).getOrElse(cursor));
+            if (selected.getColumn() == 0) {
+                if (selected.getRow() == 0) return this;
+                return new Editor<>(style, projector, tree, cursor.withRelativeRow(-1).withColumn(projection.columns()));
+            }
+            return character(projection, selected.withRelativeColumn(-1)).map(character -> {
+                T t2 = character.delete().getOrElse(tree);
+                return new Editor<>(style, projector, t2, left(projector.project(t2), selected).getOrElse(cursor));
+            }).getOrElse(this);
         } else if (keyStroke.getKeyType() == KeyType.Enter) {
-            T t2 = character(projection, selected).submit();
-            return new Editor<>(style, projector, t2, cursor);
+            return character(projection, selected).map(character -> {
+                T t2 = character.submit().getOrElse(tree);
+                TerminalPosition cursor = left(projector.project(t2), selected.withRelativeRow(1).withRelativeColumn(1))
+                        .getOrElse(this.cursor);
+                return new Editor<>(style, projector, t2, cursor);
+            }).getOrElse(this);
         } else {
             return this;
         }

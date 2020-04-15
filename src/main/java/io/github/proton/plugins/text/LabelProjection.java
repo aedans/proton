@@ -6,8 +6,10 @@ import io.github.proton.display.Projection;
 import io.github.proton.display.Style;
 import io.vavr.Tuple2;
 import io.vavr.collection.Map;
+import io.vavr.control.Option;
 
 public final class LabelProjection implements Projection<Line> {
+    public static final LabelProjection whitespace = new LabelProjection(" ", "base");
     private final Line line;
     private final String scope;
 
@@ -24,11 +26,10 @@ public final class LabelProjection implements Projection<Line> {
     public Map<TerminalPosition, Char<Line>> characters() {
         return line.chars
                 .map(c -> new LabelChar(line, scope, c))
+                .append(new LabelChar(line, "", ' '))
                 .zipWithIndex()
                 .toMap(p -> new Tuple2<>(new TerminalPosition(p._2, 0), p._1));
     }
-
-    public static final LabelProjection whitespace = new LabelProjection(" ", "base");
 
     public static final class LabelChar implements Char<Line> {
         private final Line line;
@@ -47,18 +48,18 @@ public final class LabelProjection implements Projection<Line> {
         }
 
         @Override
-        public Line insert(char c) {
-            return line;
+        public Option<Line> insert(char c) {
+            return Option.none();
         }
 
         @Override
-        public Line delete() {
-            return line;
+        public Option<Line> delete() {
+            return Option.none();
         }
 
         @Override
-        public Line submit() {
-            return line;
+        public Option<Line> submit() {
+            return Option.none();
         }
     }
 }

@@ -1,10 +1,8 @@
 package io.github.proton.plugins.text;
 
-import com.googlecode.lanterna.TerminalPosition;
 import io.github.proton.display.GroupProjection;
 import io.github.proton.display.Projection;
 import io.github.proton.display.Projector;
-import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import org.pf4j.Extension;
 

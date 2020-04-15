@@ -3,6 +3,7 @@ package io.github.proton.display;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import io.vavr.collection.Map;
+import io.vavr.control.Option;
 
 import java.util.function.Function;
 
@@ -33,6 +34,10 @@ public interface Projection<T> {
         return () -> characters().mapValues(c -> c.map(function));
     }
 
+    default <A> Projection<A> mapChars(Function<Char<T>, Char<A>> function) {
+        return () -> characters().mapValues(function);
+    }
+
     default <A> Projection<A> of(A a) {
         return map(x -> a);
     }
@@ -41,14 +46,18 @@ public interface Projection<T> {
         return () -> characters().mapKeys(p -> p.withRelativeColumn(delta));
     }
 
+    default Projection<T> indentVertical(int delta) {
+        return () -> characters().mapKeys(p -> p.withRelativeRow(delta));
+    }
+
     interface Char<T> {
         TextCharacter character(Style style);
 
-        T insert(char c);
+        Option<T> insert(char c);
 
-        T delete();
+        Option<T> delete();
 
-        T submit();
+        Option<T> submit();
 
         default Char<T> onSubmit(T tree) {
             return new Char<T>() {
@@ -58,18 +67,18 @@ public interface Projection<T> {
                 }
 
                 @Override
-                public T insert(char c) {
+                public Option<T> insert(char c) {
                     return Char.this.insert(c);
                 }
 
                 @Override
-                public T delete() {
+                public Option<T> delete() {
                     return Char.this.delete();
                 }
 
                 @Override
-                public T submit() {
-                    return tree;
+                public Option<T> submit() {
+                    return Char.this.submit();
                 }
             };
         }
@@ -82,18 +91,18 @@ public interface Projection<T> {
                 }
 
                 @Override
-                public A insert(char c) {
-                    return map.apply(Char.this.insert(c));
+                public Option<A> insert(char c) {
+                    return Char.this.insert(c).map(map);
                 }
 
                 @Override
-                public A delete() {
-                    return map.apply(Char.this.delete());
+                public Option<A> delete() {
+                    return Char.this.delete().map(map);
                 }
 
                 @Override
-                public A submit() {
-                    return map.apply(Char.this.submit());
+                public Option<A> submit() {
+                    return Char.this.submit().map(map);
                 }
             };
         }
