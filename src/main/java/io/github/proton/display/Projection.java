@@ -29,13 +29,16 @@ public interface Projection<T> {
                 .mapKeys(p -> p.withRelativeColumn(cols)));
     }
 
-    default Projection<T> indent(int delta) {
-        return () -> characters().mapKeys(p -> p.withRelativeColumn(delta));
+    default <A> Projection<A> map(Function<T, A> function) {
+        return () -> characters().mapValues(c -> c.map(function));
     }
 
-    default Projection<T> memoize() {
-        Map<TerminalPosition, Char<T>> characters = characters();
-        return () -> characters;
+    default <A> Projection<A> of(A a) {
+        return map(x -> a);
+    }
+
+    default Projection<T> indent(int delta) {
+        return () -> characters().mapKeys(p -> p.withRelativeColumn(delta));
     }
 
     interface Char<T> {

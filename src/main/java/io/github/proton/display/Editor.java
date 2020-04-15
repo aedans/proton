@@ -8,18 +8,12 @@ import io.vavr.control.Option;
 public final class Editor<T> {
     private final Style style;
     private final Projector<T> projector;
-    private final Projection<T> projection;
     private final T tree;
     private final TerminalPosition cursor;
 
     public Editor(Style style, Projector<T> projector, T tree, TerminalPosition cursor) {
-        this(style, projector, projector.project(tree), tree, cursor);
-    }
-
-    public Editor(Style style, Projector<T> projector, Projection<T> projection, T tree, TerminalPosition cursor) {
         this.style = style;
         this.projector = projector;
-        this.projection = projection.memoize();
         this.tree = tree;
         this.cursor = cursor;
     }
@@ -53,8 +47,9 @@ public final class Editor<T> {
     }
 
     public Editor<T> update(KeyStroke keyStroke) {
+        Projection<T> projection = projector.project(tree);
         TerminalPosition selected = selected(projection, cursor);
-        if (projector.project(tree).characters().isEmpty()) {
+        if (projection.characters().isEmpty()) {
             return this;
         } else if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
             return new Editor<>(style, projector, tree, left(projection, selected).getOrElse(cursor));
@@ -82,6 +77,6 @@ public final class Editor<T> {
     public void render(TerminalDisplay display) {
         display.background(style.base(' '));
         projector.project(tree).characters().forEach(c -> display.write(c._2.character(style), c._1));
-        display.setCursor(selected(projection, cursor));
+        display.setCursor(selected(projector.project(tree), cursor));
     }
 }
