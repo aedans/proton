@@ -19,7 +19,8 @@ public final class Editor<T> {
     }
 
     public static <T> TerminalPosition selected(Projection<T> projection, TerminalPosition cursor) {
-        return projection.characters().get(cursor).map(x -> cursor)
+        return projection.characters().get(cursor)
+                .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor))
                 .orElse(() -> left(projection, cursor))
                 .orElse(() -> right(projection, cursor))
                 .getOrElse(cursor.withColumn(0));
@@ -30,18 +31,20 @@ public final class Editor<T> {
     }
 
     public static <T> Option<TerminalPosition> left(Projection<T> projection, TerminalPosition cursor) {
-        if (cursor.getColumn() < 0) return Option.none();
+        if (cursor.getRow() < 0) return Option.none();
+        if (cursor.getColumn() < 0) return left(projection, cursor.withRelativeRow(-1).withColumn(projection.columns()));
         TerminalPosition cursor1 = cursor.withRelativeColumn(-1);
         return projection.characters().get(cursor1)
-                .map(c -> cursor1)
+                .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> left(projection, cursor1));
     }
 
     public static <T> Option<TerminalPosition> right(Projection<T> projection, TerminalPosition cursor) {
-        if (cursor.getColumn() > projection.columns()) return Option.none();
+        if (cursor.getRow() > projection.rows()) return Option.none();
+        if (cursor.getColumn() > projection.columns()) return right(projection, cursor.withRelativeRow(1).withColumn(-1));
         TerminalPosition cursor1 = cursor.withRelativeColumn(1);
         return projection.characters().get(cursor1)
-                .map(c -> cursor1)
+                .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> right(projection, cursor1));
     }
 
@@ -64,10 +67,6 @@ public final class Editor<T> {
                 return new Editor<>(style, projector, t2, right(projector.project(t2), selected).getOrElse(cursor));
             }).getOrElse(this);
         } else if (keyStroke.getKeyType() == KeyType.Backspace) {
-            if (selected.getColumn() == 0) {
-                if (selected.getRow() == 0) return this;
-                return new Editor<>(style, projector, tree, cursor.withRelativeRow(-1).withColumn(projection.columns()));
-            }
             return character(projection, selected.withRelativeColumn(-1)).map(character -> {
                 T t2 = character.delete().getOrElse(tree);
                 return new Editor<>(style, projector, t2, left(projector.project(t2), selected).getOrElse(cursor));
@@ -75,9 +74,7 @@ public final class Editor<T> {
         } else if (keyStroke.getKeyType() == KeyType.Enter) {
             return character(projection, selected).map(character -> {
                 T t2 = character.submit().getOrElse(tree);
-                TerminalPosition cursor = left(projector.project(t2), selected.withRelativeRow(1).withRelativeColumn(1))
-                        .getOrElse(this.cursor);
-                return new Editor<>(style, projector, t2, cursor);
+                return new Editor<>(style, projector, t2, selected.withRelativeRow(1).withRelativeColumn(1));
             }).getOrElse(this);
         } else {
             return this;

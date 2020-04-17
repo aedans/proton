@@ -22,6 +22,11 @@ final class LineProjection implements Projection<Line> {
         return line.chars.<Char<Line>>zipWithIndex((c, i) -> new LineChar(line, scope, i))
                 .append(new Char<Line>() {
                     @Override
+                    public boolean decorative() {
+                        return false;
+                    }
+
+                    @Override
                     public TextCharacter character(Style style) {
                         return style.base(' ');
                     }
@@ -54,6 +59,11 @@ final class LineProjection implements Projection<Line> {
             this.line = line;
             this.scope = scope;
             this.i = i;
+        }
+
+        @Override
+        public boolean decorative() {
+            return false;
         }
 
         @Override

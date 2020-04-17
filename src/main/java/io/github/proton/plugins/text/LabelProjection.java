@@ -9,7 +9,8 @@ import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
 public final class LabelProjection implements Projection<Line> {
-    public static final LabelProjection whitespace = new LabelProjection(" ", "base");
+    public static final LabelProjection openBracket = new LabelProjection("{", "punctuation.bracket");
+    public static final LabelProjection closeBracket = new LabelProjection("}", "punctuation.bracket");
     private final Line line;
     private final String scope;
 
@@ -25,21 +26,23 @@ public final class LabelProjection implements Projection<Line> {
     @Override
     public Map<TerminalPosition, Char<Line>> characters() {
         return line.chars
-                .map(c -> new LabelChar(line, scope, c))
-                .append(new LabelChar(line, "", ' '))
+                .map(c -> new LabelChar(scope, c))
                 .zipWithIndex()
                 .toMap(p -> new Tuple2<>(new TerminalPosition(p._2, 0), p._1));
     }
 
     public static final class LabelChar implements Char<Line> {
-        private final Line line;
         private final String scope;
         private final char c;
 
-        public LabelChar(Line line, String scope, char c) {
-            this.line = line;
+        public LabelChar(String scope, char c) {
             this.scope = scope;
             this.c = c;
+        }
+
+        @Override
+        public boolean decorative() {
+            return true;
         }
 
         @Override

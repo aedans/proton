@@ -18,13 +18,16 @@ public interface GroupProjection<T, E> extends Projection<T> {
         return Option.none();
     }
 
-    ;
-
     @Override
     default Map<TerminalPosition, Char<T>> characters() {
         return getElems()
                 .<Projection<T>>zipWithIndex((elem, i) -> () -> projectElem(elem).characters()
                         .mapValues(c -> new Char<T>() {
+                            @Override
+                            public boolean decorative() {
+                                return c.decorative();
+                            }
+
                             @Override
                             public TextCharacter character(Style style) {
                                 return c.character(style);

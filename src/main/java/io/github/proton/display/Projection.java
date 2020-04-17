@@ -34,10 +34,6 @@ public interface Projection<T> {
         return () -> characters().mapValues(c -> c.map(function));
     }
 
-    default <A> Projection<A> mapChars(Function<Char<T>, Char<A>> function) {
-        return () -> characters().mapValues(function);
-    }
-
     default <A> Projection<A> of(A a) {
         return map(x -> a);
     }
@@ -51,6 +47,8 @@ public interface Projection<T> {
     }
 
     interface Char<T> {
+        boolean decorative();
+
         TextCharacter character(Style style);
 
         Option<T> insert(char c);
@@ -61,6 +59,11 @@ public interface Projection<T> {
 
         default Char<T> onSubmit(T tree) {
             return new Char<T>() {
+                @Override
+                public boolean decorative() {
+                    return Char.this.decorative();
+                }
+
                 @Override
                 public TextCharacter character(Style style) {
                     return Char.this.character(style);
@@ -78,13 +81,18 @@ public interface Projection<T> {
 
                 @Override
                 public Option<T> submit() {
-                    return Char.this.submit();
+                    return Option.some(tree);
                 }
             };
         }
 
         default <A> Char<A> map(Function<T, A> map) {
             return new Char<A>() {
+                @Override
+                public boolean decorative() {
+                    return Char.this.decorative();
+                }
+
                 @Override
                 public TextCharacter character(Style style) {
                     return Char.this.character(style);
