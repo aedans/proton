@@ -9,17 +9,17 @@ import org.pf4j.Extension;
 
 @Extension
 public final class JavaPackageDeclarationProjector implements Projector<JavaPackageDeclaration> {
-    @Override
-    public Class<JavaPackageDeclaration> clazz() {
-        return JavaPackageDeclaration.class;
-    }
+  @Override
+  public Class<JavaPackageDeclaration> clazz() {
+    return JavaPackageDeclaration.class;
+  }
 
-    @Override
-    public Projection<JavaPackageDeclaration> project(JavaPackageDeclaration packageDeclaration) {
-        Projection<JavaPackageDeclaration> label = new LabelProjection("package ", "keyword")
-                .map(x -> packageDeclaration);
-        Projection<JavaPackageDeclaration> projection = Projector.get(Line.class).project(packageDeclaration.name)
-                .map(JavaPackageDeclaration::new);
-        return label.combineHorizontal(projection);
-    }
+  @Override
+  public Projection<JavaPackageDeclaration> project(JavaPackageDeclaration packageDeclaration) {
+    Projection<JavaPackageDeclaration> label =
+        new LabelProjection("package ", "keyword").map(x -> packageDeclaration);
+    Projection<JavaPackageDeclaration> projection =
+        Projector.get(Line.class).project(packageDeclaration.name).map(JavaPackageDeclaration::new);
+    return label.combineHorizontal(projection);
+  }
 }

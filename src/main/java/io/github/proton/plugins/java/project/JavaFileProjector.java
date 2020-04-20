@@ -14,58 +14,66 @@ import org.pf4j.Extension;
 
 @Extension
 public final class JavaFileProjector implements Projector<JavaFile> {
-    @Override
-    public Class<JavaFile> clazz() {
-        return JavaFile.class;
-    }
+  @Override
+  public Class<JavaFile> clazz() {
+    return JavaFile.class;
+  }
 
-    @Override
-    public Projection<JavaFile> project(JavaFile javaFile) {
-        Projection<JavaFile> packageProjection = Projector.get(JavaPackageDeclaration.class)
-                .project(javaFile.packageDeclaration)
-                .map(packageDeclaration -> new JavaFile(packageDeclaration, javaFile.importDeclarations, javaFile.classDeclarations));
-        Projection<JavaFile> importsProjection = new GroupProjection<JavaFile, JavaImportDeclaration>() {
-            @Override
-            public Projection<JavaImportDeclaration> projectElem(JavaImportDeclaration elem) {
-                return Projector.get(JavaImportDeclaration.class).project(elem);
-            }
+  @Override
+  public Projection<JavaFile> project(JavaFile javaFile) {
+    Projection<JavaFile> packageProjection =
+        Projector.get(JavaPackageDeclaration.class)
+            .project(javaFile.packageDeclaration)
+            .map(
+                packageDeclaration ->
+                    new JavaFile(
+                        packageDeclaration,
+                        javaFile.importDeclarations,
+                        javaFile.classDeclarations));
+    Projection<JavaFile> importsProjection =
+        new GroupProjection<JavaFile, JavaImportDeclaration>() {
+          @Override
+          public Projection<JavaImportDeclaration> projectElem(JavaImportDeclaration elem) {
+            return Projector.get(JavaImportDeclaration.class).project(elem);
+          }
 
-            @Override
-            public Vector<JavaImportDeclaration> getElems() {
-                return javaFile.importDeclarations;
-            }
+          @Override
+          public Vector<JavaImportDeclaration> getElems() {
+            return javaFile.importDeclarations;
+          }
 
-            @Override
-            public JavaFile setElems(Vector<JavaImportDeclaration> elems) {
-                return new JavaFile(javaFile.packageDeclaration, elems, javaFile.classDeclarations);
-            }
+          @Override
+          public JavaFile setElems(Vector<JavaImportDeclaration> elems) {
+            return new JavaFile(javaFile.packageDeclaration, elems, javaFile.classDeclarations);
+          }
 
-            @Override
-            public Option<JavaImportDeclaration> newElem() {
-                return Option.some(new JavaImportDeclaration(new Line("")));
-            }
+          @Override
+          public Option<JavaImportDeclaration> newElem() {
+            return Option.some(new JavaImportDeclaration(new Line("")));
+          }
         }.indentVertical(1);
-        Projection<JavaFile> classProjection = new GroupProjection<JavaFile, JavaClassDeclaration>() {
-            @Override
-            public Projection<JavaClassDeclaration> projectElem(JavaClassDeclaration elem) {
-                return Projector.get(JavaClassDeclaration.class).project(elem);
-            }
+    Projection<JavaFile> classProjection =
+        new GroupProjection<JavaFile, JavaClassDeclaration>() {
+          @Override
+          public Projection<JavaClassDeclaration> projectElem(JavaClassDeclaration elem) {
+            return Projector.get(JavaClassDeclaration.class).project(elem);
+          }
 
-            @Override
-            public Vector<JavaClassDeclaration> getElems() {
-                return javaFile.classDeclarations;
-            }
+          @Override
+          public Vector<JavaClassDeclaration> getElems() {
+            return javaFile.classDeclarations;
+          }
 
-            @Override
-            public JavaFile setElems(Vector<JavaClassDeclaration> elems) {
-                return new JavaFile(javaFile.packageDeclaration, javaFile.importDeclarations, elems);
-            }
+          @Override
+          public JavaFile setElems(Vector<JavaClassDeclaration> elems) {
+            return new JavaFile(javaFile.packageDeclaration, javaFile.importDeclarations, elems);
+          }
 
-            @Override
-            public Option<JavaClassDeclaration> newElem() {
-                return Option.some(new JavaClassDeclaration(new Line(""), Vector.empty()));
-            }
+          @Override
+          public Option<JavaClassDeclaration> newElem() {
+            return Option.some(new JavaClassDeclaration(new Line(""), Vector.empty()));
+          }
         }.indentVertical(1);
-        return packageProjection.combineVertical(importsProjection).combineVertical(classProjection);
-    }
+    return packageProjection.combineVertical(importsProjection).combineVertical(classProjection);
+  }
 }

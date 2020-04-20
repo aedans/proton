@@ -3,5 +3,9 @@ build
 
 # Project exclude paths
 /.gradle/
+/bin/
 
 .proton
+.classpath
+.project
+.vscode/
