@@ -1,11 +1,14 @@
+/*
+ * Copyright 2020 Aedan Smith
+ */
 package io.github.proton.plugins.java.tree;
 
 import io.github.proton.plugins.text.Line;
 
 public final class JavaImportDeclaration {
-  public final Line name;
+    public final Line name;
 
-  public JavaImportDeclaration(Line name) {
-    this.name = name;
-  }
+    public JavaImportDeclaration(Line name) {
+        this.name = name;
+    }
 }
