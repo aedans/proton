@@ -1,13 +1,13 @@
 buildscript {
-   repositories {
+    repositories {
        gradlePluginPortal()
        maven { url  "http://palantir.bintray.com/releases" }
-   }
+    }
 
-   dependencies {
+    dependencies {
        classpath 'com.palantir.baseline:gradle-baseline-java:3.10.0'
        classpath 'gradle.plugin.org.inferred:gradle-processors:2.1.0'
-   }
+    }
 }
 
 plugins {
@@ -16,14 +16,11 @@ plugins {
 }
 
 repositories {
-   jcenter()
-mavenCentral()
-   maven { url  "http://palantir.bintray.com/releases" }
+    jcenter()
+    mavenCentral()
+    maven { url  "http://palantir.bintray.com/releases" }
 }
 
-apply plugin: 'java'
-//apply plugin: 'org.inferred.processors'  // installs the "processor" configuration needed for baseline-error-prone
-//apply plugin: 'com.palantir.baseline-idea'
 apply plugin: 'com.palantir.baseline-format'
 
 group 'io.github.proton'
