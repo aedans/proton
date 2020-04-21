@@ -29,7 +29,8 @@ apply plugin: 'com.palantir.baseline-format'
 group 'io.github.proton'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 dependencies {
     compile 'com.googlecode.lanterna:lanterna:3.0.1'
