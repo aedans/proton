@@ -3,10 +3,9 @@
  */
 package io.github.proton.plugins.file;
 
-import io.github.proton.display.GroupProjection;
 import io.github.proton.display.Projection;
 import io.github.proton.display.Projector;
-import io.vavr.collection.Vector;
+import io.github.proton.display.VectorProjection;
 import org.pf4j.Extension;
 
 @Extension
@@ -18,21 +17,6 @@ public final class DirectoryProjector implements Projector<Directory> {
 
     @Override
     public Projection<Directory> project(Directory directory) {
-        return new GroupProjection<Directory, FileLink>() {
-            @Override
-            public Projection<FileLink> projectElem(FileLink file) {
-                return new FileLinkProjector().project(file);
-            }
-
-            @Override
-            public Vector<FileLink> getElems() {
-                return directory.files;
-            }
-
-            @Override
-            public Directory setElems(Vector<FileLink> files) {
-                return new Directory(files);
-            }
-        };
+        return new VectorProjection<>(directory.files, new FileLinkProjector()).map(Directory::new);
     }
 }
