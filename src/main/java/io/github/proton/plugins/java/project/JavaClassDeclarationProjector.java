@@ -21,12 +21,12 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
 
     @Override
     public Projection<JavaClassDeclaration> project(JavaClassDeclaration classDeclaration) {
-        Projection<JavaClassDeclaration> label = new LabelProjection("class ", "keyword").map(x -> classDeclaration);
+        Projection<JavaClassDeclaration> label = new LabelProjection("class ", "keyword").of(classDeclaration);
         Projection<JavaClassDeclaration> projection = Projector.get(Line.class)
                 .project(classDeclaration.name)
                 .map(name -> new JavaClassDeclaration(name, classDeclaration.fields));
-        Projection<JavaClassDeclaration> openBracket = LabelProjection.openBracket.map(x -> classDeclaration);
-        Projection<JavaClassDeclaration> closeBracket = LabelProjection.closeBracket.map(x -> classDeclaration);
+        Projection<JavaClassDeclaration> openBracket = LabelProjection.openBracket.of(classDeclaration);
+        Projection<JavaClassDeclaration> closeBracket = LabelProjection.closeBracket.of(classDeclaration);
         Projection<JavaClassDeclaration> fields = new VectorProjection<>(
                         classDeclaration.fields, Projector.get(JavaFieldMember.class), new JavaFieldMember(
                                 new Line("")))

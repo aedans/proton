@@ -23,9 +23,8 @@ public final class SolarizedStyle implements Style {
 
     @Override
     public TextCharacter style(String scope, char character) {
-        switch (scope) {
-            case "keyword":
-                return base(character).withForegroundColor(green);
+        if (scope.startsWith("keyword")) {
+            return base(character).withForegroundColor(green);
         }
         return base(character);
     }

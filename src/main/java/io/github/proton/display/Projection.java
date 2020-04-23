@@ -57,35 +57,6 @@ public interface Projection<T> {
 
         Option<T> submit();
 
-        default Char<T> onSubmit(T tree) {
-            return new Char<T>() {
-                @Override
-                public boolean decorative() {
-                    return Char.this.decorative();
-                }
-
-                @Override
-                public TextCharacter character(Style style) {
-                    return Char.this.character(style);
-                }
-
-                @Override
-                public Option<T> insert(char c) {
-                    return Char.this.insert(c);
-                }
-
-                @Override
-                public Option<T> delete() {
-                    return Char.this.delete();
-                }
-
-                @Override
-                public Option<T> submit() {
-                    return Option.some(tree);
-                }
-            };
-        }
-
         default <A> Char<A> map(Function<T, A> map) {
             return new Char<A>() {
                 @Override

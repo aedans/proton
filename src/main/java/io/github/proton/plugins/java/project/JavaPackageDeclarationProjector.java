@@ -19,8 +19,7 @@ public final class JavaPackageDeclarationProjector implements Projector<JavaPack
 
     @Override
     public Projection<JavaPackageDeclaration> project(JavaPackageDeclaration packageDeclaration) {
-        Projection<JavaPackageDeclaration> label =
-                new LabelProjection("package ", "keyword").map(x -> packageDeclaration);
+        Projection<JavaPackageDeclaration> label = new LabelProjection("package ", "keyword").of(packageDeclaration);
         Projection<JavaPackageDeclaration> projection =
                 Projector.get(Line.class).project(packageDeclaration.name).map(JavaPackageDeclaration::new);
         return label.combineHorizontal(projection);

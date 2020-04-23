@@ -19,7 +19,7 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
 
     @Override
     public Projection<JavaImportDeclaration> project(JavaImportDeclaration importDeclaration) {
-        Projection<JavaImportDeclaration> label = new LabelProjection("import ", "keyword").map(x -> importDeclaration);
+        Projection<JavaImportDeclaration> label = new LabelProjection("import ", "keyword").of(importDeclaration);
         Projection<JavaImportDeclaration> projection =
                 Projector.get(Line.class).project(importDeclaration.name).map(JavaImportDeclaration::new);
         return label.combineHorizontal(projection);

@@ -11,7 +11,7 @@ import io.vavr.Tuple2;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
-final class LineProjection implements Projection<Line> {
+public final class LineProjection implements Projection<Line> {
     private final Line line;
     private final String scope;
 
