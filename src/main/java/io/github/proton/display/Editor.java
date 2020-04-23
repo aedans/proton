@@ -94,8 +94,7 @@ public final class Editor<T> {
                 return character(projection, selected)
                         .map(character -> {
                             T t2 = character.submit().getOrElse(tree);
-                            return new Editor<>(
-                                    style, projector, t2, selected.withRelativeRow(1).withRelativeColumn(1));
+                            return new Editor<>(style, projector, t2, cursor.withRelativeRow(1));
                         })
                         .getOrElse(this);
             default:
