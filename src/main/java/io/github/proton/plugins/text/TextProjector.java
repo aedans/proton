@@ -17,7 +17,7 @@ public final class TextProjector implements Projector<Text> {
 
     @Override
     public Projection<Text> project(Text text) {
-        Projector<Line> lineProjector = Projector.get(Line.class);
-        return new VectorProjection<>(text.lines, Projector.get(Line.class)).map(Text::new);
+        return new VectorProjection<>(text.lines, Projector.get(Line.class), new Line(""))
+                .map(Text::new);
     }
 }

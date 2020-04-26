@@ -24,4 +24,18 @@ public interface Style extends ExtensionPoint {
             }
         };
     }
+
+    default Style of(String scope) {
+        return new Style() {
+            @Override
+            public TextCharacter base(char character) {
+                return Style.this.style(scope, character);
+            }
+
+            @Override
+            public TextCharacter style(String s, char character) {
+                return Style.this.style(scope, character);
+            }
+        };
+    }
 }

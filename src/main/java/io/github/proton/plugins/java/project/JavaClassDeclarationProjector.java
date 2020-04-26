@@ -27,13 +27,14 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
                 .map(name -> new JavaClassDeclaration(name, classDeclaration.fields));
         Projection<JavaClassDeclaration> openBracket = LabelProjection.openBracket.of(classDeclaration);
         Projection<JavaClassDeclaration> closeBracket = LabelProjection.closeBracket.of(classDeclaration);
+        Projector<JavaFieldMember> fieldProjector = Projector.get(JavaFieldMember.class);
         Projection<JavaClassDeclaration> fields = new VectorProjection<>(
-                        classDeclaration.fields, Projector.get(JavaFieldMember.class), new JavaFieldMember(
-                                new Line("")))
+                        classDeclaration.fields, fieldProjector, new JavaFieldMember(new Line("")))
                 .map(x -> new JavaClassDeclaration(classDeclaration.name, x));
         return label.combineHorizontal(projection)
                 .combineHorizontal(openBracket)
                 .combineVertical(fields.indent(2))
-                .combineVertical(closeBracket);
+                .combineVertical(closeBracket)
+                .indentVertical(1);
     }
 }

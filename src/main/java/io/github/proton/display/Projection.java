@@ -34,6 +34,10 @@ public interface Projection<T> {
         return () -> characters().mapValues(c -> c.map(function));
     }
 
+    default <A> Projection<A> mapChars(Function<Char<T>, Char<A>> function) {
+        return () -> characters().mapValues(function);
+    }
+
     default <A> Projection<A> of(A a) {
         return map(x -> a);
     }

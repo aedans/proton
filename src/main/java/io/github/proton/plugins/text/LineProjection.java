@@ -15,6 +15,10 @@ public final class LineProjection implements Projection<Line> {
     private final Line line;
     private final String scope;
 
+    public LineProjection(String line, String scope) {
+        this(new Line(line), scope);
+    }
+
     public LineProjection(Line line, String scope) {
         this.line = line;
         this.scope = scope;

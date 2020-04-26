@@ -13,17 +13,9 @@ import io.vavr.control.Option;
 public final class VectorProjection<T> implements Projection<Vector<T>> {
     private final Vector<T> vector;
     private final Projector<T> projector;
-    private final Option<T> elem;
-
-    public VectorProjection(Vector<T> vector, Projector<T> projector) {
-        this(vector, projector, Option.none());
-    }
+    private final T elem;
 
     public VectorProjection(Vector<T> vector, Projector<T> projector, T elem) {
-        this(vector, projector, Option.of(elem));
-    }
-
-    public VectorProjection(Vector<T> vector, Projector<T> projector, Option<T> elem) {
         this.vector = vector;
         this.projector = projector;
         this.elem = elem;
@@ -56,10 +48,35 @@ public final class VectorProjection<T> implements Projection<Vector<T>> {
 
                             @Override
                             public Option<Vector<T>> submit() {
-                                return c.submit().map(t -> vector.update(i, t)).orElse(() ->
-                                        VectorProjection.this.elem.map(e -> vector.insert(i + 1, e)));
+                                return c.submit().map(t -> vector.update(i, t));
                             }
                         }))
+                .append(projector.project(elem).map(vector::append).mapChars(c -> new Char<Vector<T>>() {
+                    @Override
+                    public boolean decorative() {
+                        return c.decorative();
+                    }
+
+                    @Override
+                    public TextCharacter character(Style style) {
+                        return c.character(style.of("comment.ignored"));
+                    }
+
+                    @Override
+                    public Option<Vector<T>> insert(char w) {
+                        return c.insert(w);
+                    }
+
+                    @Override
+                    public Option<Vector<T>> delete() {
+                        return Option.some(vector);
+                    }
+
+                    @Override
+                    public Option<Vector<T>> submit() {
+                        return c.submit();
+                    }
+                }))
                 .reduceOption(Projection::combineVertical)
                 .map(Projection::characters)
                 .getOrElse(HashMap.empty());

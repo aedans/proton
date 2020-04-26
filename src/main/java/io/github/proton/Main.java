@@ -11,7 +11,8 @@ import io.github.proton.display.Projector;
 import io.github.proton.display.Style;
 import io.github.proton.display.TerminalDisplay;
 import io.github.proton.plugins.Plugins;
-import io.github.proton.plugins.java.tree.*;
+import io.github.proton.plugins.java.tree.JavaFile;
+import io.github.proton.plugins.java.tree.JavaPackageDeclaration;
 import io.github.proton.plugins.text.Line;
 import io.vavr.collection.Vector;
 import java.io.File;
@@ -25,13 +26,7 @@ public final class Main {
         Plugins.start();
 
         // Object tree = FileReader.instance.read(home).get();
-        Object tree = new JavaFile(
-                new JavaPackageDeclaration(new Line("Hello")),
-                Vector.of(
-                        new JavaImportDeclaration(new Line("std.io")), new JavaImportDeclaration(new Line("std.math"))),
-                Vector.of(new JavaClassDeclaration(
-                        new Line("Main"),
-                        Vector.of(new JavaFieldMember(new Line("x")), new JavaFieldMember(new Line("y"))))));
+        Object tree = new JavaFile(new JavaPackageDeclaration(new Line("")), Vector.of(), Vector.of());
 
         Editor<?> editor = new Editor<>(
                 Plugins.getExtensions(Style.class).get(0),
