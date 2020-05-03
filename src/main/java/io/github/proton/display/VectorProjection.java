@@ -15,40 +15,41 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
         super(characters(vector, projector, elem));
     }
 
-    private static <T> Map<TerminalPosition, Char<Vector<T>>> characters(Vector<T> vector, Projector<T> projector, T elem) {
-        return vector.<Projection<Vector<T>>>zipWithIndex(
-                (e, i) -> new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
-                    @Override
-                    public boolean decorative() {
-                        return c.decorative();
-                    }
-
-                    @Override
-                    public TextCharacter character(Style style) {
-                        return c.character(style);
-                    }
-
-                    @Override
-                    public Option<Vector<T>> insert(char character) {
-                        return c.insert(character).map(t -> vector.update(i, t));
-                    }
-
-                    @Override
-                    public Option<Vector<T>> delete() {
-                        return c.delete().map(t -> {
-                            if (t.equals(elem)) {
-                                return vector.removeAt(i);
-                            } else {
-                                return vector.update(i, t);
+    private static <T> Map<TerminalPosition, Char<Vector<T>>> characters(
+            Vector<T> vector, Projector<T> projector, T elem) {
+        return vector.<Projection<Vector<T>>>zipWithIndex((e, i) ->
+                        new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
+                            @Override
+                            public boolean decorative() {
+                                return c.decorative();
                             }
-                        });
-                    }
 
-                    @Override
-                    public Option<Vector<T>> submit() {
-                        return c.submit().map(t -> vector.update(i, t));
-                    }
-                })))
+                            @Override
+                            public TextCharacter character(Style style) {
+                                return c.character(style);
+                            }
+
+                            @Override
+                            public Option<Vector<T>> insert(char character) {
+                                return c.insert(character).map(t -> vector.update(i, t));
+                            }
+
+                            @Override
+                            public Option<Vector<T>> delete() {
+                                return c.delete().map(t -> {
+                                    if (t.equals(elem)) {
+                                        return vector.removeAt(i);
+                                    } else {
+                                        return vector.update(i, t);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public Option<Vector<T>> submit() {
+                                return c.submit().map(t -> vector.update(i, t));
+                            }
+                        })))
                 .append(projector.project(elem).map(vector::append).mapChars(c -> new Char<Vector<T>>() {
                     @Override
                     public boolean decorative() {

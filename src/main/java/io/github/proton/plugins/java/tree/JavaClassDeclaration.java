@@ -21,8 +21,7 @@ public final class JavaClassDeclaration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JavaClassDeclaration that = (JavaClassDeclaration) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(fields, that.fields);
+        return Objects.equals(name, that.name) && Objects.equals(fields, that.fields);
     }
 
     @Override

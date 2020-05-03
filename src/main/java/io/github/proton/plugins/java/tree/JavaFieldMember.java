@@ -19,8 +19,7 @@ public final class JavaFieldMember {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JavaFieldMember that = (JavaFieldMember) o;
-        return Objects.equals(type, that.type) &&
-                Objects.equals(name, that.name);
+        return Objects.equals(type, that.type) && Objects.equals(name, that.name);
     }
 
     @Override

@@ -21,7 +21,8 @@ public final class Editor<T> {
     }
 
     public static <T> TerminalPosition selected(Projection<T> projection, TerminalPosition cursor) {
-        return projection.characters
+        return projection
+                .characters
                 .get(cursor)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor))
                 .orElse(() -> left(projection, cursor))
@@ -38,7 +39,8 @@ public final class Editor<T> {
         if (cursor.getColumn() < 0)
             return left(projection, cursor.withRelativeRow(-1).withColumn(projection.columns()));
         TerminalPosition cursor1 = cursor.withRelativeColumn(-1);
-        return projection.characters
+        return projection
+                .characters
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> left(projection, cursor1));
@@ -49,7 +51,8 @@ public final class Editor<T> {
         if (cursor.getColumn() > projection.columns())
             return right(projection, cursor.withRelativeRow(1).withColumn(-1));
         TerminalPosition cursor1 = cursor.withRelativeColumn(1);
-        return projection.characters
+        return projection
+                .characters
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> right(projection, cursor1));
@@ -98,8 +101,12 @@ public final class Editor<T> {
                 return character(projection, selected)
                         .map(character -> {
                             T t2 = character.submit().getOrElse(tree);
-                            return new Editor<>(style, projector, t2,
-                                    right(projector.project(t2), cursor.withRelativeRow(1).withColumn(-1)).getOrElse(cursor));
+                            return new Editor<>(
+                                    style,
+                                    projector,
+                                    t2,
+                                    right(projector.project(t2), cursor.withRelativeRow(1).withColumn(-1))
+                                            .getOrElse(cursor));
                         })
                         .getOrElse(new Editor<>(style, projector, tree, right(projection, selected).getOrElse(cursor)));
             default:

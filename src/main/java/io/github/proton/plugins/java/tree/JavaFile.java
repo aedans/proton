@@ -26,9 +26,9 @@ public final class JavaFile {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JavaFile javaFile = (JavaFile) o;
-        return Objects.equals(packageDeclaration, javaFile.packageDeclaration) &&
-                Objects.equals(importDeclarations, javaFile.importDeclarations) &&
-                Objects.equals(classDeclarations, javaFile.classDeclarations);
+        return Objects.equals(packageDeclaration, javaFile.packageDeclaration)
+                && Objects.equals(importDeclarations, javaFile.importDeclarations)
+                && Objects.equals(classDeclarations, javaFile.classDeclarations);
     }
 
     @Override
