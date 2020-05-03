@@ -27,7 +27,7 @@ public final class TerminalDisplay implements Closeable {
     }
 
     public void write(TextCharacter character, TerminalPosition position) {
-        screen.setCharacter(position.getColumn(), position.getRow(), character);
+        screen.setCharacter(position, character);
     }
 
     public void background(TextCharacter character) {

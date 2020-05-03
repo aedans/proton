@@ -16,6 +16,6 @@ public final class LineProjector implements Projector<Line> {
 
     @Override
     public Projection<Line> project(Line line) {
-        return new LineProjection(line, "base");
+        return new LineProjection(line, "");
     }
 }

@@ -41,3 +41,13 @@ dependencies {
 application {
     mainClassName = 'io.github.proton.Main'
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "io.github.proton.Main"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

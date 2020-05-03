@@ -10,47 +10,45 @@ import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
-public final class VectorProjection<T> implements Projection<Vector<T>> {
-    private final Vector<T> vector;
-    private final Projector<T> projector;
-    private final T elem;
-
+public final class VectorProjection<T> extends Projection<Vector<T>> {
     public VectorProjection(Vector<T> vector, Projector<T> projector, T elem) {
-        this.vector = vector;
-        this.projector = projector;
-        this.elem = elem;
+        super(characters(vector, projector, elem));
     }
 
-    @Override
-    public Map<TerminalPosition, Char<Vector<T>>> characters() {
+    private static <T> Map<TerminalPosition, Char<Vector<T>>> characters(Vector<T> vector, Projector<T> projector, T elem) {
         return vector.<Projection<Vector<T>>>zipWithIndex(
-                        (elem, i) -> () -> projector.project(elem).characters().mapValues(c -> new Char<Vector<T>>() {
-                            @Override
-                            public boolean decorative() {
-                                return c.decorative();
-                            }
+                (e, i) -> new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
+                    @Override
+                    public boolean decorative() {
+                        return c.decorative();
+                    }
 
-                            @Override
-                            public TextCharacter character(Style style) {
-                                return c.character(style);
-                            }
+                    @Override
+                    public TextCharacter character(Style style) {
+                        return c.character(style);
+                    }
 
-                            @Override
-                            public Option<Vector<T>> insert(char w) {
-                                return c.insert(w).map(t -> vector.update(i, t));
-                            }
+                    @Override
+                    public Option<Vector<T>> insert(char character) {
+                        return c.insert(character).map(t -> vector.update(i, t));
+                    }
 
-                            @Override
-                            public Option<Vector<T>> delete() {
-                                return c.delete().map(t -> vector.update(i, t)).orElse(() ->
-                                        Option.of(vector.removeAt(i)));
+                    @Override
+                    public Option<Vector<T>> delete() {
+                        return c.delete().map(t -> {
+                            if (t.equals(elem)) {
+                                return vector.removeAt(i);
+                            } else {
+                                return vector.update(i, t);
                             }
+                        });
+                    }
 
-                            @Override
-                            public Option<Vector<T>> submit() {
-                                return c.submit().map(t -> vector.update(i, t));
-                            }
-                        }))
+                    @Override
+                    public Option<Vector<T>> submit() {
+                        return c.submit().map(t -> vector.update(i, t));
+                    }
+                })))
                 .append(projector.project(elem).map(vector::append).mapChars(c -> new Char<Vector<T>>() {
                     @Override
                     public boolean decorative() {
@@ -63,8 +61,8 @@ public final class VectorProjection<T> implements Projection<Vector<T>> {
                     }
 
                     @Override
-                    public Option<Vector<T>> insert(char w) {
-                        return c.insert(w);
+                    public Option<Vector<T>> insert(char character) {
+                        return c.insert(character);
                     }
 
                     @Override
@@ -78,7 +76,7 @@ public final class VectorProjection<T> implements Projection<Vector<T>> {
                     }
                 }))
                 .reduceOption(Projection::combineVertical)
-                .map(Projection::characters)
+                .map(x -> x.characters)
                 .getOrElse(HashMap.empty());
     }
 }

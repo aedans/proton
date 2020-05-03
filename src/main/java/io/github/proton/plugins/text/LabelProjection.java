@@ -11,23 +11,19 @@ import io.vavr.Tuple2;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
-public final class LabelProjection implements Projection<Line> {
+public final class LabelProjection extends Projection<Line> {
     public static final LabelProjection openBracket = new LabelProjection("{", "punctuation.bracket");
     public static final LabelProjection closeBracket = new LabelProjection("}", "punctuation.bracket");
-    private final Line line;
-    private final String scope;
 
     public LabelProjection(String string, String scope) {
         this(new Line(string), scope);
     }
 
     public LabelProjection(Line line, String scope) {
-        this.line = line;
-        this.scope = scope;
+        super(characters(line, scope));
     }
 
-    @Override
-    public Map<TerminalPosition, Char<Line>> characters() {
+    public static Map<TerminalPosition, Char<Line>> characters(Line line, String scope) {
         return line.chars.map(c -> new LabelChar(scope, c)).zipWithIndex().toMap(p ->
                 new Tuple2<>(new TerminalPosition(p._2, 0), p._1));
     }
@@ -52,7 +48,7 @@ public final class LabelProjection implements Projection<Line> {
         }
 
         @Override
-        public Option<Line> insert(char c) {
+        public Option<Line> insert(char character) {
             return Option.none();
         }
 

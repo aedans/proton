@@ -3,12 +3,25 @@
  */
 package io.github.proton.plugins.java.tree;
 
-import io.github.proton.plugins.text.Line;
+import java.util.Objects;
 
 public final class JavaImportDeclaration {
-    public final Line name;
+    public final JavaIdentifier name;
 
-    public JavaImportDeclaration(Line name) {
+    public JavaImportDeclaration(JavaIdentifier name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JavaImportDeclaration that = (JavaImportDeclaration) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

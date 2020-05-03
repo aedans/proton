@@ -12,8 +12,8 @@ import io.github.proton.display.Style;
 import io.github.proton.display.TerminalDisplay;
 import io.github.proton.plugins.Plugins;
 import io.github.proton.plugins.java.tree.JavaFile;
+import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaPackageDeclaration;
-import io.github.proton.plugins.text.Line;
 import io.vavr.collection.Vector;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ public final class Main {
         Plugins.start();
 
         // Object tree = FileReader.instance.read(home).get();
-        Object tree = new JavaFile(new JavaPackageDeclaration(new Line("")), Vector.of(), Vector.of());
+        Object tree = new JavaFile(new JavaPackageDeclaration(new JavaIdentifier("")), Vector.of(), Vector.of());
 
         Editor<?> editor = new Editor<>(
                 Plugins.getExtensions(Style.class).get(0),

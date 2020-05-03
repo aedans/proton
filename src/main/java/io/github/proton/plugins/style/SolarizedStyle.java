@@ -16,6 +16,7 @@ public final class SolarizedStyle implements Style {
     TextColor base01 = fromString("#586E75");
     TextColor base0 = fromString("#839496");
     TextColor green = fromString("#859900");
+    TextColor blue = fromString("#268BD2");
 
     @Override
     public TextCharacter base(char character) {
@@ -29,6 +30,9 @@ public final class SolarizedStyle implements Style {
         }
         if (scope.startsWith("comment")) {
             return base(character).withForegroundColor(base01);
+        }
+        if (scope.startsWith("entity.name.class") || scope.startsWith("entity.name.type.class")) {
+            return base(character).withForegroundColor(blue);
         }
         return base(character);
     }

@@ -11,21 +11,16 @@ import io.vavr.Tuple2;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
-public final class LineProjection implements Projection<Line> {
-    private final Line line;
-    private final String scope;
-
+public final class LineProjection extends Projection<Line> {
     public LineProjection(String line, String scope) {
         this(new Line(line), scope);
     }
 
     public LineProjection(Line line, String scope) {
-        this.line = line;
-        this.scope = scope;
+        super(characters(line, scope));
     }
 
-    @Override
-    public Map<TerminalPosition, Char<Line>> characters() {
+    public static Map<TerminalPosition, Char<Line>> characters(Line line, String scope) {
         return line.chars
                 .<Char<Line>>zipWithIndex((c, i) -> new LineChar(line, scope, i))
                 .append(new Char<Line>() {
@@ -40,8 +35,8 @@ public final class LineProjection implements Projection<Line> {
                     }
 
                     @Override
-                    public Option<Line> insert(char c) {
-                        return Option.some(new Line(line.chars.append(c)));
+                    public Option<Line> insert(char character) {
+                        return Option.some(new Line(line.chars.append(character)));
                     }
 
                     @Override
@@ -80,8 +75,8 @@ public final class LineProjection implements Projection<Line> {
         }
 
         @Override
-        public Option<Line> insert(char c) {
-            return Option.some(new Line(line.chars.insert(i, c)));
+        public Option<Line> insert(char character) {
+            return Option.some(new Line(line.chars.insert(i, character)));
         }
 
         @Override
