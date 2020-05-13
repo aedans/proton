@@ -9,14 +9,14 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public interface JavaType {
-    <A> A match(Function<Primitive, A> primitive, Function<ClassOrInterface, A> classOrInterface);
-
     static JavaType fromIdentifier(JavaIdentifier identifier) {
         return Vector.of(Primitive.values())
                 .find(x -> x.name().toLowerCase().equals(identifier.toString()))
                 .map(x -> (JavaType) x)
                 .getOrElse(new ClassOrInterface(identifier));
     }
+
+    <A> A match(Function<Primitive, A> primitive, Function<ClassOrInterface, A> classOrInterface);
 
     enum Primitive implements JavaType {
         BYTE,

@@ -76,11 +76,19 @@ public final class Editor<T> {
                         style, projector, tree, cursor.withRow(Math.min(projection.rows() - 1, cursor.getRow() + 1)));
             case Character:
                 return character(projection, selected)
-                        .map(character -> {
-                            T t2 = character.insert(keyStroke.getCharacter()).getOrElse(tree);
-                            return new Editor<>(
-                                    style, projector, t2, right(projector.project(t2), selected).getOrElse(cursor));
-                        })
+                        .map(character -> character
+                                .insert(keyStroke.getCharacter())
+                                .map(t2 -> new Editor<>(
+                                        style, projector, t2, right(projector.project(t2), selected).getOrElse(cursor)))
+                                .getOrElse(
+                                        character.character(style).getCharacter() == keyStroke.getCharacter()
+                                                ? new Editor<>(
+                                                        style,
+                                                        projector,
+                                                        tree,
+                                                        right(projector.project(tree), selected)
+                                                                .getOrElse(cursor))
+                                                : this))
                         .getOrElse(this);
             case Delete:
                 return character(projection, selected)
