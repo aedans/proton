@@ -3,7 +3,7 @@
  */
 package io.github.proton.plugins.java.tree;
 
-import io.github.proton.plugins.text.Line;
+import io.github.proton.plugins.text.Text;
 import io.vavr.collection.Vector;
 import java.util.Objects;
 
@@ -11,11 +11,11 @@ public final class JavaIdentifier {
     public final Vector<Character> chars;
 
     public JavaIdentifier(String name) {
-        this(new Line(name));
+        this(new Text(name));
     }
 
-    public JavaIdentifier(Line line) {
-        this(line.chars);
+    public JavaIdentifier(Text text) {
+        this(text.chars);
     }
 
     public JavaIdentifier(Vector<Character> chars) {
@@ -28,7 +28,7 @@ public final class JavaIdentifier {
 
     @Override
     public String toString() {
-        return new Line(chars).toString();
+        return new Text(chars).toString();
     }
 
     @Override

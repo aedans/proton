@@ -6,10 +6,10 @@ package io.github.proton.display;
 import java.util.Objects;
 
 public final class Position {
-    public final int col;
     public final int row;
+    public final int col;
 
-    public Position(int col, int row) {
+    public Position(int row, int col) {
         this.col = col;
         this.row = row;
     }
@@ -23,11 +23,11 @@ public final class Position {
     }
 
     public Position withRow(int row) {
-        return new Position(col, row);
+        return new Position(row, col);
     }
 
     public Position withColumn(int col) {
-        return new Position(col, row);
+        return new Position(row, col);
     }
 
     public Position withRelativeRow(int row) {

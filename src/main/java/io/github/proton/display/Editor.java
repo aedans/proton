@@ -4,6 +4,7 @@
 package io.github.proton.display;
 
 import io.vavr.control.Option;
+
 import java.awt.event.KeyEvent;
 
 public final class Editor<T> {
@@ -109,17 +110,20 @@ public final class Editor<T> {
                         })
                         .getOrElse(this);
             case KeyEvent.VK_BACK_SPACE:
-                return character(projection, selected.withRelativeColumn(-1))
+                Position deleted = cursor.getColumn() <= 0
+                        ? selected(projection, cursor.withRelativeRow(-1).withColumn(projection.columns()))
+                        : selected.withRelativeColumn(-1);
+                return character(projection, deleted)
+                        .flatMap(c -> c.decorative() ? Option.none() : Option.some(c))
                         .map(character -> {
                             T t2 = character.delete().getOrElse(tree);
-                            return new Editor<>(
-                                    style, projector, t2, left(projector.project(t2), selected).getOrElse(cursor));
+                            return new Editor<>(style, projector, t2, deleted);
                         })
                         .getOrElse(new Editor<>(style, projector, tree, left(projection, selected).getOrElse(cursor)));
             case KeyEvent.VK_ENTER:
                 return character(projection, selected)
                         .map(character -> {
-                            T t2 = character.submit().getOrElse(tree);
+                            T t2 = character.insert('\n').getOrElse(tree);
                             return new Editor<>(
                                     style,
                                     projector,
@@ -137,11 +141,11 @@ public final class Editor<T> {
                                 .getOrElse(
                                         character.character(style).character == key.getKeyChar()
                                                 ? new Editor<>(
-                                                        style,
-                                                        projector,
-                                                        tree,
-                                                        right(projector.project(tree), selected)
-                                                                .getOrElse(cursor))
+                                                style,
+                                                projector,
+                                                tree,
+                                                right(projector.project(tree), selected)
+                                                        .getOrElse(cursor))
                                                 : this))
                         .getOrElse(this);
         }

@@ -5,6 +5,7 @@ package io.github.proton.display;
 
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
+
 import java.util.function.Function;
 
 public class Projection<T> {
@@ -61,8 +62,6 @@ public class Projection<T> {
 
         Option<T> delete();
 
-        Option<T> submit();
-
         default <A> Char<A> map(Function<T, A> map) {
             return new Char<A>() {
                 @Override
@@ -83,11 +82,6 @@ public class Projection<T> {
                 @Override
                 public Option<A> delete() {
                     return Char.this.delete().map(map);
-                }
-
-                @Override
-                public Option<A> submit() {
-                    return Char.this.submit().map(map);
                 }
             };
         }

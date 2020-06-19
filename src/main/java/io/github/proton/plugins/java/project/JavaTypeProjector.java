@@ -45,11 +45,6 @@ public final class JavaTypeProjector implements Projector<JavaType> {
                             public Option<JavaType> delete() {
                                 return c.delete();
                             }
-
-                            @Override
-                            public Option<JavaType> submit() {
-                                return c.submit();
-                            }
                         }),
                 classOrInterface -> Projector.get(JavaIdentifier.class)
                         .project(classOrInterface.name)

@@ -41,11 +41,6 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
                                     }
                                 });
                             }
-
-                            @Override
-                            public Option<Vector<T>> submit() {
-                                return c.submit().map(t -> vector.update(i, t));
-                            }
                         })))
                 .append(projector.project(elem).map(vector::append).mapChars(c -> new Char<Vector<T>>() {
                     @Override
@@ -66,11 +61,6 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
                     @Override
                     public Option<Vector<T>> delete() {
                         return Option.some(vector);
-                    }
-
-                    @Override
-                    public Option<Vector<T>> submit() {
-                        return c.submit();
                     }
                 }))
                 .reduceOption(Projection::combineVertical)
