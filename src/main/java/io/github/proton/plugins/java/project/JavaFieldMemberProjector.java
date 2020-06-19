@@ -3,8 +3,8 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.display.Projection;
-import io.github.proton.display.Projector;
+import io.github.proton.editor.Projection;
+import io.github.proton.editor.Projector;
 import io.github.proton.plugins.java.tree.JavaFieldMember;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaType;
@@ -25,6 +25,6 @@ public final class JavaFieldMemberProjector implements Projector<JavaFieldMember
         Projection<JavaFieldMember> name = Projector.get(JavaIdentifier.class)
                 .project(fieldMember.name)
                 .map(n -> new JavaFieldMember(fieldMember.type, n));
-        return type.combineHorizontal(name);
+        return type.combine(name);
     }
 }

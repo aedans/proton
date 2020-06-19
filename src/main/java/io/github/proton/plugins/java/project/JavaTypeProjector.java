@@ -3,10 +3,10 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.display.Projection;
-import io.github.proton.display.Projector;
-import io.github.proton.display.Style;
-import io.github.proton.display.StyledCharacter;
+import io.github.proton.editor.Projection;
+import io.github.proton.editor.Projector;
+import io.github.proton.editor.Style;
+import io.github.proton.editor.StyledCharacter;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaType;
 import io.vavr.control.Option;

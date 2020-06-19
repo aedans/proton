@@ -1,7 +1,7 @@
 /*
  * Copyright 2020 Aedan Smith
  */
-package io.github.proton.plugins.text;
+package io.github.proton.editor;
 
 import io.vavr.collection.Vector;
 import java.util.Objects;

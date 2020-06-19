@@ -1,21 +1,28 @@
 /*
  * Copyright 2020 Aedan Smith
  */
-package io.github.proton.display;
+package io.github.proton.editor;
 
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
-public final class VectorProjection<T> extends Projection<Vector<T>> {
+public final class VectorProjection<T> implements Projection<Vector<T>> {
+    private final Vector<T> vector;
+    private final Projector<T> projector;
+    private final T elem;
+
     public VectorProjection(Vector<T> vector, Projector<T> projector, T elem) {
-        super(characters(vector, projector, elem));
+        this.vector = vector;
+        this.projector = projector;
+        this.elem = elem;
     }
 
-    private static <T> Map<Position, Char<Vector<T>>> characters(Vector<T> vector, Projector<T> projector, T elem) {
+    @Override
+    public Map<Position, Char<Vector<T>>> characters() {
         return vector.<Projection<Vector<T>>>zipWithIndex((e, i) ->
-                        new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
+                        Projection.of(projector.project(e).characters().mapValues(c -> new Char<Vector<T>>() {
                             @Override
                             public boolean decorative() {
                                 return c.decorative();
@@ -64,7 +71,7 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
                     }
                 }))
                 .reduceOption(Projection::combineVertical)
-                .map(x -> x.characters)
+                .map(Projection::characters)
                 .getOrElse(HashMap.empty());
     }
 }

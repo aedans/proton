@@ -3,14 +3,14 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.display.Projection;
-import io.github.proton.display.Projector;
-import io.github.proton.display.VectorProjection;
+import io.github.proton.editor.Projection;
+import io.github.proton.editor.Projector;
+import io.github.proton.editor.TextProjection;
+import io.github.proton.editor.VectorProjection;
 import io.github.proton.plugins.java.tree.JavaClassDeclaration;
 import io.github.proton.plugins.java.tree.JavaFieldMember;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaType;
-import io.github.proton.plugins.text.LabelProjection;
 import org.pf4j.Extension;
 
 @Extension
@@ -22,18 +22,18 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
 
     @Override
     public Projection<JavaClassDeclaration> project(JavaClassDeclaration classDeclaration) {
-        Projection<JavaClassDeclaration> label = new LabelProjection("class ", "keyword").of(classDeclaration);
+        Projection<JavaClassDeclaration> label = TextProjection.label("class ", "keyword").of(classDeclaration);
         Projection<JavaClassDeclaration> projection = Projector.get(JavaIdentifier.class)
                 .project(classDeclaration.name)
                 .map(name -> new JavaClassDeclaration(name, classDeclaration.fields));
-        Projection<JavaClassDeclaration> openBracket = LabelProjection.openBracket.of(classDeclaration);
-        Projection<JavaClassDeclaration> closeBracket = LabelProjection.closeBracket.of(classDeclaration);
+        Projection<JavaClassDeclaration> openBracket = TextProjection.openBracket.of(classDeclaration);
+        Projection<JavaClassDeclaration> closeBracket = TextProjection.closeBracket.of(classDeclaration);
         Projection<JavaClassDeclaration> fields = new VectorProjection<>(
                         classDeclaration.fields, Projector.get(JavaFieldMember.class), new JavaFieldMember(
                                 new JavaType.ClassOrInterface(new JavaIdentifier("")), new JavaIdentifier("")))
                 .map(x -> new JavaClassDeclaration(classDeclaration.name, x));
-        return label.combineHorizontal(projection)
-                .combineHorizontal(openBracket)
+        return label.combine(projection)
+                .combine(openBracket)
                 .combineVertical(fields.indent(2))
                 .combineVertical(closeBracket)
                 .indentVertical(1);

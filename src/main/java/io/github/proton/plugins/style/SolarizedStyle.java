@@ -3,8 +3,8 @@
  */
 package io.github.proton.plugins.style;
 
-import io.github.proton.display.Style;
-import io.github.proton.display.StyledCharacter;
+import io.github.proton.editor.Style;
+import io.github.proton.editor.StyledCharacter;
 import java.awt.*;
 import org.pf4j.Extension;
 

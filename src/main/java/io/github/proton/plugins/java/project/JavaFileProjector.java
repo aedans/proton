@@ -3,9 +3,9 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.display.Projection;
-import io.github.proton.display.Projector;
-import io.github.proton.display.VectorProjection;
+import io.github.proton.editor.Projection;
+import io.github.proton.editor.Projector;
+import io.github.proton.editor.VectorProjection;
 import io.github.proton.plugins.java.tree.*;
 import io.vavr.collection.Vector;
 import org.pf4j.Extension;

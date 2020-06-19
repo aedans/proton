@@ -1,10 +1,9 @@
 /*
  * Copyright 2020 Aedan Smith
  */
-package io.github.proton.display;
+package io.github.proton.editor;
 
 import io.vavr.control.Option;
-
 import java.awt.event.KeyEvent;
 
 public final class Editor<T> {
@@ -21,12 +20,12 @@ public final class Editor<T> {
     }
 
     public static <T> Option<Projection.Char<T>> character(Projection<T> projection, Position selected) {
-        return projection.characters.get(selected);
+        return projection.characters().get(selected);
     }
 
     public static <T> Position selected(Projection<T> projection, Position cursor) {
         return projection
-                .characters
+                .characters()
                 .get(cursor)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor))
                 .orElse(() -> left1(projection, cursor))
@@ -38,7 +37,7 @@ public final class Editor<T> {
         if (cursor.getColumn() < 0) return Option.none();
         Position cursor1 = cursor.withRelativeColumn(-1);
         return projection
-                .characters
+                .characters()
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> left1(projection, cursor1));
@@ -54,7 +53,7 @@ public final class Editor<T> {
         if (cursor.getColumn() > projection.columns()) return Option.none();
         Position cursor1 = cursor.withRelativeColumn(1);
         return projection
-                .characters
+                .characters()
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> right1(projection, cursor1));
@@ -69,7 +68,7 @@ public final class Editor<T> {
         if (cursor.getRow() <= 0) return Option.none();
         Position cursor1 = cursor.withRelativeRow(-1);
         return projection
-                .characters
+                .characters()
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> left1(projection, cursor1).orElse(right1(projection, cursor1)).map(x -> cursor1))
@@ -80,7 +79,7 @@ public final class Editor<T> {
         if (cursor.getRow() >= projection.rows() - 1) return Option.none();
         Position cursor1 = cursor.withRelativeRow(1);
         return projection
-                .characters
+                .characters()
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
                 .orElse(() -> right1(projection, cursor1).orElse(left1(projection, cursor1)).map(x -> cursor1))
@@ -90,7 +89,7 @@ public final class Editor<T> {
     public Editor<T> update(KeyEvent key) {
         Projection<T> projection = projector.project(tree);
         Position selected = selected(projection, cursor);
-        if (projection.characters.isEmpty()) {
+        if (projection.characters().isEmpty()) {
             return this;
         }
         switch (key.getKeyCode()) {
@@ -132,6 +131,10 @@ public final class Editor<T> {
                                             .getOrElse(cursor));
                         })
                         .getOrElse(new Editor<>(style, projector, tree, right(projection, selected).getOrElse(cursor)));
+            case KeyEvent.VK_SHIFT:
+            case KeyEvent.VK_ALT:
+            case KeyEvent.VK_CAPS_LOCK:
+                return this;
             default:
                 return character(projection, selected)
                         .map(character -> character
@@ -141,11 +144,11 @@ public final class Editor<T> {
                                 .getOrElse(
                                         character.character(style).character == key.getKeyChar()
                                                 ? new Editor<>(
-                                                style,
-                                                projector,
-                                                tree,
-                                                right(projector.project(tree), selected)
-                                                        .getOrElse(cursor))
+                                                        style,
+                                                        projector,
+                                                        tree,
+                                                        right(projector.project(tree), selected)
+                                                                .getOrElse(cursor))
                                                 : this))
                         .getOrElse(this);
         }
@@ -153,7 +156,7 @@ public final class Editor<T> {
 
     public void render(Display<T> display) {
         display.setBackgroundColor(style.background());
-        display.setCharacters(projector.project(tree).characters.mapValues(x -> x.character(style)));
+        display.setCharacters(projector.project(tree).characters().mapValues(x -> x.character(style)));
         display.setCursor(selected(projector.project(tree), cursor));
     }
 }

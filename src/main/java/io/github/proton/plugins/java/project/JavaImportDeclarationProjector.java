@@ -3,11 +3,11 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.display.Projection;
-import io.github.proton.display.Projector;
+import io.github.proton.editor.Projection;
+import io.github.proton.editor.Projector;
+import io.github.proton.editor.TextProjection;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaImportDeclaration;
-import io.github.proton.plugins.text.LabelProjection;
 import org.pf4j.Extension;
 
 @Extension
@@ -19,10 +19,10 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
 
     @Override
     public Projection<JavaImportDeclaration> project(JavaImportDeclaration importDeclaration) {
-        Projection<JavaImportDeclaration> label = new LabelProjection("import ", "keyword").of(importDeclaration);
+        Projection<JavaImportDeclaration> label = TextProjection.label("import ", "keyword").of(importDeclaration);
         Projection<JavaImportDeclaration> projection = Projector.get(JavaIdentifier.class)
                 .project(importDeclaration.name)
                 .map(JavaImportDeclaration::new);
-        return label.combineHorizontal(projection);
+        return label.combine(projection);
     }
 }

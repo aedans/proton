@@ -3,16 +3,15 @@
  */
 package io.github.proton;
 
-import io.github.proton.display.*;
+import io.github.proton.editor.*;
 import io.github.proton.plugins.Plugins;
 import io.github.proton.plugins.java.tree.JavaFile;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaPackageDeclaration;
 import io.vavr.collection.Vector;
-
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.*;
 
 public final class Main {
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -26,7 +25,7 @@ public final class Main {
 
         Editor<?> editor = new Editor<>(
                 Plugins.getExtensions(Style.class).get(0), Projector.get((Class) tree.getClass()), tree, new Position(
-                0, 0));
+                        0, 0));
 
         SwingUtilities.invokeLater(() -> new Display<>(editor));
     }

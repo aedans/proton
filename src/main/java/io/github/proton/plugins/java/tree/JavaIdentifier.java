@@ -3,7 +3,7 @@
  */
 package io.github.proton.plugins.java.tree;
 
-import io.github.proton.plugins.text.Text;
+import io.github.proton.editor.Text;
 import io.vavr.collection.Vector;
 import java.util.Objects;
 

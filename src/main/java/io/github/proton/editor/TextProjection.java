@@ -1,30 +1,52 @@
 /*
  * Copyright 2020 Aedan Smith
  */
-package io.github.proton.plugins.text;
+package io.github.proton.editor;
 
-import io.github.proton.display.Position;
-import io.github.proton.display.Projection;
-import io.github.proton.display.Style;
-import io.github.proton.display.StyledCharacter;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
-public final class TextProjection extends Projection<Text> {
-    public TextProjection(String line, String scope) {
-        this(new Text(line), scope);
+public final class TextProjection implements Projection<Text> {
+    public static final TextProjection openBracket = label("{", "punctuation.bracket");
+    public static final TextProjection closeBracket = label("}", "punctuation.bracket");
+
+    private final Text text;
+    private final String scope;
+    private final boolean decorative;
+
+    private TextProjection(String line, String scope, boolean decorative) {
+        this(new Text(line), scope, decorative);
     }
 
-    public TextProjection(Text text, String scope) {
-        super(characters(text, scope));
+    private TextProjection(Text text, String scope, boolean decorative) {
+        this.text = text;
+        this.scope = scope;
+        this.decorative = decorative;
     }
 
-    public static Map<Position, Char<Text>> characters(Text text, String scope) {
+    public static TextProjection text(String line, String scope) {
+        return new TextProjection(line, scope, false);
+    }
+
+    public static TextProjection text(Text text, String scope) {
+        return new TextProjection(text, scope, false);
+    }
+
+    public static TextProjection label(String line, String scope) {
+        return new TextProjection(line, scope, true);
+    }
+
+    public static TextProjection label(Text text, String scope) {
+        return new TextProjection(text, scope, true);
+    }
+
+    @Override
+    public Map<Position, Char<Text>> characters() {
         int index = 0, row = 0, col = 0;
         Map<Position, Char<Text>> chars = HashMap.empty();
         for (char c : text.chars) {
-            chars = chars.put(new Position(row, col), new LineChar(text, scope, index));
+            chars = chars.put(new Position(row, col), new TextChar(text, scope, decorative, index));
             index++;
             if (c == '\n') {
                 col = 0;
@@ -36,7 +58,7 @@ public final class TextProjection extends Projection<Text> {
         return chars.put(new Position(row, col), new Char<Text>() {
             @Override
             public boolean decorative() {
-                return false;
+                return decorative;
             }
 
             @Override
@@ -56,20 +78,22 @@ public final class TextProjection extends Projection<Text> {
         });
     }
 
-    private static final class LineChar implements Projection.Char<Text> {
+    private static final class TextChar implements Projection.Char<Text> {
         private final Text text;
         private final String scope;
+        private final boolean decorative;
         private final int i;
 
-        public LineChar(Text text, String scope, int i) {
+        public TextChar(Text text, String scope, boolean decorative, int i) {
             this.text = text;
             this.scope = scope;
+            this.decorative = decorative;
             this.i = i;
         }
 
         @Override
         public boolean decorative() {
-            return false;
+            return decorative;
         }
 
         @Override

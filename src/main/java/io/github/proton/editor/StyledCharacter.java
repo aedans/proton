@@ -1,7 +1,7 @@
 /*
  * Copyright 2020 Aedan Smith
  */
-package io.github.proton.display;
+package io.github.proton.editor;
 
 import java.awt.*;
 
