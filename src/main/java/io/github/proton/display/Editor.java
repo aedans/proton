@@ -19,42 +19,71 @@ public final class Editor<T> {
         this.cursor = cursor;
     }
 
+    public static <T> Option<Projection.Char<T>> character(Projection<T> projection, Position selected) {
+        return projection.characters.get(selected);
+    }
+
     public static <T> Position selected(Projection<T> projection, Position cursor) {
         return projection
                 .characters
                 .get(cursor)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor))
-                .orElse(() -> left(projection, cursor))
-                .orElse(() -> right(projection, cursor))
+                .orElse(() -> left1(projection, cursor))
+                .orElse(() -> right1(projection, cursor))
                 .getOrElse(cursor.withColumn(0));
     }
 
-    public static <T> Option<Projection.Char<T>> character(Projection<T> projection, Position selected) {
-        return projection.characters.get(selected);
-    }
-
-    public static <T> Option<Position> left(Projection<T> projection, Position cursor) {
-        if (cursor.getRow() < 0) return Option.none();
-        if (cursor.getColumn() < 0)
-            return left(projection, cursor.withRelativeRow(-1).withColumn(projection.columns()));
+    public static <T> Option<Position> left1(Projection<T> projection, Position cursor) {
+        if (cursor.getColumn() < 0) return Option.none();
         Position cursor1 = cursor.withRelativeColumn(-1);
         return projection
                 .characters
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
-                .orElse(() -> left(projection, cursor1));
+                .orElse(() -> left1(projection, cursor1));
     }
 
-    public static <T> Option<Position> right(Projection<T> projection, Position cursor) {
-        if (cursor.getRow() > projection.rows()) return Option.none();
-        if (cursor.getColumn() > projection.columns())
-            return right(projection, cursor.withRelativeRow(1).withColumn(-1));
+    public static <T> Option<Position> left(Projection<T> projection, Position cursor) {
+        if (cursor.getRow() < 0) return Option.none();
+        return left1(projection, cursor)
+                .orElse(() -> left(projection, cursor.withRelativeRow(-1).withColumn(projection.columns())));
+    }
+
+    public static <T> Option<Position> right1(Projection<T> projection, Position cursor) {
+        if (cursor.getColumn() > projection.columns()) return Option.none();
         Position cursor1 = cursor.withRelativeColumn(1);
         return projection
                 .characters
                 .get(cursor1)
                 .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
-                .orElse(() -> right(projection, cursor1));
+                .orElse(() -> right1(projection, cursor1));
+    }
+
+    public static <T> Option<Position> right(Projection<T> projection, Position cursor) {
+        if (cursor.getRow() > projection.rows()) return Option.none();
+        return right1(projection, cursor).orElse(() -> right(projection, cursor.withRelativeRow(1).withColumn(-1)));
+    }
+
+    public static <T> Option<Position> up(Projection<T> projection, Position cursor) {
+        if (cursor.getRow() <= 0) return Option.none();
+        Position cursor1 = cursor.withRelativeRow(-1);
+        return projection
+                .characters
+                .get(cursor1)
+                .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
+                .orElse(() -> left1(projection, cursor1).orElse(right1(projection, cursor1)).map(x -> cursor1))
+                .orElse(() -> up(projection, cursor1));
+    }
+
+    public static <T> Option<Position> down(Projection<T> projection, Position cursor) {
+        if (cursor.getRow() >= projection.rows() - 1) return Option.none();
+        Position cursor1 = cursor.withRelativeRow(1);
+        return projection
+                .characters
+                .get(cursor1)
+                .flatMap(c -> c.decorative() ? Option.none() : Option.some(cursor1))
+                .orElse(() -> right1(projection, cursor1).orElse(left1(projection, cursor1)).map(x -> cursor1))
+                .orElse(() -> down(projection, cursor1));
     }
 
     public Editor<T> update(KeyEvent key) {
@@ -69,10 +98,9 @@ public final class Editor<T> {
             case KeyEvent.VK_RIGHT:
                 return new Editor<>(style, projector, tree, right(projection, selected).getOrElse(cursor));
             case KeyEvent.VK_UP:
-                return new Editor<>(style, projector, tree, cursor.withRow(Math.max(0, cursor.getRow() - 1)));
+                return new Editor<>(style, projector, tree, up(projection, cursor).getOrElse(cursor));
             case KeyEvent.VK_DOWN:
-                return new Editor<>(
-                        style, projector, tree, cursor.withRow(Math.min(projection.rows() - 1, cursor.getRow() + 1)));
+                return new Editor<>(style, projector, tree, down(projection, cursor).getOrElse(cursor));
             case KeyEvent.VK_DELETE:
                 return character(projection, selected)
                         .map(character -> {

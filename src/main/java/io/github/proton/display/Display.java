@@ -71,7 +71,7 @@ public final class Display<T> extends JFrame {
             g.fillRect(0, 0, getWidth(), getHeight());
             g.setFont(new Font("Monospaced", Font.PLAIN, 16));
 
-            int d = g.getFontMetrics().getDescent() / 2;
+            int d = (g.getFontMetrics().getDescent() + 1) / 2;
             int height = g.getFontMetrics().getAscent();
             int width = g.getFontMetrics().charWidth('_');
 

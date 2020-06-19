@@ -50,4 +50,9 @@ public final class Position {
     public int hashCode() {
         return Objects.hash(row, col);
     }
+
+    @Override
+    public String toString() {
+        return "Position{" + "col=" + col + ", row=" + row + '}';
+    }
 }
