@@ -3,28 +3,32 @@
  */
 package io.github.proton.plugins.style;
 
-import static com.googlecode.lanterna.TextColor.Factory.fromString;
-
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
 import io.github.proton.display.Style;
+import io.github.proton.display.StyledCharacter;
 import org.pf4j.Extension;
+
+import java.awt.*;
 
 @Extension
 public final class SolarizedStyle implements Style {
-    TextColor base03 = fromString("#002b36");
-    TextColor base01 = fromString("#586E75");
-    TextColor base0 = fromString("#839496");
-    TextColor green = fromString("#859900");
-    TextColor blue = fromString("#268BD2");
+    Color base03 = new Color(0x00, 0x2b, 0x36);
+    Color base01 = new Color(0x58, 0x6e, 0x75);
+    Color base0 = new Color(0x83, 0x94, 0x96);
+    Color green = new Color(0x85, 0x99, 0x00);
+    Color blue = new Color(0x26, 0x8b, 0xd2);
 
     @Override
-    public TextCharacter base(char character) {
-        return new TextCharacter(character, base0, base03);
+    public Color background() {
+        return base03;
     }
 
     @Override
-    public TextCharacter style(String scope, char character) {
+    public StyledCharacter base(char character) {
+        return new StyledCharacter(character, base0);
+    }
+
+    @Override
+    public StyledCharacter style(String scope, char character) {
         if (scope.startsWith("keyword")) {
             return base(character).withForegroundColor(green);
         }

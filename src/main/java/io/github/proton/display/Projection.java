@@ -3,17 +3,15 @@
  */
 package io.github.proton.display;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TextCharacter;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
 import java.util.function.Function;
 
 public class Projection<T> {
-    public final Map<TerminalPosition, Char<T>> characters;
+    public final Map<Position, Char<T>> characters;
 
-    public Projection(Map<TerminalPosition, Char<T>> characters) {
+    public Projection(Map<Position, Char<T>> characters) {
         this.characters = characters;
     }
 
@@ -58,7 +56,7 @@ public class Projection<T> {
     public interface Char<T> {
         boolean decorative();
 
-        TextCharacter character(Style style);
+        StyledCharacter character(Style style);
 
         Option<T> insert(char character);
 
@@ -74,7 +72,7 @@ public class Projection<T> {
                 }
 
                 @Override
-                public TextCharacter character(Style style) {
+                public StyledCharacter character(Style style) {
                     return Char.this.character(style);
                 }
 

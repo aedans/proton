@@ -3,8 +3,6 @@
  */
 package io.github.proton.display;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TextCharacter;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
@@ -15,7 +13,7 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
         super(characters(vector, projector, elem));
     }
 
-    private static <T> Map<TerminalPosition, Char<Vector<T>>> characters(
+    private static <T> Map<Position, Char<Vector<T>>> characters(
             Vector<T> vector, Projector<T> projector, T elem) {
         return vector.<Projection<Vector<T>>>zipWithIndex((e, i) ->
                         new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
@@ -25,7 +23,7 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
                             }
 
                             @Override
-                            public TextCharacter character(Style style) {
+                            public StyledCharacter character(Style style) {
                                 return c.character(style);
                             }
 
@@ -57,7 +55,7 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
                     }
 
                     @Override
-                    public TextCharacter character(Style style) {
+                    public StyledCharacter character(Style style) {
                         return c.character(style.of("comment.ignored"));
                     }
 

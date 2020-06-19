@@ -3,10 +3,10 @@
  */
 package io.github.proton.plugins.java.project;
 
-import com.googlecode.lanterna.TextCharacter;
 import io.github.proton.display.Projection;
 import io.github.proton.display.Projector;
 import io.github.proton.display.Style;
+import io.github.proton.display.StyledCharacter;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.text.Line;
 import io.vavr.control.Option;
@@ -29,7 +29,7 @@ public final class JavaIdentifierProjector implements Projector<JavaIdentifier> 
                     }
 
                     @Override
-                    public TextCharacter character(Style style) {
+                    public StyledCharacter character(Style style) {
                         return c.character(style);
                     }
 

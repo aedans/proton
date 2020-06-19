@@ -3,23 +3,31 @@
  */
 package io.github.proton.display;
 
-import com.googlecode.lanterna.TextCharacter;
 import org.pf4j.ExtensionPoint;
 
-public interface Style extends ExtensionPoint {
-    TextCharacter base(char character);
+import java.awt.*;
 
-    TextCharacter style(String scope, char character);
+public interface Style extends ExtensionPoint {
+    Color background();
+
+    StyledCharacter base(char character);
+
+    StyledCharacter style(String scope, char character);
 
     default Style withBase(String scope) {
         return new Style() {
             @Override
-            public TextCharacter base(char character) {
+            public Color background() {
+                return Style.this.background();
+            }
+
+            @Override
+            public StyledCharacter base(char character) {
                 return Style.this.style(scope, character);
             }
 
             @Override
-            public TextCharacter style(String scope, char character) {
+            public StyledCharacter style(String scope, char character) {
                 return Style.this.style(scope, character);
             }
         };
@@ -28,12 +36,17 @@ public interface Style extends ExtensionPoint {
     default Style of(String scope) {
         return new Style() {
             @Override
-            public TextCharacter base(char character) {
+            public Color background() {
+                return Style.this.background();
+            }
+
+            @Override
+            public StyledCharacter base(char character) {
                 return Style.this.style(scope, character);
             }
 
             @Override
-            public TextCharacter style(String s, char character) {
+            public StyledCharacter style(String s, char character) {
                 return Style.this.style(scope, character);
             }
         };

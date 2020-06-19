@@ -3,10 +3,10 @@
  */
 package io.github.proton.plugins.text;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TextCharacter;
+import io.github.proton.display.Position;
 import io.github.proton.display.Projection;
 import io.github.proton.display.Style;
+import io.github.proton.display.StyledCharacter;
 import io.vavr.Tuple2;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
@@ -20,7 +20,7 @@ public final class LineProjection extends Projection<Line> {
         super(characters(line, scope));
     }
 
-    public static Map<TerminalPosition, Char<Line>> characters(Line line, String scope) {
+    public static Map<Position, Char<Line>> characters(Line line, String scope) {
         return line.chars
                 .<Char<Line>>zipWithIndex((c, i) -> new LineChar(line, scope, i))
                 .append(new Char<Line>() {
@@ -30,7 +30,7 @@ public final class LineProjection extends Projection<Line> {
                     }
 
                     @Override
-                    public TextCharacter character(Style style) {
+                    public StyledCharacter character(Style style) {
                         return style.base(' ');
                     }
 
@@ -50,7 +50,7 @@ public final class LineProjection extends Projection<Line> {
                     }
                 })
                 .zipWithIndex()
-                .toMap(p -> new Tuple2<>(new TerminalPosition(p._2, 0), p._1));
+                .toMap(p -> new Tuple2<>(new Position(p._2, 0), p._1));
     }
 
     private static final class LineChar implements Projection.Char<Line> {
@@ -70,7 +70,7 @@ public final class LineProjection extends Projection<Line> {
         }
 
         @Override
-        public TextCharacter character(Style style) {
+        public StyledCharacter character(Style style) {
             return style.style(scope, line.chars.get(i));
         }
 
