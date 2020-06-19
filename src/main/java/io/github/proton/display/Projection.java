@@ -5,7 +5,6 @@ package io.github.proton.display;
 
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
-
 import java.util.function.Function;
 
 public class Projection<T> {

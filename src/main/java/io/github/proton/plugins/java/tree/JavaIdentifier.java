@@ -5,7 +5,6 @@ package io.github.proton.plugins.java.tree;
 
 import io.github.proton.plugins.text.Line;
 import io.vavr.collection.Vector;
-
 import java.util.Objects;
 
 public final class JavaIdentifier {

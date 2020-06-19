@@ -4,7 +4,6 @@
 package io.github.proton.display;
 
 import io.vavr.control.Option;
-
 import java.awt.event.KeyEvent;
 
 public final class Editor<T> {
@@ -110,11 +109,11 @@ public final class Editor<T> {
                                 .getOrElse(
                                         character.character(style).character == key.getKeyChar()
                                                 ? new Editor<>(
-                                                style,
-                                                projector,
-                                                tree,
-                                                right(projector.project(tree), selected)
-                                                        .getOrElse(cursor))
+                                                        style,
+                                                        projector,
+                                                        tree,
+                                                        right(projector.project(tree), selected)
+                                                                .getOrElse(cursor))
                                                 : this))
                         .getOrElse(this);
         }

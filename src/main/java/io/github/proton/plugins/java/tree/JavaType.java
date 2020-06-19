@@ -4,7 +4,6 @@
 package io.github.proton.plugins.java.tree;
 
 import io.vavr.collection.Vector;
-
 import java.util.Objects;
 import java.util.function.Function;
 

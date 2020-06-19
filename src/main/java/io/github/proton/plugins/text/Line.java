@@ -4,7 +4,6 @@
 package io.github.proton.plugins.text;
 
 import io.vavr.collection.Vector;
-
 import java.util.Objects;
 
 public final class Line {

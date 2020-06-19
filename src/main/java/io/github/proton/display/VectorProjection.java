@@ -13,8 +13,7 @@ public final class VectorProjection<T> extends Projection<Vector<T>> {
         super(characters(vector, projector, elem));
     }
 
-    private static <T> Map<Position, Char<Vector<T>>> characters(
-            Vector<T> vector, Projector<T> projector, T elem) {
+    private static <T> Map<Position, Char<Vector<T>>> characters(Vector<T> vector, Projector<T> projector, T elem) {
         return vector.<Projection<Vector<T>>>zipWithIndex((e, i) ->
                         new Projection<>(projector.project(e).characters.mapValues(c -> new Char<Vector<T>>() {
                             @Override

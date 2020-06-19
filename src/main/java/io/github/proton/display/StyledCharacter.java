@@ -1,3 +1,6 @@
+/*
+ * Copyright 2020 Aedan Smith
+ */
 package io.github.proton.display;
 
 import java.awt.*;

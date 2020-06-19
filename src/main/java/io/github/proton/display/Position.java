@@ -1,3 +1,6 @@
+/*
+ * Copyright 2020 Aedan Smith
+ */
 package io.github.proton.display;
 
 import java.util.Objects;
@@ -10,10 +13,10 @@ public final class Position {
         this.col = col;
         this.row = row;
     }
+
     public int getRow() {
         return row;
     }
-
 
     public int getColumn() {
         return col;
@@ -40,8 +43,7 @@ public final class Position {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Position position = (Position) o;
-        return row == position.row &&
-                col == position.col;
+        return row == position.row && col == position.col;
     }
 
     @Override

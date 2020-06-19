@@ -5,9 +5,8 @@ package io.github.proton.plugins.style;
 
 import io.github.proton.display.Style;
 import io.github.proton.display.StyledCharacter;
-import org.pf4j.Extension;
-
 import java.awt.*;
+import org.pf4j.Extension;
 
 @Extension
 public final class SolarizedStyle implements Style {
