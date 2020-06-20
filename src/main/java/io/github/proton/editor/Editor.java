@@ -19,7 +19,7 @@ public final class Editor<T> {
         this.cursor = cursor;
     }
 
-    public static <T> Option<Projection.Char<T>> character(Projection<T> projection, Position selected) {
+    public static <T> Option<Char<T>> character(Projection<T> projection, Position selected) {
         return projection.characters().get(selected);
     }
 

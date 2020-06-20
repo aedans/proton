@@ -78,7 +78,7 @@ public final class TextProjection implements Projection<Text> {
         });
     }
 
-    private static final class TextChar implements Projection.Char<Text> {
+    private static final class TextChar implements Char<Text> {
         private final Text text;
         private final String scope;
         private final boolean decorative;

@@ -51,38 +51,4 @@ public interface Projection<T> {
     default Projection<T> indentVertical(int delta) {
         return of(characters().mapKeys(p -> p.withRelativeRow(delta)));
     }
-
-    interface Char<T> {
-        boolean decorative();
-
-        StyledCharacter character(Style style);
-
-        Option<T> insert(char character);
-
-        Option<T> delete();
-
-        default <A> Char<A> map(Function<T, A> map) {
-            return new Char<A>() {
-                @Override
-                public boolean decorative() {
-                    return Char.this.decorative();
-                }
-
-                @Override
-                public StyledCharacter character(Style style) {
-                    return Char.this.character(style);
-                }
-
-                @Override
-                public Option<A> insert(char character) {
-                    return Char.this.insert(character).map(map);
-                }
-
-                @Override
-                public Option<A> delete() {
-                    return Char.this.delete().map(map);
-                }
-            };
-        }
-    }
 }
