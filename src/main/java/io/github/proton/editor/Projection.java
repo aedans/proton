@@ -3,7 +3,6 @@
  */
 package io.github.proton.editor;
 
-import io.github.proton.plugins.style.SolarizedStyle;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
@@ -170,7 +169,7 @@ public interface Projection<T> {
         int row = 0, col = 0;
         for (Char<T> c : chars) {
             characters = characters.put(new Position(row, col), c);
-            if (c.character(new SolarizedStyle()).character == '\n') {
+            if (c.character() == '\n') {
                 col = 0;
                 row++;
             } else {

@@ -18,7 +18,7 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
 
     @Override
     public Projection<JavaImportDeclaration> project(JavaImportDeclaration importDeclaration) {
-        Projection<JavaImportDeclaration> label = Projection.label("import ", "keyword").of(importDeclaration);
+        Projection<JavaImportDeclaration> label = Projection.label("import", "keyword").of(importDeclaration);
         Projection<JavaImportDeclaration> projection = Projector.get(JavaIdentifier.class)
                 .project(importDeclaration.name)
                 .map(JavaImportDeclaration::new);

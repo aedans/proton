@@ -21,7 +21,7 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
 
     @Override
     public Projection<JavaClassDeclaration> project(JavaClassDeclaration classDeclaration) {
-        Projection<JavaClassDeclaration> label = Projection.label("class ", "keyword").of(classDeclaration);
+        Projection<JavaClassDeclaration> label = Projection.label("class", "keyword").of(classDeclaration);
         Projection<JavaClassDeclaration> projection = Projector.get(JavaIdentifier.class)
                 .project(classDeclaration.name)
                 .map(name -> new JavaClassDeclaration(name, classDeclaration.fields));
