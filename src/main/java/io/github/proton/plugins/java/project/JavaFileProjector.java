@@ -25,14 +25,20 @@ public final class JavaFileProjector implements Projector<JavaFile> {
                         new JavaFile(packageDeclaration, javaFile.importDeclarations, javaFile.classDeclarations));
         Projector<JavaImportDeclaration> importProjector = Projector.get(JavaImportDeclaration.class);
         Projection<JavaFile> importsProjection = new VectorProjection<>(
-                        javaFile.importDeclarations, importProjector, new JavaImportDeclaration(new JavaIdentifier("")))
-                .map(x -> new JavaFile(javaFile.packageDeclaration, x, javaFile.classDeclarations))
-                .indentVertical(1);
+                        javaFile.importDeclarations, importProjector, Projection.newline(), new JavaImportDeclaration(
+                                new JavaIdentifier("")))
+                .map(x -> new JavaFile(javaFile.packageDeclaration, x, javaFile.classDeclarations));
         Projector<JavaClassDeclaration> classProjector = Projector.get(JavaClassDeclaration.class);
         Projection<JavaFile> classProjection = new VectorProjection<>(
-                        javaFile.classDeclarations, classProjector, new JavaClassDeclaration(
+                        javaFile.classDeclarations, classProjector, Projection.newline(), new JavaClassDeclaration(
                                 new JavaIdentifier(""), Vector.empty()))
                 .map(x -> new JavaFile(javaFile.packageDeclaration, javaFile.importDeclarations, x));
-        return packageProjection.combineVertical(importsProjection).combineVertical(classProjection);
+        return packageProjection
+                .combine(Projection.newline())
+                .combine(Projection.newline())
+                .combine(importsProjection)
+                .combine(Projection.newline())
+                .combine(Projection.newline())
+                .combine(classProjection);
     }
 }

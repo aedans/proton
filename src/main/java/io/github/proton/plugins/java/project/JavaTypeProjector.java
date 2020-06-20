@@ -3,10 +3,7 @@
  */
 package io.github.proton.plugins.java.project;
 
-import io.github.proton.editor.Projection;
-import io.github.proton.editor.Projector;
-import io.github.proton.editor.Style;
-import io.github.proton.editor.StyledCharacter;
+import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.JavaIdentifier;
 import io.github.proton.plugins.java.tree.JavaType;
 import io.vavr.control.Option;
@@ -25,7 +22,7 @@ public final class JavaTypeProjector implements Projector<JavaType> {
                 primitive -> Projector.get(JavaIdentifier.class)
                         .project(new JavaIdentifier(primitive.name().toLowerCase()))
                         .map(JavaType::fromIdentifier)
-                        .mapChars(c -> new Projection.Char<JavaType>() {
+                        .mapChars(c -> new Char<JavaType>() {
                             @Override
                             public boolean decorative() {
                                 return c.decorative();

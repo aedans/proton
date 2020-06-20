@@ -1,7 +1,9 @@
+/*
+ * Copyright 2020 Aedan Smith
+ */
 package io.github.proton.editor;
 
 import io.vavr.control.Option;
-
 import java.util.function.Function;
 
 public interface Char<T> {
