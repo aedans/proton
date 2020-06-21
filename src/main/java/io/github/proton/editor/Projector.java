@@ -1,6 +1,3 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.editor;
 
 import io.github.proton.plugins.Plugins;
@@ -11,8 +8,8 @@ import org.pf4j.ExtensionPoint;
 
 public interface Projector<T> extends ExtensionPoint {
     @SuppressWarnings("rawtypes")
-    Map<Class, Projector> instances =
-            Plugins.getExtensions(Projector.class).toMap(projector -> new Tuple2<>(projector.clazz(), projector));
+    Map<Class, Projector> instances = Plugins.getExtensions(Projector.class)
+            .toMap(projector -> new Tuple2<>(projector.clazz(), projector));
 
     static <T> Projector<T> get(Class<T> clazz) {
         return getOption(clazz).getOrElseThrow(() -> new RuntimeException("Could not find projector for " + clazz));

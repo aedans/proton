@@ -1,9 +1,7 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.editor;
 
 import io.vavr.control.Option;
+
 import java.awt.*;
 import java.util.function.Function;
 
@@ -18,22 +16,21 @@ public interface Char<T> {
 
     default char character() {
         return character(new Style() {
-                    @Override
-                    public Color background() {
-                        return null;
-                    }
+            @Override
+            public Color background() {
+                return null;
+            }
 
-                    @Override
-                    public StyledCharacter base(char character) {
-                        return new StyledCharacter(character, null);
-                    }
+            @Override
+            public StyledCharacter base(char character) {
+                return new StyledCharacter(character, null);
+            }
 
-                    @Override
-                    public StyledCharacter style(String scope, char character) {
-                        return new StyledCharacter(character, null);
-                    }
-                })
-                .character;
+            @Override
+            public StyledCharacter style(String scope, char character) {
+                return new StyledCharacter(character, null);
+            }
+        }).character();
     }
 
     default <A> Char<A> map(Function<T, A> map) {

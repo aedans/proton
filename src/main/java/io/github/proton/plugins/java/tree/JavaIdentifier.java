@@ -1,25 +1,15 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.plugins.java.tree;
 
 import io.github.proton.editor.Text;
 import io.vavr.collection.Vector;
-import java.util.Objects;
 
-public final class JavaIdentifier {
-    public final Vector<Character> chars;
-
+public record JavaIdentifier(Vector<Character>chars) {
     public JavaIdentifier(String name) {
         this(new Text(name));
     }
 
     public JavaIdentifier(Text text) {
-        this(text.chars);
-    }
-
-    public JavaIdentifier(Vector<Character> chars) {
-        this.chars = chars;
+        this(text.chars());
     }
 
     public static boolean isValid(char c) {
@@ -29,18 +19,5 @@ public final class JavaIdentifier {
     @Override
     public String toString() {
         return new Text(chars).toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        JavaIdentifier that = (JavaIdentifier) o;
-        return Objects.equals(chars, that.chars);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(chars);
     }
 }

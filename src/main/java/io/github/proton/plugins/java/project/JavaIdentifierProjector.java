@@ -1,6 +1,3 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.plugins.java.project;
 
 import io.github.proton.editor.*;
@@ -17,7 +14,7 @@ public final class JavaIdentifierProjector implements Projector<JavaIdentifier> 
 
     @Override
     public Projection<JavaIdentifier> project(JavaIdentifier identifier) {
-        return Projection.text(new Text(identifier.chars), "").mapChars(c -> new Char<JavaIdentifier>() {
+        return Projection.text(new Text(identifier.chars()), "").mapChars(c -> new Char<JavaIdentifier>() {
             @Override
             public boolean decorative() {
                 return c.decorative();

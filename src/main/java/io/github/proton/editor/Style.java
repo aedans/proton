@@ -1,10 +1,8 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.editor;
 
-import java.awt.*;
 import org.pf4j.ExtensionPoint;
+
+import java.awt.*;
 
 public interface Style extends ExtensionPoint {
     Color background();

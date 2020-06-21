@@ -1,11 +1,6 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.plugins.java.tree;
 
 import io.vavr.collection.Vector;
-import java.util.Objects;
-import java.util.function.Function;
 
 public interface JavaType {
     static JavaType fromIdentifier(JavaIdentifier identifier) {
@@ -14,8 +9,6 @@ public interface JavaType {
                 .map(x -> (JavaType) x)
                 .getOrElse(new ClassOrInterface(identifier));
     }
-
-    <A> A match(Function<Primitive, A> primitive, Function<ClassOrInterface, A> classOrInterface);
 
     enum Primitive implements JavaType {
         BYTE,
@@ -26,36 +19,8 @@ public interface JavaType {
         FLOAT,
         DOUBLE,
         BOOLEAN;
-
-        @Override
-        public <A> A match(Function<Primitive, A> primitive, Function<ClassOrInterface, A> classOrInterface) {
-            return primitive.apply(this);
-        }
     }
 
-    final class ClassOrInterface implements JavaType {
-        public final JavaIdentifier name;
-
-        public ClassOrInterface(JavaIdentifier name) {
-            this.name = name;
-        }
-
-        @Override
-        public <A> A match(Function<Primitive, A> primitive, Function<ClassOrInterface, A> classOrInterface) {
-            return classOrInterface.apply(this);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ClassOrInterface that = (ClassOrInterface) o;
-            return Objects.equals(name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name);
-        }
+    final record ClassOrInterface(JavaIdentifier name) implements JavaType {
     }
 }

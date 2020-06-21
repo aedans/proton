@@ -1,12 +1,9 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.plugins.style;
 
-import io.github.proton.editor.Style;
-import io.github.proton.editor.StyledCharacter;
-import java.awt.*;
+import io.github.proton.editor.*;
 import org.pf4j.Extension;
+
+import java.awt.*;
 
 @Extension
 public final class SolarizedStyle implements Style {

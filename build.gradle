@@ -1,44 +1,36 @@
-buildscript {
-    repositories {
-       gradlePluginPortal()
-       maven { url  "http://palantir.bintray.com/releases" }
-    }
-
-    dependencies {
-       classpath 'com.palantir.baseline:gradle-baseline-java:3.10.0'
-       classpath 'gradle.plugin.org.inferred:gradle-processors:2.1.0'
-    }
-}
-
 plugins {
-    id 'java'
-    id 'application'
+    id "java"
+    id "application"
 }
 
 repositories {
     jcenter()
     mavenCentral()
-    maven { url  "http://palantir.bintray.com/releases" }
 }
 
-apply plugin: 'com.palantir.baseline-format'
-
-group 'io.github.proton'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 8
-targetCompatibility = 8
+group "io.github.proton"
+version "1.0-SNAPSHOT"
 
 dependencies {
     compile "io.vavr:vavr:0.9.3"
     compile "org.slf4j:slf4j-nop:1.7.9"
-    compile 'org.pf4j:pf4j:3.2.0'
-    implementation 'com.github.javaparser:javaparser-core:3.15.9'
-    annotationProcessor 'org.pf4j:pf4j:3.2.0'
+    compile "org.pf4j:pf4j:3.2.0"
+    annotationProcessor "org.pf4j:pf4j:3.2.0"
+}
+
+sourceCompatibility = JavaVersion.VERSION_15
+targetCompatibility = JavaVersion.VERSION_15
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
 }
 
 application {
-    mainClassName = 'io.github.proton.Main'
+    mainClassName = "io.github.proton.Main"
 }
 
 jar {

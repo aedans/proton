@@ -1,11 +1,6 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.plugins.text;
 
-import io.github.proton.editor.Projection;
-import io.github.proton.editor.Projector;
-import io.github.proton.editor.Text;
+import io.github.proton.editor.*;
 import org.pf4j.Extension;
 
 @Extension

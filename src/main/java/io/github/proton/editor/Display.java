@@ -1,13 +1,10 @@
-/*
- * Copyright 2020 Aedan Smith
- */
 package io.github.proton.editor;
 
 import io.vavr.collection.Map;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public final class Display<T> extends JFrame {
     private Editor<T> editor;
@@ -29,7 +26,8 @@ public final class Display<T> extends JFrame {
 
         addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {
+            }
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -39,7 +37,8 @@ public final class Display<T> extends JFrame {
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
         });
 
         repaint();
@@ -71,18 +70,18 @@ public final class Display<T> extends JFrame {
             g.fillRect(0, 0, getWidth(), getHeight());
             g.setFont(new Font("Monospaced", Font.PLAIN, 16));
 
-            int d = (g.getFontMetrics().getDescent() + 1) / 2;
-            int height = g.getFontMetrics().getAscent();
-            int width = g.getFontMetrics().charWidth('_');
+            var d = (g.getFontMetrics().getDescent() + 1) / 2;
+            var height = g.getFontMetrics().getAscent();
+            var width = g.getFontMetrics().charWidth('_');
 
-            int cx = cursor.col * width;
-            int cy = cursor.row * height;
+            var cx = cursor.col() * width;
+            var cy = cursor.row() * height;
             g.setColor(Color.WHITE);
             g.drawLine(cx, cy + d, cx, cy + height + d);
 
             characters.forEach(c -> {
-                g.setColor(c._2.foregroundColor);
-                g.drawString(Character.toString(c._2.character), c._1.col * width, c._1.row * height + height);
+                g.setColor(c._2.foregroundColor());
+                g.drawString(Character.toString(c._2.character()), c._1.col() * width, c._1.row() * height + height);
             });
         }
     }
