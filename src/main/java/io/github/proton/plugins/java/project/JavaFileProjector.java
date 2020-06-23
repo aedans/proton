@@ -15,29 +15,29 @@ public final class JavaFileProjector implements Projector<JavaFile> {
     @Override
     public Projection<JavaFile> project(JavaFile javaFile) {
         var packageProjection = Projector.get(JavaPackageDeclaration.class)
-                .project(javaFile.packageDeclaration())
-                .map(packageDeclaration ->
-                        new JavaFile(packageDeclaration, javaFile.importDeclarations(), javaFile.classDeclarations()));
+            .project(javaFile.packageDeclaration())
+            .map(packageDeclaration ->
+                new JavaFile(packageDeclaration, javaFile.importDeclarations(), javaFile.classDeclarations()));
         var importProjector = Projector.get(JavaImportDeclaration.class);
         var importsProjection = new VectorProjection<>(
-                javaFile.importDeclarations(),
-                importProjector,
-                Projection.newline(),
-                new JavaImportDeclaration(new JavaIdentifier("")))
-                .map(x -> new JavaFile(javaFile.packageDeclaration(), x, javaFile.classDeclarations()));
+            javaFile.importDeclarations(),
+            importProjector,
+            Projection.newline(),
+            new JavaImportDeclaration(new JavaIdentifier(""))
+        ).map(x -> new JavaFile(javaFile.packageDeclaration(), x, javaFile.classDeclarations()));
         var classProjector = Projector.get(JavaClassDeclaration.class);
         var classProjection = new VectorProjection<>(
-                javaFile.classDeclarations(),
-                classProjector,
-                Projection.newline(),
-                new JavaClassDeclaration(new JavaIdentifier(""), Vector.empty()))
-                .map(x -> new JavaFile(javaFile.packageDeclaration(), javaFile.importDeclarations(), x));
+            javaFile.classDeclarations(),
+            classProjector,
+            Projection.newline(),
+            new JavaClassDeclaration(new JavaIdentifier(""), Vector.empty())
+        ).map(x -> new JavaFile(javaFile.packageDeclaration(), javaFile.importDeclarations(), x));
         return packageProjection
-                .combine(Projection.newline())
-                .combine(Projection.newline())
-                .combine(importsProjection)
-                .combine(Projection.newline())
-                .combine(Projection.newline())
-                .combine(classProjection);
+            .combine(Projection.newline())
+            .combine(Projection.newline())
+            .combine(importsProjection)
+            .combine(Projection.newline())
+            .combine(Projection.newline())
+            .combine(classProjection);
     }
 }

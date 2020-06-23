@@ -16,33 +16,33 @@ public final class JavaTypeProjector implements Projector<JavaType> {
     public Projection<JavaType> project(JavaType javaType) {
         if (javaType instanceof JavaType.Primitive primitive) {
             return Projector.get(JavaIdentifier.class)
-                    .project(new JavaIdentifier(primitive.name().toLowerCase()))
-                    .map(JavaType::fromIdentifier)
-                    .mapChars(c -> new Char<JavaType>() {
-                        @Override
-                        public boolean decorative() {
-                            return c.decorative();
-                        }
+                .project(new JavaIdentifier(primitive.name().toLowerCase()))
+                .map(JavaType::fromIdentifier)
+                .mapChars(c -> new Char<JavaType>() {
+                    @Override
+                    public boolean decorative() {
+                        return c.decorative();
+                    }
 
-                        @Override
-                        public StyledCharacter character(Style style) {
-                            return c.character(style.of("keyword"));
-                        }
+                    @Override
+                    public StyledCharacter character(Style style) {
+                        return c.character(style.of("keyword"));
+                    }
 
-                        @Override
-                        public Option<JavaType> insert(char character) {
-                            return c.insert(character);
-                        }
+                    @Override
+                    public Option<JavaType> insert(char character) {
+                        return c.insert(character);
+                    }
 
-                        @Override
-                        public Option<JavaType> delete() {
-                            return c.delete();
-                        }
-                    });
+                    @Override
+                    public Option<JavaType> delete() {
+                        return c.delete();
+                    }
+                });
         } else if (javaType instanceof JavaType.ClassOrInterface classOrInterface) {
             return Projector.get(JavaIdentifier.class)
-                    .project(classOrInterface.name())
-                    .map(JavaType::fromIdentifier);
+                .project(classOrInterface.identifier())
+                .map(JavaType::fromIdentifier);
         } else {
             throw new RuntimeException();
         }

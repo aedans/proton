@@ -63,8 +63,8 @@ public interface Projection<T> {
 
     static <T> Projection<T> linebreak() {
         return (width, fit, space, position, indent) -> fit
-                ? Projection.<T>empty().project(width, true, space, position, indent)
-                : Projection.<T>newline().project(width, false, space, position, indent);
+            ? Projection.<T>empty().project(width, true, space, position, indent)
+            : Projection.<T>newline().project(width, false, space, position, indent);
     }
 
     static Projection<Text> text(String text, String scope) {
@@ -192,6 +192,15 @@ public interface Projection<T> {
 
     default <A> Projection<A> of(A a) {
         return map(x -> a);
+    }
+
+    interface Delegate<T> extends Projection<T> {
+        @Override
+        default Result<T> project(int width, boolean fit, int space, int position, int indent) {
+            return delegate().project(width, fit, space, position, indent);
+        }
+
+        Projection<T> delegate();
     }
 
     record Result<T>(int space, int position, Vector<Char<T>>chars) {

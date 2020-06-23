@@ -15,8 +15,8 @@ public final class JavaPackageDeclarationProjector implements Projector<JavaPack
     public Projection<JavaPackageDeclaration> project(JavaPackageDeclaration packageDeclaration) {
         var label = Projection.label("package", "keyword").of(packageDeclaration);
         var projection = Projector.get(JavaIdentifier.class)
-                .project(packageDeclaration.name())
-                .map(JavaPackageDeclaration::new);
+            .project(packageDeclaration.name())
+            .map(JavaPackageDeclaration::new);
         return label.combine(projection);
     }
 }

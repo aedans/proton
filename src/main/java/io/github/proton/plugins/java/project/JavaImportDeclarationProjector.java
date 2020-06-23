@@ -15,8 +15,8 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
     public Projection<JavaImportDeclaration> project(JavaImportDeclaration importDeclaration) {
         var label = Projection.label("import", "keyword").of(importDeclaration);
         var projection = Projector.get(JavaIdentifier.class)
-                .project(importDeclaration.name())
-                .map(JavaImportDeclaration::new);
+            .project(importDeclaration.name())
+            .map(JavaImportDeclaration::new);
         return label.combine(projection);
     }
 }

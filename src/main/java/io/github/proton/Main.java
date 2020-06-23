@@ -18,10 +18,10 @@ public final class Main {
         var tree = new JavaFile(new JavaPackageDeclaration(new JavaIdentifier("")), Vector.of(), Vector.of());
 
         var editor = new Editor<>(
-                Plugins.getExtensions(Style.class).get(0),
-                Projector.get((Class) tree.getClass()),
-                tree,
-                new Position(0, 0));
+            Plugins.getExtensions(Style.class).get(0),
+            Projector.get((Class) tree.getClass()),
+            tree,
+            new Position(0, 0));
 
         SwingUtilities.invokeLater(() -> new Display<>(editor));
     }
