@@ -55,7 +55,7 @@ public record OptionProjection<T>(Option<T>option,
 
                     @Override
                     public StyledCharacter character(Style style) {
-                        return c.character(style.of("comment.ignored"));
+                        return c.character(style.of("comment.invisible"));
                     }
 
                     @Override

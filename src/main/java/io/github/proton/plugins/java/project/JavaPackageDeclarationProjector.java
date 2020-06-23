@@ -13,12 +13,12 @@ public final class JavaPackageDeclarationProjector implements Projector<JavaPack
 
     @Override
     public Projection<JavaPackageDeclaration> project(JavaPackageDeclaration packageDeclaration) {
-        var label = Projection.label("package", "keyword").of(packageDeclaration);
+        var label = TextProjection.label("package", "keyword").of(packageDeclaration);
         var projection = Projector.get(JavaIdentifier.class)
             .project(packageDeclaration.name())
             .map(JavaPackageDeclaration::new);
         return label
-            .combine(Projection.space.of(packageDeclaration))
+            .combine(TextProjection.space.of(packageDeclaration))
             .combine(projection);
     }
 }

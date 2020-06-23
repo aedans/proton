@@ -10,10 +10,21 @@ public interface JavaType {
             .getOrElse(new ClassOrInterface(identifier));
     }
 
+    boolean isEmpty();
+
     enum Primitive implements JavaType {
-        BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE, BOOLEAN
+        BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE, BOOLEAN;
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
     }
 
     final record ClassOrInterface(JavaIdentifier identifier) implements JavaType {
+        @Override
+        public boolean isEmpty() {
+            return identifier.isEmpty();
+        }
     }
 }

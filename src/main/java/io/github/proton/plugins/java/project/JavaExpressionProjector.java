@@ -20,7 +20,7 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
                 .map(JavaExpression::fromIdentifier);
         } else if (expression instanceof JavaExpression.Int i) {
             var s = Integer.toString(i.integer());
-            return Projection.text(s, "constant.numeric")
+            return TextProjection.text(s, "constant.numeric")
                 .map(JavaIdentifier::new)
                 .mapChars(c -> new Char<JavaExpression>() {
                     @Override

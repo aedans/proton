@@ -13,12 +13,12 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
 
     @Override
     public Projection<JavaImportDeclaration> project(JavaImportDeclaration importDeclaration) {
-        var label = Projection.label("import", "keyword").of(importDeclaration);
+        var label = TextProjection.label("import", "keyword").of(importDeclaration);
         var projection = Projector.get(JavaIdentifier.class)
             .project(importDeclaration.name())
             .map(JavaImportDeclaration::new);
         return label
-            .combine(Projection.space.of(importDeclaration))
+            .combine(TextProjection.space.of(importDeclaration))
             .combine(projection);
     }
 }

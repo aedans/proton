@@ -23,14 +23,16 @@ public final class JavaFileProjector implements Projector<JavaFile> {
             javaFile.importDeclarations(),
             importProjector,
             Projection.newline(),
-            new JavaImportDeclaration(new JavaIdentifier(""))
+            new JavaImportDeclaration(new JavaIdentifier("")),
+            JavaImportDeclaration::isEmpty
         ).map(x -> new JavaFile(javaFile.packageDeclaration(), x, javaFile.classDeclarations()));
         var classProjector = Projector.get(JavaClassDeclaration.class);
         var classProjection = new VectorProjection<>(
             javaFile.classDeclarations(),
             classProjector,
             Projection.newline(),
-            new JavaClassDeclaration(new JavaIdentifier(""), Vector.empty())
+            new JavaClassDeclaration(new JavaIdentifier(""), Vector.empty()),
+            JavaClassDeclaration::isEmpty
         ).map(x -> new JavaFile(javaFile.packageDeclaration(), javaFile.importDeclarations(), x));
         return packageProjection
             .combine(Projection.newline())

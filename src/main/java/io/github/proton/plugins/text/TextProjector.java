@@ -12,6 +12,6 @@ public final class TextProjector implements Projector<Text> {
 
     @Override
     public Projection<Text> project(Text text) {
-        return Projection.text(text, "");
+        return TextProjection.text(text, "");
     }
 }

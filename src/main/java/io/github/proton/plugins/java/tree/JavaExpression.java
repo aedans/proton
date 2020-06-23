@@ -9,12 +9,23 @@ public interface JavaExpression {
         return new Identifier(identifier);
     }
 
+    boolean isEmpty();
+
     final record Int(int integer) implements JavaExpression {
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
     }
 
     final record Identifier(JavaIdentifier identifier) implements JavaExpression {
         public Identifier(String string) {
             this(new JavaIdentifier(string));
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return identifier.isEmpty();
         }
     }
 }

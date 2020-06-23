@@ -3,10 +3,13 @@ package io.github.proton.editor;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
+import java.util.function.Predicate;
+
 public record VectorProjection<T>(Vector<T>vector,
                                   Projector<T>projector,
                                   Projection<Vector<T>>separator,
-                                  T elem) implements Projection.Delegate<Vector<T>> {
+                                  T elem,
+                                  Predicate<T> isEmpty) implements Projection.Delegate<Vector<T>> {
     @Override
     public Projection<Vector<T>> delegate() {
         return vector.zipWithIndex((e, i) -> projector.project(e)
@@ -34,7 +37,7 @@ public record VectorProjection<T>(Vector<T>vector,
                 @Override
                 public Option<Vector<T>> delete() {
                     return c.delete().map(t -> {
-                        if (t.equals(elem)) {
+                        if (isEmpty.test(t)) {
                             return vector.removeAt(i);
                         } else {
                             return vector.update(i, t);
@@ -55,7 +58,7 @@ public record VectorProjection<T>(Vector<T>vector,
 
                 @Override
                 public StyledCharacter character(Style style) {
-                    return c.character(style.of("comment.ignored"));
+                    return c.character(style.of("comment.invisible"));
                 }
 
                 @Override

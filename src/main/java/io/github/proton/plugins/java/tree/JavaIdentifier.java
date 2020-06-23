@@ -16,6 +16,10 @@ public record JavaIdentifier(Vector<Character>chars) {
         return Character.isAlphabetic(c) || Character.isDigit(c);
     }
 
+    public boolean isEmpty() {
+        return chars.isEmpty();
+    }
+
     @Override
     public String toString() {
         return new Text(chars).toString();
