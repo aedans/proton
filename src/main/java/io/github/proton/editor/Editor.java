@@ -132,9 +132,7 @@ public record Editor<T>(Style style, Projector<T>projector, T tree, Position cur
             .map(character -> character
                 .insert(key.getKeyChar())
                 .map(t2 -> new Editor<>(style, projector, t2, right1(projector.project(t2), selected).getOrElse(cursor)))
-                .getOrElse(character.character(style).character() == key.getKeyChar()
-                    ? new Editor<>(style, projector, tree, right1(projector.project(tree), selected).getOrElse(cursor))
-                    : this))
+                .getOrElse(new Editor<>(style, projector, tree, right1(projector.project(tree), selected).getOrElse(cursor))))
             .getOrElse(this);
     }
 

@@ -10,7 +10,6 @@ public interface JavaExpression {
     }
 
     final record Int(int integer) implements JavaExpression {
-
     }
 
     final record Identifier(JavaIdentifier identifier) implements JavaExpression {

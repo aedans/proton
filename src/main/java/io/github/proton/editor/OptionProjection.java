@@ -16,6 +16,11 @@ public record OptionProjection<T>(Option<T>option,
                     }
 
                     @Override
+                    public boolean mergeable() {
+                        return c.mergeable();
+                    }
+
+                    @Override
                     public StyledCharacter character(Style style) {
                         return c.character(style);
                     }
@@ -44,13 +49,18 @@ public record OptionProjection<T>(Option<T>option,
                     }
 
                     @Override
+                    public boolean mergeable() {
+                        return c.mergeable();
+                    }
+
+                    @Override
                     public StyledCharacter character(Style style) {
                         return c.character(style.of("comment.ignored"));
                     }
 
                     @Override
                     public Option<Option<T>> insert(char character) {
-                        return Option.some(c.insert(character));
+                        return c.insert(character).map(Option::some);
                     }
 
                     @Override

@@ -18,27 +18,7 @@ public final class JavaTypeProjector implements Projector<JavaType> {
             return Projector.get(JavaIdentifier.class)
                 .project(new JavaIdentifier(primitive.name().toLowerCase()))
                 .map(JavaType::fromIdentifier)
-                .mapChars(c -> new Char<JavaType>() {
-                    @Override
-                    public boolean decorative() {
-                        return c.decorative();
-                    }
-
-                    @Override
-                    public StyledCharacter character(Style style) {
-                        return c.character(style.of("keyword"));
-                    }
-
-                    @Override
-                    public Option<JavaType> insert(char character) {
-                        return c.insert(character);
-                    }
-
-                    @Override
-                    public Option<JavaType> delete() {
-                        return c.delete();
-                    }
-                });
+                .mapChars(c -> c.mapStyle(style -> style.of("keyword")));
         } else if (javaType instanceof JavaType.ClassOrInterface classOrInterface) {
             return Projector.get(JavaIdentifier.class)
                 .project(classOrInterface.identifier())

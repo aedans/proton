@@ -21,6 +21,11 @@ public final class JavaIdentifierProjector implements Projector<JavaIdentifier> 
             }
 
             @Override
+            public boolean mergeable() {
+                return c.mergeable();
+            }
+
+            @Override
             public StyledCharacter character(Style style) {
                 return c.character(style);
             }

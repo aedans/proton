@@ -17,6 +17,11 @@ public record VectorProjection<T>(Vector<T>vector,
                 }
 
                 @Override
+                public boolean mergeable() {
+                    return c.mergeable();
+                }
+
+                @Override
                 public StyledCharacter character(Style style) {
                     return c.character(style);
                 }
@@ -41,6 +46,11 @@ public record VectorProjection<T>(Vector<T>vector,
                 @Override
                 public boolean decorative() {
                     return c.decorative();
+                }
+
+                @Override
+                public boolean mergeable() {
+                    return c.mergeable();
                 }
 
                 @Override

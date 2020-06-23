@@ -19,11 +19,10 @@ public final class JavaFieldMemberProjector implements Projector<JavaFieldMember
         var name = Projector.get(JavaIdentifier.class)
             .project(fieldMember.name())
             .map(n -> new JavaFieldMember(fieldMember.type(), n, fieldMember.expression()));
+        var projector = Projector.get(JavaExpression.class);
         var expr = new OptionProjection<>(
             fieldMember.expression(),
             new Projector<JavaExpression>() {
-                Projector<JavaExpression> projector = Projector.get(JavaExpression.class);
-
                 @Override
                 public Class<JavaExpression> clazz() {
                     return JavaExpression.class;
@@ -32,7 +31,10 @@ public final class JavaFieldMemberProjector implements Projector<JavaFieldMember
                 @Override
                 public Projection<JavaExpression> project(JavaExpression expression) {
                     var eq = Projection.label("=", "punctuation.eq").of(expression);
-                    return eq.combine(projector.project(expression));
+                    return Projection.space.of(expression)
+                        .combine(eq)
+                        .combine(Projection.space.of(expression))
+                        .combine(projector.project(expression));
                 }
             },
             new JavaExpression.Identifier("")

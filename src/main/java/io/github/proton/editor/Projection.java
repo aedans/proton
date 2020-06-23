@@ -6,6 +6,7 @@ import io.vavr.control.Option;
 import java.util.function.Function;
 
 public interface Projection<T> {
+    Projection<Text> space = label(" ", "punctuation.space");
     Projection<Text> openBracket = label("{", "punctuation.bracket");
     Projection<Text> closeBracket = label("}", "punctuation.bracket");
 
@@ -19,6 +20,11 @@ public interface Projection<T> {
                 @Override
                 public boolean decorative() {
                     return true;
+                }
+
+                @Override
+                public boolean mergeable() {
+                    return false;
                 }
 
                 @Override
@@ -40,6 +46,11 @@ public interface Projection<T> {
                 @Override
                 public boolean decorative() {
                     return true;
+                }
+
+                @Override
+                public boolean mergeable() {
+                    return false;
                 }
 
                 @Override
@@ -93,6 +104,11 @@ public interface Projection<T> {
                 }
 
                 @Override
+                public boolean mergeable() {
+                    return true;
+                }
+
+                @Override
                 public StyledCharacter character(Style style) {
                     return style.base(' ');
                 }
@@ -111,6 +127,11 @@ public interface Projection<T> {
                 @Override
                 public boolean decorative() {
                     return decorative;
+                }
+
+                @Override
+                public boolean mergeable() {
+                    return false;
                 }
 
                 @Override
@@ -138,8 +159,47 @@ public interface Projection<T> {
         return (width, fit, space, position, indent) -> {
             var a = project(width, fit, space, position, indent);
             var b = projection.project(width, fit, a.space, a.position, indent);
-            return new Result<>(b.space, b.position, a.chars.appendAll(b.chars));
+            return new Result<>(b.space, b.position, concat(a.chars, b.chars));
         };
+    }
+
+    default Vector<Char<T>> concat(Vector<Char<T>> a, Vector<Char<T>> b) {
+        if (a.isEmpty()) {
+            return b;
+        } else if (b.isEmpty()) {
+            return a;
+        } else if (a.last().mergeable() && b.head().decorative()) {
+            return concat(a.init().append(new Char<T>() {
+                @Override
+                public boolean decorative() {
+                    return a.last().decorative();
+                }
+
+                @Override
+                public boolean mergeable() {
+                    return false;
+                }
+
+                @Override
+                public StyledCharacter character(Style style) {
+                    return b.head().character(style);
+                }
+
+                @Override
+                public Option<T> insert(char character) {
+                    return a.last().insert(character);
+                }
+
+                @Override
+                public Option<T> delete() {
+                    return a.last().delete();
+                }
+            }), b.tail());
+        } else if (a.last().mergeable() && a.last().decorative()) {
+            return concat(a.init().append(b.head()), b.tail());
+        } else {
+            return a.appendAll(b);
+        }
     }
 
     default Projection<T> group() {

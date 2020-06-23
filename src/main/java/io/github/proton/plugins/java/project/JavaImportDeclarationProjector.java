@@ -17,6 +17,8 @@ public final class JavaImportDeclarationProjector implements Projector<JavaImpor
         var projection = Projector.get(JavaIdentifier.class)
             .project(importDeclaration.name())
             .map(JavaImportDeclaration::new);
-        return label.combine(projection);
+        return label
+            .combine(Projection.space.of(importDeclaration))
+            .combine(projection);
     }
 }

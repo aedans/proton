@@ -29,6 +29,11 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
                     }
 
                     @Override
+                    public boolean mergeable() {
+                        return c.mergeable();
+                    }
+
+                    @Override
                     public StyledCharacter character(Style style) {
                         return c.character(style);
                     }

@@ -3,10 +3,12 @@ package io.github.proton.editor;
 import io.vavr.control.Option;
 
 import java.awt.*;
-import java.util.function.Function;
+import java.util.function.*;
 
 public interface Char<T> {
     boolean decorative();
+
+    boolean mergeable();
 
     StyledCharacter character(Style style);
 
@@ -33,11 +35,45 @@ public interface Char<T> {
         }).character();
     }
 
+    default Char<T> mapStyle(Function<Style, Style> function) {
+        return new Char<T>() {
+            @Override
+            public boolean decorative() {
+                return Char.this.decorative();
+            }
+
+            @Override
+            public boolean mergeable() {
+                return Char.this.mergeable();
+            }
+
+            @Override
+            public StyledCharacter character(Style style) {
+                return Char.this.character(function.apply(style));
+            }
+
+            @Override
+            public Option<T> insert(char character) {
+                return Char.this.insert(character);
+            }
+
+            @Override
+            public Option<T> delete() {
+                return Char.this.delete();
+            }
+        };
+    }
+
     default <A> Char<A> map(Function<T, A> map) {
         return new Char<A>() {
             @Override
             public boolean decorative() {
                 return Char.this.decorative();
+            }
+
+            @Override
+            public boolean mergeable() {
+                return Char.this.mergeable();
             }
 
             @Override

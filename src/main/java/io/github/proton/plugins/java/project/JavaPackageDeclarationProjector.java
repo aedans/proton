@@ -17,6 +17,8 @@ public final class JavaPackageDeclarationProjector implements Projector<JavaPack
         var projection = Projector.get(JavaIdentifier.class)
             .project(packageDeclaration.name())
             .map(JavaPackageDeclaration::new);
-        return label.combine(projection);
+        return label
+            .combine(Projection.space.of(packageDeclaration))
+            .combine(projection);
     }
 }
