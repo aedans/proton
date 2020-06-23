@@ -2,7 +2,6 @@ package io.github.proton.plugins.java.project;
 
 import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.*;
-import io.vavr.control.Option;
 import org.pf4j.Extension;
 
 @Extension

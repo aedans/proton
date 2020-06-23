@@ -2,9 +2,7 @@ package io.github.proton.plugins.java.project;
 
 import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.*;
-import io.github.proton.plugins.java.tree.member.*;
-import io.vavr.collection.Vector;
-import io.vavr.control.Option;
+import io.github.proton.plugins.java.tree.member.JavaFieldMember;
 import org.pf4j.Extension;
 
 @Extension

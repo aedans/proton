@@ -2,6 +2,7 @@ package io.github.proton.plugins.java.project.member;
 
 import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.*;
+import io.github.proton.plugins.java.tree.expression.JavaIdentifierExpression;
 import io.github.proton.plugins.java.tree.member.JavaMethodMember;
 import org.pf4j.Extension;
 
@@ -24,7 +25,7 @@ public final class JavaMethodMemberProjector implements Projector<JavaMethodMemb
             methodMember.expressions(),
             Projector.get(JavaExpression.class),
             Projection.newline(),
-            new JavaExpression.Identifier(""),
+            new JavaIdentifierExpression(""),
             JavaExpression::isEmpty
         ).map(es -> new JavaMethodMember(methodMember.type(), methodMember.name(), es));
         return type
@@ -34,7 +35,7 @@ public final class JavaMethodMemberProjector implements Projector<JavaMethodMemb
             .combine(TextProjection.closeParen.of(methodMember))
             .combine(TextProjection.space.of(methodMember))
             .combine(Projection.newline().of(methodMember))
-                .combine(expressions)
-                .indent(2);
+            .combine(expressions)
+            .indent(2);
     }
 }

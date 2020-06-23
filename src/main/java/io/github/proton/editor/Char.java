@@ -3,7 +3,7 @@ package io.github.proton.editor;
 import io.vavr.control.Option;
 
 import java.awt.*;
-import java.util.function.*;
+import java.util.function.Function;
 
 public interface Char<T> {
     boolean decorative();

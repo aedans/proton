@@ -101,9 +101,7 @@ public record Editor<T>(Style style, Projector<T>projector, T tree, Position cur
     }
 
     private Editor<T> backspace(Projection<T> projection, Position selected) {
-        var deleted = cursor.col() <= 0
-            ? selected(projection, cursor.withRelativeRow(-1).withCol(projection.columns()))
-            : selected.withRelativeCol(-1);
+        var deleted = left(projection, selected).getOrElse(cursor);
         return character(projection, deleted)
             .flatMap(c -> c.decorative() ? Option.none() : Option.some(c))
             .map(character -> {

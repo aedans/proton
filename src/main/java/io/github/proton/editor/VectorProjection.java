@@ -9,7 +9,7 @@ public record VectorProjection<T>(Vector<T>vector,
                                   Projector<T>projector,
                                   Projection<Vector<T>>separator,
                                   T elem,
-                                  Predicate<T> isEmpty) implements Projection.Delegate<Vector<T>> {
+                                  Predicate<T>isEmpty) implements Projection.Delegate<Vector<T>> {
     @Override
     public Projection<Vector<T>> delegate() {
         return vector.zipWithIndex((e, i) -> projector.project(e)
@@ -36,13 +36,7 @@ public record VectorProjection<T>(Vector<T>vector,
 
                 @Override
                 public Option<Vector<T>> delete() {
-                    return c.delete().map(t -> {
-                        if (isEmpty.test(t)) {
-                            return vector.removeAt(i);
-                        } else {
-                            return vector.update(i, t);
-                        }
-                    });
+                    return c.delete().map(t -> isEmpty.test(t) ? vector.removeAt(i) : vector.update(i, t));
                 }
             }))
             .append(projector.project(elem).map(vector::append).mapChars(c -> new Char<Vector<T>>() {

@@ -1,31 +1,18 @@
 package io.github.proton.plugins.java.tree;
 
+import io.github.proton.plugins.java.tree.expression.*;
+
 public interface JavaExpression {
     static JavaExpression fromIdentifier(JavaIdentifier identifier) {
+        if (identifier.toString().equals("return")) {
+            return new JavaReturnExpression(new JavaIdentifierExpression(""));
+        }
         try {
-            return new Int(Integer.parseInt(identifier.toString()));
+            return new JavaIntegerExpression(Integer.parseInt(identifier.toString()));
         } catch (NumberFormatException ignored) {
         }
-        return new Identifier(identifier);
+        return new JavaIdentifierExpression(identifier);
     }
 
     boolean isEmpty();
-
-    final record Int(int integer) implements JavaExpression {
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-    }
-
-    final record Identifier(JavaIdentifier identifier) implements JavaExpression {
-        public Identifier(String string) {
-            this(new JavaIdentifier(string));
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return identifier.isEmpty();
-        }
-    }
 }
