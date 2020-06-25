@@ -17,9 +17,13 @@ public final class JavaFieldMemberProjector implements Projector<JavaFieldMember
         var type = Projector.get(JavaType.class)
             .project(fieldMember.type())
             .map(t -> new JavaFieldMember(t, fieldMember.name()));
-        var name = Projector.get(JavaIdentifier.class)
-            .project(fieldMember.name())
-            .map(n -> new JavaFieldMember(fieldMember.type(), n));
-        return type.combine(name);
+        if (fieldMember.type().isEmpty()) {
+            return type;
+        } else {
+            var name = Projector.get(JavaIdentifier.class)
+                .project(fieldMember.name())
+                .map(n -> new JavaFieldMember(fieldMember.type(), n));
+            return type.combine(name);
+        }
     }
 }
