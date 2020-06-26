@@ -1,7 +1,7 @@
 package io.github.proton.plugins.java.project;
 
 import io.github.proton.editor.*;
-import io.github.proton.plugins.java.tree.*;
+import io.github.proton.plugins.java.tree.JavaMember;
 import io.github.proton.plugins.java.tree.expression.JavaIdentifierExpression;
 import io.github.proton.plugins.java.tree.member.*;
 import io.vavr.collection.Vector;
@@ -31,10 +31,10 @@ public final class JavaMemberProjector implements Projector<JavaMember> {
                     : c.map(x -> x));
         } else if (member instanceof JavaMethodMember methodMember) {
             return Projector.get(JavaMethodMember.class).project(methodMember).map(x -> x)
-                .mapChars(c -> methodMember.expressions().isEmpty()
+                .mapChars(c -> methodMember.statements().isEmpty()
                     ? setFieldChar(c, new JavaFieldMember(methodMember.type(), methodMember.name()))
                     : c.map(x -> x))
-                .mapChars(c -> methodMember.expressions().isEmpty()
+                .mapChars(c -> methodMember.statements().isEmpty()
                     ? fieldChar(c, new JavaFieldMember(methodMember.type(), methodMember.name()))
                     : c.map(x -> x));
         } else {
@@ -43,106 +43,29 @@ public final class JavaMemberProjector implements Projector<JavaMember> {
     }
 
     private <T extends JavaMember> Char<JavaMember> methodChar(Char<T> c, JavaFieldMember fieldMember) {
-        return new Char<JavaMember>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaMember> insert(char character) {
-                if (character == '(') {
-                    return Option.some(c.insert(character).map(x -> (JavaMember) x)
-                        .getOrElse(new JavaMethodMember(
-                            fieldMember.type(),
-                            fieldMember.name(),
-                            Vector.empty())));
-                } else {
-                    return c.insert(character).map(x -> x);
-                }
-            }
-
-            @Override
-            public Option<JavaMember> delete() {
-                return c.delete().map(x -> x);
-            }
-        };
+        return c.modify(
+            character -> character == '(' ? Option.some(c.insert(character).map(x -> (JavaMember) x)
+                .getOrElse(new JavaMethodMember(
+                    fieldMember.type(),
+                    fieldMember.name(),
+                    Vector.empty())))
+                : c.insert(character).map(x -> x),
+            () -> c.delete().map(x -> x));
     }
 
     private <T extends JavaMember> Char<JavaMember> setFieldChar(Char<T> c, JavaFieldMember fieldMember) {
-        return new Char<JavaMember>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaMember> insert(char character) {
-                if (character == '=') {
-                    return Option.some(c.insert(character).map(x -> (JavaMember) x)
-                        .getOrElse(new JavaSetFieldMember(
-                            new JavaFieldMember(fieldMember.type(), fieldMember.name()),
-                            new JavaIdentifierExpression(""))));
-                } else {
-                    return c.insert(character).map(x -> x);
-                }
-            }
-
-            @Override
-            public Option<JavaMember> delete() {
-                return c.delete().map(x -> x);
-            }
-        };
+        return c.modify(
+            character -> character == '=' ? Option.some(c.insert(character).map(x -> (JavaMember) x)
+                .getOrElse(new JavaSetFieldMember(
+                    new JavaFieldMember(fieldMember.type(), fieldMember.name()),
+                    new JavaIdentifierExpression(""))))
+                : c.insert(character).map(x -> x),
+            () -> c.delete().map(x -> x));
     }
 
     private <T extends JavaMember> Char<JavaMember> fieldChar(Char<T> c, JavaFieldMember fieldMember) {
-        return new Char<JavaMember>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaMember> insert(char character) {
-                return c.insert(character).map(x -> x);
-            }
-
-            @Override
-            public Option<JavaMember> delete() {
-                return c.delete()
-                    .map(x -> (JavaMember) x)
-                    .orElse(Option.some(fieldMember));
-            }
-        };
+        return c.modify(
+            character -> c.insert(character).map(x -> x),
+            () -> c.delete().map(x -> (JavaMember) x).orElse(Option.some(fieldMember)));
     }
 }

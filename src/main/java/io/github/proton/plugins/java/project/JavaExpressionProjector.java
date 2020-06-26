@@ -25,49 +25,13 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
             var s = Integer.toString(i.integer());
             return TextProjection.text(s, "constant.numeric")
                 .map(JavaIdentifier::new)
-                .mapChars(this::identifierChar)
+                .mapChars(JavaExpressionProjector::identifierChar)
                 .mapChars(c -> binaryOp(c, i));
-        } else if (expression instanceof JavaReturnExpression r) {
-            var projection = Projector.get(JavaExpression.class)
-                .project(r.expression())
-                .map(x -> (JavaExpression) new JavaReturnExpression(x));
-            var ret = TextProjection.text("return", "keyword")
-                .map(JavaIdentifier::new)
-                .mapChars(this::identifierChar);
-            return ret
-                .combine(TextProjection.space.of(r))
-                .combine(projection)
-                .map(x -> x);
         } else if (expression instanceof JavaBinaryExpression e) {
             var projection = Projector.get(JavaExpression.class);
             var left = projection.project(e.left())
                 .map(l -> (JavaExpression) new JavaBinaryExpression(l, e.right(), e.op()))
-                .mapChars(c -> new Char<JavaExpression>() {
-                    @Override
-                    public boolean decorative() {
-                        return c.decorative();
-                    }
-
-                    @Override
-                    public boolean mergeable() {
-                        return c.mergeable();
-                    }
-
-                    @Override
-                    public StyledCharacter character(Style style) {
-                        return c.character(style);
-                    }
-
-                    @Override
-                    public Option<JavaExpression> insert(char character) {
-                        return c.insert(character);
-                    }
-
-                    @Override
-                    public Option<JavaExpression> delete() {
-                        return Option.some(c.delete().getOrElse(e::left));
-                    }
-                });
+                .mapChars(c -> c.withDelete(() -> Option.some(c.delete().getOrElse(e::left))));
             var right = projection.project(e.right())
                 .map(r -> (JavaExpression) new JavaBinaryExpression(e.left(), r, e.op()));
             return left
@@ -80,71 +44,21 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
         }
     }
 
-    private Char<JavaExpression> identifierChar(Char<JavaIdentifier> c) {
-        return new Char<JavaExpression>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaExpression> insert(char character) {
-                if (JavaIdentifier.isValid(character)) {
-                    return c.insert(character).map(JavaExpression::fromIdentifier);
-                } else {
-                    return Option.none();
-                }
-            }
-
-            @Override
-            public Option<JavaExpression> delete() {
-                return c.delete().map(JavaExpression::fromIdentifier);
-            }
-        };
+    public static Char<JavaExpression> identifierChar(Char<JavaIdentifier> c) {
+        return c.modify(
+            character -> JavaIdentifier.isValid(character)
+                ? c.insert(character).map(JavaExpression::fromIdentifier)
+                : Option.none(),
+            () -> c.delete().map(JavaExpression::fromIdentifier));
     }
 
-    private Char<JavaExpression> binaryOp(Char<JavaExpression> c, JavaExpression expression) {
-        return new Char<JavaExpression>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaExpression> insert(char character) {
-                return Vector.of(JavaBinaryExpression.Operator.values())
-                    .find(x -> x.string.equals(Character.toString(character)))
-                    .map(op -> Option.some((JavaExpression) new JavaBinaryExpression(
-                        expression,
-                        new JavaIdentifierExpression(""),
-                        op)))
-                    .getOrElse(c.insert(character));
-            }
-
-            @Override
-            public Option<JavaExpression> delete() {
-                return c.delete();
-            }
-        };
+    public static Char<JavaExpression> binaryOp(Char<JavaExpression> c, JavaExpression expression) {
+        return c.withInsert(character -> Vector.of(JavaBinaryExpression.Operator.values())
+            .find(x -> x.string.equals(Character.toString(character)))
+            .map(op -> Option.some((JavaExpression) new JavaBinaryExpression(
+                expression,
+                new JavaIdentifierExpression(""),
+                op)))
+            .getOrElse(c.insert(character)));
     }
 }

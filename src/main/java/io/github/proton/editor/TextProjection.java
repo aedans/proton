@@ -29,32 +29,10 @@ public record TextProjection(Text text, String scope, boolean decorative) implem
     @Override
     public Result<Text> project(int width, boolean fit, int space, int position, int indent) {
         var length = text.chars().length();
-        var trail = new Char<Text>() {
-            @Override
-            public boolean decorative() {
-                return decorative;
-            }
-
-            @Override
-            public boolean mergeable() {
-                return true;
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return style.base(' ');
-            }
-
-            @Override
-            public Option<Text> insert(char character) {
-                return Option.some(new Text(text.chars().append(character)));
-            }
-
-            @Override
-            public Option<Text> delete() {
-                return Option.none();
-            }
-        };
+        var trail = Char.<Text>empty(' ')
+            .withDecorative(decorative)
+            .withMergeable(true)
+            .withInsert(character -> Option.some(new Text(text.chars().append(character))));
         Vector<Char<Text>> chars = text.chars().zipWithIndex((c, i) -> new Char<Text>() {
             @Override
             public boolean decorative() {

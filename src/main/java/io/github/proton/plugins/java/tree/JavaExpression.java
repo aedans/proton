@@ -1,18 +1,14 @@
 package io.github.proton.plugins.java.tree;
 
 import io.github.proton.plugins.java.tree.expression.*;
+import io.github.proton.plugins.java.tree.statement.JavaReturnStatement;
 
-public interface JavaExpression {
+public interface JavaExpression extends JavaStatement {
     static JavaExpression fromIdentifier(JavaIdentifier identifier) {
-        if (identifier.toString().equals("return")) {
-            return new JavaReturnExpression(new JavaIdentifierExpression(""));
-        }
         try {
             return new JavaIntegerExpression(Integer.parseInt(identifier.toString()));
         } catch (NumberFormatException ignored) {
         }
         return new JavaIdentifierExpression(identifier);
     }
-
-    boolean isEmpty();
 }

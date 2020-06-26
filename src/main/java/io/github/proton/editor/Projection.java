@@ -1,7 +1,6 @@
 package io.github.proton.editor;
 
 import io.vavr.collection.*;
-import io.vavr.control.Option;
 
 import java.util.function.Function;
 
@@ -12,58 +11,8 @@ public interface Projection<T> {
 
     static <T> Projection<T> newline() {
         return (width, fit, space, position, indent) -> {
-            var newline = new Char<T>() {
-                @Override
-                public boolean decorative() {
-                    return true;
-                }
-
-                @Override
-                public boolean mergeable() {
-                    return false;
-                }
-
-                @Override
-                public StyledCharacter character(Style style) {
-                    return style.base('\n');
-                }
-
-                @Override
-                public Option<T> insert(char character) {
-                    return Option.none();
-                }
-
-                @Override
-                public Option<T> delete() {
-                    return Option.none();
-                }
-            };
-            Vector<Char<T>> indents = Vector.range(0, indent).map(x -> new Char<T>() {
-                @Override
-                public boolean decorative() {
-                    return true;
-                }
-
-                @Override
-                public boolean mergeable() {
-                    return false;
-                }
-
-                @Override
-                public StyledCharacter character(Style style) {
-                    return style.base(' ');
-                }
-
-                @Override
-                public Option<T> insert(char character) {
-                    return Option.none();
-                }
-
-                @Override
-                public Option<T> delete() {
-                    return Option.none();
-                }
-            });
+            var newline = Char.<T>empty('\n');
+            Vector<Char<T>> indents = Vector.fill(indent, () -> Char.empty(' '));
             return new Result<>(width - indent, position + 1, indents.prepend(newline));
         };
     }
@@ -90,32 +39,9 @@ public interface Projection<T> {
         } else if (b.isEmpty()) {
             return a;
         } else if (a.last().mergeable() && b.head().decorative()) {
-            return concat(a.init().append(new Char<T>() {
-                @Override
-                public boolean decorative() {
-                    return a.last().decorative();
-                }
-
-                @Override
-                public boolean mergeable() {
-                    return false;
-                }
-
-                @Override
-                public StyledCharacter character(Style style) {
-                    return b.head().character(style);
-                }
-
-                @Override
-                public Option<T> insert(char character) {
-                    return a.last().insert(character);
-                }
-
-                @Override
-                public Option<T> delete() {
-                    return a.last().delete();
-                }
-            }), b.tail());
+            return concat(a.init().append(a.last()
+                .withCharacter(b.head()::character)
+                .withMergeable(false)), b.tail());
         } else if (a.last().mergeable() && a.last().decorative()) {
             return concat(a.init().append(b.head()), b.tail());
         } else {

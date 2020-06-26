@@ -14,35 +14,10 @@ public final class JavaIdentifierProjector implements Projector<JavaIdentifier> 
 
     @Override
     public Projection<JavaIdentifier> project(JavaIdentifier identifier) {
-        return TextProjection.text(new Text(identifier.chars()), "").mapChars(c -> new Char<JavaIdentifier>() {
-            @Override
-            public boolean decorative() {
-                return c.decorative();
-            }
-
-            @Override
-            public boolean mergeable() {
-                return c.mergeable();
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return c.character(style);
-            }
-
-            @Override
-            public Option<JavaIdentifier> insert(char character) {
-                if (JavaIdentifier.isValid(character)) {
-                    return c.insert(character).map(JavaIdentifier::new);
-                } else {
-                    return Option.none();
-                }
-            }
-
-            @Override
-            public Option<JavaIdentifier> delete() {
-                return c.delete().map(JavaIdentifier::new);
-            }
-        });
+        return TextProjection.text(new Text(identifier.chars()), "").mapChars(c -> c.modify(
+            character -> JavaIdentifier.isValid(character)
+                ? c.insert(character).map(JavaIdentifier::new)
+                : Option.none(),
+            () -> c.delete().map(JavaIdentifier::new)));
     }
 }
