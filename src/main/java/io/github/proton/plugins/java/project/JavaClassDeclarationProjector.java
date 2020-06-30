@@ -18,10 +18,10 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
         var name = Projector.get(JavaIdentifier.class)
             .project(classDeclaration.name())
             .map(n -> new JavaClassDeclaration(n, classDeclaration.members()));
-        var members = new VectorProjection<>(
+        Projector<JavaMember> memberProjector = Projector.get(JavaMember.class);
+        var members = new AppendProjection<>(
             classDeclaration.members(),
-            Projector.get(JavaMember.class),
-            Projection.newline(),
+            x -> Projection.<JavaMember>newline().combine(memberProjector.project(x)).indent(2),
             new JavaFieldMember(
                 new JavaType.ClassOrInterface(new JavaIdentifier("")),
                 new JavaIdentifier("")),
@@ -31,8 +31,6 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
             .combine(TextProjection.space.of(classDeclaration))
             .combine(name)
             .combine(TextProjection.space.of(classDeclaration))
-            .combine(Projection.newline().of(classDeclaration)
-                .combine(members)
-                .indent(2));
+            .combine(members);
     }
 }

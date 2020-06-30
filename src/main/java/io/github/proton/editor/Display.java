@@ -12,8 +12,8 @@ public final class Display<T> extends JFrame {
     private Map<Position, StyledCharacter> characters;
     private Position cursor;
 
-    public Display(Editor<T> editor) {
-        this.editor = editor;
+    public Display(Editor<T> e) {
+        this.editor = e;
         editor.render(this);
 
         setContentPane(new EditorPanel());
@@ -31,8 +31,8 @@ public final class Display<T> extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                Display.this.editor = Display.this.editor.update(e);
-                Display.this.editor.render(Display.this);
+                editor = editor.update(e);
+                editor.render(Display.this);
                 getContentPane().repaint();
             }
 
@@ -57,6 +57,36 @@ public final class Display<T> extends JFrame {
     }
 
     private class EditorPanel extends JPanel {
+        Font font = new Font("Monospaced", Font.PLAIN, 16);
+        int width = 0;
+
+        {
+            addComponentListener(new ComponentListener() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    editor = new Editor<>(
+                        editor.style(),
+                        editor.projector(),
+                        editor.tree(),
+                        editor.cursor(),
+                        (getWidth() / width) - 1);
+                    editor.render(Display.this);
+                }
+
+                @Override
+                public void componentMoved(ComponentEvent e) {
+                }
+
+                @Override
+                public void componentShown(ComponentEvent e) {
+                }
+
+                @Override
+                public void componentHidden(ComponentEvent e) {
+                }
+            });
+        }
+
         @Override
         public Dimension getPreferredSize() {
             return new Dimension(720, 480);
@@ -68,11 +98,11 @@ public final class Display<T> extends JFrame {
 
             g.setColor(backgroundColor);
             g.fillRect(0, 0, getWidth(), getHeight());
-            g.setFont(new Font("Monospaced", Font.PLAIN, 16));
+            g.setFont(font);
 
             var d = (g.getFontMetrics().getDescent() + 1) / 2;
             var height = g.getFontMetrics().getAscent();
-            var width = g.getFontMetrics().charWidth('_');
+            width = g.getFontMetrics().charWidth('_');
 
             var cx = cursor.col() * width;
             var cy = cursor.row() * height;

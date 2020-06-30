@@ -5,11 +5,6 @@ import io.github.proton.plugins.java.tree.JavaExpression;
 public record JavaBinaryExpression(JavaExpression left,
                                    JavaExpression right,
                                    Operator op) implements JavaExpression {
-    @Override
-    public boolean isEmpty()  {
-        return left.isEmpty() && right.isEmpty();
-    }
-
     public enum Operator {
         ADD("+", 4), SUB("-", 4), MUL("*", 3), DIV("/", 3), MOD("%", 3),
         EQ("==", 7), NEQ("!=", 7), LT("<", 6), GT(">", 6), LEQ("<=", 6), GEQ(">=", 6),

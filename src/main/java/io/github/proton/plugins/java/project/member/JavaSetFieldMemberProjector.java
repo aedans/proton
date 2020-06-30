@@ -24,6 +24,6 @@ public final class JavaSetFieldMemberProjector implements Projector<JavaSetField
             .combine(TextProjection.space.of(setFieldMember))
             .combine(TextProjection.label("=", "punctuation.eq").of(setFieldMember))
             .combine(TextProjection.space.of(setFieldMember))
-            .combine(expression);
+            .combine(expression.group().indent(2));
     }
 }

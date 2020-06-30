@@ -3,12 +3,14 @@ package io.github.proton.editor;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
-public record TextProjection(Text text, String scope, boolean decorative) implements Projection<Text> {
+public record TextProjection(Text text, String scope, boolean decorative) implements Projection.Delegate<Text> {
     public static Projection<Text> space = label(" ", "punctuation.space");
     public static Projection<Text> openParen = label("(", "punctuation.paren");
     public static Projection<Text> closeParen = label(")", "punctuation.paren");
     public static Projection<Text> openBracket = label("{", "punctuation.bracket");
     public static Projection<Text> closeBracket = label("}", "punctuation.bracket");
+    public static Projection<Text> dot = label(".", "punctuation.dot");
+    public static Projection<Text> comma = label(",", "punctuation.dot");
 
     public static Projection<Text> text(String text, String scope) {
         return text(new Text(text), scope);
@@ -27,38 +29,16 @@ public record TextProjection(Text text, String scope, boolean decorative) implem
     }
 
     @Override
-    public Result<Text> project(int width, boolean fit, int space, int position, int indent) {
-        var length = text.chars().length();
+    public Projection<Text> delegate() {
         var trail = Char.<Text>empty(' ')
             .withDecorative(decorative)
-            .withMergeable(true)
+            .withMerge(true)
             .withInsert(character -> Option.some(new Text(text.chars().append(character))));
-        Vector<Char<Text>> chars = text.chars().zipWithIndex((c, i) -> new Char<Text>() {
-            @Override
-            public boolean decorative() {
-                return decorative;
-            }
-
-            @Override
-            public boolean mergeable() {
-                return false;
-            }
-
-            @Override
-            public StyledCharacter character(Style style) {
-                return style.style(scope, text.chars().get(i));
-            }
-
-            @Override
-            public Option<Text> insert(char character) {
-                return Option.some(new Text(text.chars().insert(i, character)));
-            }
-
-            @Override
-            public Option<Text> delete() {
-                return Option.some(new Text(text.chars().removeAt(i)));
-            }
-        });
-        return new Result<>(space - length, position + length, chars.append(trail));
+        Vector<Char<Text>> chars = text.chars().zipWithIndex((c, i) -> Char.<Text>empty(text.chars().get(i))
+            .withDecorative(decorative)
+            .withInsert(character -> Option.some(new Text(text.chars().insert(i, character))))
+            .withDelete(() -> Option.some(new Text(text.chars().removeAt(i))))
+            .mapStyle(style -> style.of(scope)));
+        return Projection.chars(chars.append(trail));
     }
 }

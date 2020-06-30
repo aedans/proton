@@ -37,17 +37,16 @@ public final class JavaStatementProjector implements Projector<JavaStatement> {
             var condition = Projector.get(JavaExpression.class)
                 .project(f.condition())
                 .map(c -> (JavaStatement) new JavaIfStatement(c, f.trueBlock(), f.falseBlock()));
-            var trueBlock = new VectorProjection<>(
+            Projector<JavaStatement> statementProjector = Projector.get(JavaStatement.class);
+            var trueBlock = new AppendProjection<>(
                 f.trueBlock(),
-                Projector.get(JavaStatement.class),
-                Projection.newline(),
+                x -> Projection.<JavaStatement>newline().combine(statementProjector.project(x)).indent(2),
                 new JavaIdentifierExpression(""),
                 JavaStatement::isEmpty
             ).map(ts -> new JavaIfStatement(f.condition(), ts, f.falseBlock()));
-            var falseBlock = new VectorProjection<>(
+            var falseBlock = new AppendProjection<>(
                 f.falseBlock(),
-                Projector.get(JavaStatement.class),
-                Projection.newline(),
+                x -> Projection.<JavaStatement>newline().combine(statementProjector.project(x)).indent(2),
                 new JavaIdentifierExpression(""),
                 JavaStatement::isEmpty
             ).map(fs -> new JavaIfStatement(f.condition(), f.trueBlock(), fs));
@@ -57,15 +56,11 @@ public final class JavaStatementProjector implements Projector<JavaStatement> {
                 .map(x -> (JavaStatement) x);
             return iff
                 .combine(TextProjection.space.of(f))
-                .combine(condition)
-                .combine(Projection.<JavaStatement>newline()
-                    .combine(trueBlock.map(x -> x))
-                    .indent(2))
+                .combine(condition.group())
+                .combine(trueBlock.map(x -> x))
                 .combine(Projection.newline())
                 .combine(TextProjection.label("else", "keyword").of(f))
-                .combine(Projection.<JavaStatement>newline()
-                    .combine(falseBlock.map(x -> x))
-                    .indent(2));
+                .combine(falseBlock.map(x -> x));
         } else if (statement instanceof JavaExpression expression) {
             return Projector.get(JavaExpression.class).project(expression).map(x -> x);
         } else {

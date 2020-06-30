@@ -15,5 +15,7 @@ public interface JavaStatement {
         }
     }
 
-    boolean isEmpty();
+    default boolean isEmpty() {
+        return false;
+    }
 }

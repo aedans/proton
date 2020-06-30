@@ -8,7 +8,7 @@ import java.util.function.*;
 public interface Char<T> {
     boolean decorative();
 
-    boolean mergeable();
+    boolean merge();
 
     StyledCharacter character(Style style);
 
@@ -24,7 +24,7 @@ public interface Char<T> {
             }
 
             @Override
-            public boolean mergeable() {
+            public boolean merge() {
                 return false;
             }
 
@@ -78,7 +78,7 @@ public interface Char<T> {
         };
     }
 
-    default Char<T> withMergeable(boolean mergeable) {
+    default Char<T> withMerge(boolean merge) {
         return new Delegate<T>() {
             @Override
             public Char<T> delegate() {
@@ -86,8 +86,8 @@ public interface Char<T> {
             }
 
             @Override
-            public boolean mergeable() {
-                return mergeable;
+            public boolean merge() {
+                return merge;
             }
         };
     }
@@ -153,8 +153,8 @@ public interface Char<T> {
             }
 
             @Override
-            public boolean mergeable() {
-                return Char.this.mergeable();
+            public boolean merge() {
+                return Char.this.merge();
             }
 
             @Override
@@ -183,8 +183,8 @@ public interface Char<T> {
         }
 
         @Override
-        default boolean mergeable() {
-            return delegate().mergeable();
+        default boolean merge() {
+            return delegate().merge();
         }
 
         @Override

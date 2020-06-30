@@ -23,6 +23,16 @@ public interface Projection<T> {
             : Projection.<T>newline().project(width, false, space, position, indent);
     }
 
+    @SafeVarargs
+    static <T> Projection<T> chars(Char<T>... chars) {
+        return chars(Vector.of(chars));
+    }
+
+    static <T> Projection<T> chars(Vector<Char<T>> chars) {
+        int length = chars.filter(x -> !x.merge()).length();
+        return (width, fit, space, position, indent) -> new Result<>(space - length, position + length, chars);
+    }
+
     Result<T> project(int width, boolean fit, int space, int position, int indent);
 
     default Projection<T> combine(Projection<T> projection) {
@@ -38,11 +48,11 @@ public interface Projection<T> {
             return b;
         } else if (b.isEmpty()) {
             return a;
-        } else if (a.last().mergeable() && b.head().decorative()) {
+        } else if (a.last().merge() && b.head().decorative()) {
             return concat(a.init().append(a.last()
                 .withCharacter(b.head()::character)
-                .withMergeable(false)), b.tail());
-        } else if (a.last().mergeable() && a.last().decorative()) {
+                .withMerge(false)), b.tail());
+        } else if (a.last().merge() && a.last().decorative()) {
             return concat(a.init().append(b.head()), b.tail());
         } else {
             return a.appendAll(b);
@@ -61,10 +71,6 @@ public interface Projection<T> {
         return (width, fit, space, position, indent) -> project(width, fit, space, position, indent + i);
     }
 
-    default Map<Position, Char<T>> characters() {
-        return characters(20);
-    }
-
     default Map<Position, Char<T>> characters(int width) {
         var chars = project(width, true, width, 0, 0).chars;
         var characters = HashMap.<Position, Char<T>>empty();
@@ -79,14 +85,6 @@ public interface Projection<T> {
             }
         }
         return characters;
-    }
-
-    default int rows() {
-        return characters().mapKeys(x -> x.row() + 1).keySet().max().getOrElse(0);
-    }
-
-    default int columns() {
-        return characters().mapKeys(x -> x.col() + 1).keySet().max().getOrElse(0);
     }
 
     default <A> Projection<A> map(Function<T, A> f) {
