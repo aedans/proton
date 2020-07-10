@@ -125,7 +125,7 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
         Projector<JavaExpression> expressionProjector = Projector.get(JavaExpression.class);
         InsertProjection<JavaExpression> projection = new InsertProjection<>(
             args,
-            t -> expressionProjector.project(t).group(),
+            t -> expressionProjector.project(t).indent(2).group(),
             TextProjection.comma.combine(TextProjection.space).combine(Projection.linebreak())
                 .of(Vector.empty()),
             new JavaIdentifierExpression(""),

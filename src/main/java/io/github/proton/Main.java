@@ -20,8 +20,7 @@ public final class Main {
         var editor = new Editor<>(
             Plugins.getExtensions(Style.class).get(0),
             Projector.get((Class) tree.getClass()),
-            tree,
-            new Position(0, 0),
+            0, tree,
             0);
 
         SwingUtilities.invokeLater(() -> new Display<>(editor));

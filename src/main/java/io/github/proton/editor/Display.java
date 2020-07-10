@@ -1,20 +1,14 @@
 package io.github.proton.editor;
 
-import io.vavr.collection.Map;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public final class Display<T> extends JFrame {
     private Editor<T> editor;
-    private Color backgroundColor;
-    private Map<Position, StyledCharacter> characters;
-    private Position cursor;
 
     public Display(Editor<T> e) {
         this.editor = e;
-        editor.render(this);
 
         setContentPane(new EditorPanel());
         pack();
@@ -32,7 +26,6 @@ public final class Display<T> extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 editor = editor.update(e);
-                editor.render(Display.this);
                 getContentPane().repaint();
             }
 
@@ -44,18 +37,6 @@ public final class Display<T> extends JFrame {
         repaint();
     }
 
-    public void setBackgroundColor(Color backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public void setCharacters(Map<Position, StyledCharacter> characters) {
-        this.characters = characters;
-    }
-
-    public void setCursor(Position cursor) {
-        this.cursor = cursor;
-    }
-
     private class EditorPanel extends JPanel {
         Font font = new Font("Monospaced", Font.PLAIN, 16);
         int width = 0;
@@ -65,12 +46,12 @@ public final class Display<T> extends JFrame {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     editor = new Editor<>(
-                        editor.style(),
-                        editor.projector(),
-                        editor.tree(),
-                        editor.cursor(),
-                        (getWidth() / width) - 1);
-                    editor.render(Display.this);
+                        editor.style,
+                        editor.projector,
+                        (getWidth() / width) - 1, editor.tree,
+                        editor.position
+                    );
+                    repaint();
                 }
 
                 @Override
@@ -96,7 +77,7 @@ public final class Display<T> extends JFrame {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            g.setColor(backgroundColor);
+            g.setColor(editor.style.background());
             g.fillRect(0, 0, getWidth(), getHeight());
             g.setFont(font);
 
@@ -104,15 +85,26 @@ public final class Display<T> extends JFrame {
             var height = g.getFontMetrics().getAscent();
             width = g.getFontMetrics().charWidth('_');
 
-            var cx = cursor.col() * width;
-            var cy = cursor.row() * height;
-            g.setColor(Color.WHITE);
-            g.drawLine(cx, cy + d, cx, cy + height + d);
-
-            characters.forEach(c -> {
-                g.setColor(c._2.foregroundColor());
-                g.drawString(Character.toString(c._2.character()), c._1.col() * width, c._1.row() * height + height);
-            });
+            int row = 0, col = 0, i = 0;
+            for (Char<T> c : editor.chars()) {
+                StyledCharacter character = c.character(editor.style);
+                g.setColor(character.foregroundColor());
+                g.drawString(Character.toString(character.character()), col * width, row * height + height);
+                if (!c.decorative()) {
+                    if (i == editor.position) {
+                        int cx = col * width, cy = row * height;
+                        g.setColor(Color.WHITE);
+                        g.drawLine(cx, cy + d, cx, cy + height + d);
+                    }
+                    i++;
+                }
+                if (c.character() == '\n') {
+                    col = 0;
+                    row++;
+                } else {
+                    col++;
+                }
+            }
         }
     }
 }

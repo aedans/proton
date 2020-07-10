@@ -71,20 +71,8 @@ public interface Projection<T> {
         return (width, fit, space, position, indent) -> project(width, fit, space, position, indent + i);
     }
 
-    default Map<Position, Char<T>> characters(int width) {
-        var chars = project(width, true, width, 0, 0).chars;
-        var characters = HashMap.<Position, Char<T>>empty();
-        int row = 0, col = 0;
-        for (Char<T> c : chars) {
-            characters = characters.put(new Position(row, col), c);
-            if (c.character() == '\n') {
-                col = 0;
-                row++;
-            } else {
-                col++;
-            }
-        }
-        return characters;
+    default Vector<Char<T>> chars(int width) {
+        return project(width, true, width, 0, 0).chars;
     }
 
     default <A> Projection<A> map(Function<T, A> f) {
