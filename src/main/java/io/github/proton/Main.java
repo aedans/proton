@@ -3,6 +3,7 @@ package io.github.proton;
 import io.github.proton.editor.*;
 import io.github.proton.plugins.Plugins;
 import io.github.proton.plugins.java.tree.*;
+import io.github.proton.ui.Frame;
 import io.vavr.collection.Vector;
 
 import javax.swing.*;
@@ -23,6 +24,6 @@ public final class Main {
             0, tree,
             0);
 
-        SwingUtilities.invokeLater(() -> new Display<>(editor));
+        SwingUtilities.invokeLater(() -> new Frame<>(editor));
     }
 }

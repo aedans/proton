@@ -47,6 +47,15 @@ public final class Editor<T> {
         return new Position(row, col);
     }
 
+    public static int left(int index) {
+        return index <= 1 ? 0 : index - 1;
+    }
+
+    public static <T> int right(Vector<Char<T>> chars, int index) {
+        var size = selectedLength(chars) - 1;
+        return index >= size ? size : index + 1;
+    }
+
     public static <T> int up(Vector<Char<T>> chars, int index, int col) {
         var target = position(chars, index).withRelativeRow(-1).withCol(col);
         while (true) {
@@ -80,8 +89,8 @@ public final class Editor<T> {
         if (chars.isEmpty())
             return this;
         return switch (key.getKeyCode()) {
-            case KeyEvent.VK_LEFT -> new Editor<>(style, projector, width, tree, index - 1);
-            case KeyEvent.VK_RIGHT -> new Editor<>(style, projector, width, tree, index + 1);
+            case KeyEvent.VK_LEFT -> new Editor<>(style, projector, width, tree, left(index));
+            case KeyEvent.VK_RIGHT -> new Editor<>(style, projector, width, tree, right(chars, index));
             case KeyEvent.VK_UP -> new Editor<>(style, projector, width, tree, up(chars, index, col), Option.some(col));
             case KeyEvent.VK_DOWN -> new Editor<>(style, projector, width, tree, down(chars, index, col), Option.some(col));
             case KeyEvent.VK_DELETE -> delete();
@@ -92,12 +101,24 @@ public final class Editor<T> {
         };
     }
 
+    public Editor<T> select(int dot) {
+        if (dot >= chars.length()) {
+            return this;
+        } else {
+            return new Editor<>(style, projector, width, tree, chars.take(dot).filter(Char::edit).length());
+        }
+    }
+
     public Editor<T> delete() {
         return new Editor<>(style, projector, width, selected(chars, index).delete().getOrElse(tree), index);
     }
 
     public Editor<T> backspace() {
-        return new Editor<>(style, projector, width, selected(chars, index - 1).delete().getOrElse(tree), index - 1);
+        if (index == 0) {
+            return this;
+        } else {
+            return new Editor<>(style, projector, width, selected(chars, index - 1).delete().getOrElse(tree), index - 1);
+        }
     }
 
     public Editor<T> enter() {

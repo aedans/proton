@@ -81,7 +81,7 @@ public interface Projection<T> {
     }
 
     default Vector<Char<T>> chars(int width) {
-        return combine(Projection.newline()).project(width, true, width, 0, 0).chars;
+        return project(width, true, width, 0, 0).chars;
     }
 
     default <A> Projection<A> map(Function<T, A> f) {
