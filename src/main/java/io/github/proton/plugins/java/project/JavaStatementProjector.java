@@ -58,7 +58,7 @@ public final class JavaStatementProjector implements Projector<JavaStatement> {
                 .combine(TextProjection.space.of(f))
                 .combine(condition.group())
                 .combine(trueBlock.map(x -> x))
-                .combine(Projection.newline())
+                .combine(Projection.trailingNewline())
                 .combine(TextProjection.label("else", "keyword").of(f))
                 .combine(falseBlock.map(x -> x));
         } else if (statement instanceof JavaExpression expression) {

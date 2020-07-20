@@ -1,6 +1,6 @@
 package io.github.proton.editor;
 
-import io.vavr.collection.*;
+import io.vavr.collection.Vector;
 
 import java.util.function.Function;
 

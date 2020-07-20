@@ -1,7 +1,6 @@
 package io.github.proton.plugins.java.tree;
 
 import io.github.proton.plugins.java.tree.expression.*;
-import io.github.proton.plugins.java.tree.statement.JavaReturnStatement;
 
 public interface JavaExpression extends JavaStatement {
     static JavaExpression fromIdentifier(JavaIdentifier identifier) {
