@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.function.*;
 
 public interface Char<T> {
-    boolean decorative();
+    boolean edit();
 
     boolean merge();
 
@@ -16,11 +16,15 @@ public interface Char<T> {
 
     Option<T> delete();
 
+    static <T> Char<T> trailing() {
+        return Char.<T>empty(' ').withEdit(true).withMerge(true);
+    }
+
     static <T> Char<T> empty(char c) {
         return new Char<T>() {
             @Override
-            public boolean decorative() {
-                return true;
+            public boolean edit() {
+                return false;
             }
 
             @Override
@@ -64,7 +68,7 @@ public interface Char<T> {
         }).character();
     }
 
-    default Char<T> withDecorative(boolean decorative) {
+    default Char<T> withEdit(boolean edit) {
         return new Delegate<T>() {
             @Override
             public Char<T> delegate() {
@@ -72,8 +76,8 @@ public interface Char<T> {
             }
 
             @Override
-            public boolean decorative() {
-                return decorative;
+            public boolean edit() {
+                return edit;
             }
         };
     }
@@ -148,8 +152,8 @@ public interface Char<T> {
                                Supplier<Option<A>> delete) {
         return new Char<A>() {
             @Override
-            public boolean decorative() {
-                return Char.this.decorative();
+            public boolean edit() {
+                return Char.this.edit();
             }
 
             @Override
@@ -178,8 +182,8 @@ public interface Char<T> {
         Char<T> delegate();
 
         @Override
-        default boolean decorative() {
-            return delegate().decorative();
+        default boolean edit() {
+            return delegate().edit();
         }
 
         @Override

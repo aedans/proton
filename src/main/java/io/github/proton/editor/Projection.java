@@ -33,6 +33,14 @@ public interface Projection<T> {
         return (width, fit, space, position, indent) -> new Result<>(space - length, position + length, chars);
     }
 
+    static <T> Projection<T> trailing() {
+        return chars(Char.trailing());
+    }
+
+    static <T> Projection<T> trailingNewline() {
+        return Projection.<T>newline().combine(trailing());
+    }
+
     Result<T> project(int width, boolean fit, int space, int position, int indent);
 
     default Projection<T> combine(Projection<T> projection) {
@@ -48,12 +56,13 @@ public interface Projection<T> {
             return b;
         } else if (b.isEmpty()) {
             return a;
-        } else if (a.last().merge() && b.head().decorative()) {
+        } else if (a.last().merge() && !a.last().edit()) {
+            return concat(a.init().append(b.head()), b.tail());
+        } else if (a.last().merge() && !b.head().edit()) {
             return concat(a.init().append(a.last()
                 .withCharacter(b.head()::character)
+                .withEdit(a.last().edit())
                 .withMerge(false)), b.tail());
-        } else if (a.last().merge() && a.last().decorative()) {
-            return concat(a.init().append(b.head()), b.tail());
         } else {
             return a.appendAll(b);
         }
@@ -72,7 +81,7 @@ public interface Projection<T> {
     }
 
     default Vector<Char<T>> chars(int width) {
-        return project(width, true, width, 0, 0).chars;
+        return combine(Projection.newline()).project(width, true, width, 0, 0).chars;
     }
 
     default <A> Projection<A> map(Function<T, A> f) {

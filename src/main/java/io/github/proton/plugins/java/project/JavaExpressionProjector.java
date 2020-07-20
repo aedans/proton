@@ -56,7 +56,7 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
                 .map(as -> (JavaExpression) new JavaFunctionExpression(f.name(), as));
             return name
                 .combine(args)
-                .combine(Projection.chars(Char.empty(' ').withDecorative(false).withMerge(true))
+                .combine(Projection.trailing()
                     .of((JavaExpression) f)
                     .mapChars(c -> binaryOpChar(c, f))
                     .mapChars(c -> fieldChar(c, f)));
@@ -88,7 +88,7 @@ public final class JavaExpressionProjector implements Projector<JavaExpression> 
                 .map(as -> (JavaExpression) new JavaMethodExpression(m.field(), as));
             return expr
                 .combine(args)
-                .combine(Projection.chars(Char.empty(' ').withDecorative(false).withMerge(true))
+                .combine(Projection.trailing()
                     .of((JavaExpression) m)
                     .mapChars(c -> binaryOpChar(c, m))
                     .mapChars(c -> fieldChar(c, m)));

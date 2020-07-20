@@ -49,7 +49,7 @@ public final class Display<T> extends JFrame {
                         editor.style,
                         editor.projector,
                         (getWidth() / width) - 1, editor.tree,
-                        editor.position
+                        editor.index
                     );
                     repaint();
                 }
@@ -86,12 +86,12 @@ public final class Display<T> extends JFrame {
             width = g.getFontMetrics().charWidth('_');
 
             int row = 0, col = 0, i = 0;
-            for (Char<T> c : editor.chars()) {
+            for (Char<T> c : editor.chars) {
                 StyledCharacter character = c.character(editor.style);
                 g.setColor(character.foregroundColor());
                 g.drawString(Character.toString(character.character()), col * width, row * height + height);
-                if (!c.decorative()) {
-                    if (i == editor.position) {
+                if (c.edit()) {
+                    if (i == editor.index) {
                         int cx = col * width, cy = row * height;
                         g.setColor(Color.WHITE);
                         g.drawLine(cx, cy + d, cx, cy + height + d);

@@ -30,7 +30,6 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
         return label
             .combine(TextProjection.space.of(classDeclaration))
             .combine(name)
-            .combine(TextProjection.space.of(classDeclaration))
             .combine(members);
     }
 }
