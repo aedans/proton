@@ -59,7 +59,7 @@ public final class EditorPane<T> extends JTextPane {
 
     private void render() {
         var editor = this.editor;
-        setText(editor.chars.map(Char::character).mkString());
+        setText(editor.chars.init().map(Char::character).mkString());
         setCaretPosition(Editor.selectedIndex(editor.chars, editor.index));
         setBackground(editor.style.background());
         setCaretColor(Color.WHITE);
