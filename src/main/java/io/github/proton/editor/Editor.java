@@ -3,8 +3,6 @@ package io.github.proton.editor;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
-import java.awt.event.KeyEvent;
-
 public final class Editor<T> {
     public final Projector<T> projector;
     public final int width;
@@ -36,7 +34,12 @@ public final class Editor<T> {
     }
 
     public static <T> int selectedIndex(Vector<Char<T>> chars, int index) {
-        return chars.zipWithIndex().filter(x -> x._1.edit()).get(index)._2;
+        var filter = chars.zipWithIndex().filter(x -> x._1.edit());
+        if (index >= filter.length()) {
+            return filter.length();
+        } else {
+            return filter.get(index)._2;
+        }
     }
 
     public static <T> Char<T> selected(Vector<Char<T>> chars, int index) {
@@ -126,7 +129,7 @@ public final class Editor<T> {
 
     public Editor<T> enter() {
         var t = selected(chars, index).insert('\n').getOrElse(tree);
-        return new Editor<>(projector, width, t, down(projector.project(t).chars(width), index, col));
+        return new Editor<>(projector, width, t, down(projector.project(t).chars(width), index, 0));
     }
 
     public Editor<T> insert(char c) {
