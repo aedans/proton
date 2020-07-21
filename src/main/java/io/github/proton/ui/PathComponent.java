@@ -1,0 +1,46 @@
+package io.github.proton.ui;
+
+import io.github.proton.editor.Editor;
+import io.github.proton.io.PathReader;
+import io.vavr.collection.Vector;
+
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.io.IOException;
+import java.nio.file.*;
+
+public final class PathComponent extends JTree {
+    public PathComponent(Path path, EditorComponent editor) throws IOException {
+        super(load(path));
+
+        addTreeSelectionListener(e -> {
+            Path p = Path.of(Vector.range(0, e.getPath().getPathCount())
+                .map(i -> e.getPath().getPathComponent(i).toString())
+                .mkString("", "/", ""));
+            try {
+                if (!Files.isDirectory(p)) {
+                    editor.setEditor(new Editor<>(PathReader.readStatic(p)));
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+    }
+
+    private static MutableTreeNode load(Path path) throws IOException {
+        var node = new DefaultMutableTreeNode(path.getFileName());
+        if (Files.isDirectory(path)) {
+            Vector<Path> paths = Vector.ofAll(Files.list(path));
+            paths
+                .filter(x -> Files.isDirectory(x))
+                .appendAll(paths.filter(x -> !Files.isDirectory(x)))
+                .forEach(p -> {
+                    try {
+                        node.add(load(p));
+                    } catch (IOException ignored) {
+                    }
+                });
+        }
+        return node;
+    }
+}

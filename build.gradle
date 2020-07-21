@@ -15,6 +15,7 @@ dependencies {
     compile "io.vavr:vavr:0.9.3"
     compile "org.slf4j:slf4j-nop:1.7.9"
     compile "org.pf4j:pf4j:3.2.0"
+    implementation 'io.github.vincenzopalazzo:material-ui-swing:1.1.1-rc4'
     annotationProcessor "org.pf4j:pf4j:3.2.0"
 }
 
@@ -35,7 +36,7 @@ application {
 
 jar {
     manifest {
-        attributes "Main-Class": "io.github.proton.Main"
+        attributes "Main-Class": "io.github.proton.ui.Proton"
     }
 
     from {

@@ -18,7 +18,7 @@ public record AppendProjection<T>(Vector<T>vector,
                     () -> c.delete().map(t -> isEmpty.test(t) ? vector.removeAt(i) : vector.update(i, t)))))
             .append(projector.apply(terminator).map(vector::append).mapChars(c -> c
                 .withDelete(Option::none)
-                .mapStyle(style -> style.of("comment.ignored"))))
+                .withStyle("comment.ignored")))
             .reduceOption(Projection::combine)
             .getOrElse(Projection.empty());
     }

@@ -3,7 +3,7 @@ package io.github.proton.editor;
 import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
-public record TextProjection(Text text, String scope, boolean edit) implements Projection.Delegate<Text> {
+public record TextProjection(Text text, String style, boolean edit) implements Projection.Delegate<Text> {
     public static Projection<Text> space = label(" ", "punctuation.space");
     public static Projection<Text> openParen = label("(", "punctuation.paren");
     public static Projection<Text> closeParen = label(")", "punctuation.paren");
@@ -37,7 +37,7 @@ public record TextProjection(Text text, String scope, boolean edit) implements P
             .withEdit(edit)
             .withInsert(character -> Option.some(new Text(text.chars().insert(i, character))))
             .withDelete(() -> Option.some(new Text(text.chars().removeAt(i))))
-            .mapStyle(style -> style.of(scope)));
+            .withStyle(style));
         return Projection.chars(chars.append(trail));
     }
 }

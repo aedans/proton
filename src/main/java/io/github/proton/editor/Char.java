@@ -2,7 +2,6 @@ package io.github.proton.editor;
 
 import io.vavr.control.Option;
 
-import java.awt.*;
 import java.util.function.*;
 
 public interface Char<T> {
@@ -10,7 +9,9 @@ public interface Char<T> {
 
     boolean merge();
 
-    StyledCharacter character(Style style);
+    char character();
+
+    String style();
 
     Option<T> insert(char character);
 
@@ -33,8 +34,13 @@ public interface Char<T> {
             }
 
             @Override
-            public StyledCharacter character(Style style) {
-                return style.base(c);
+            public char character() {
+                return c;
+            }
+
+            @Override
+            public String style() {
+                return "";
             }
 
             @Override
@@ -47,25 +53,6 @@ public interface Char<T> {
                 return Option.none();
             }
         };
-    }
-
-    default char character() {
-        return character(new Style() {
-            @Override
-            public Color background() {
-                return null;
-            }
-
-            @Override
-            public StyledCharacter base(char character) {
-                return new StyledCharacter(character, null);
-            }
-
-            @Override
-            public StyledCharacter style(String scope, char character) {
-                return new StyledCharacter(character, null);
-            }
-        }).character();
     }
 
     default Char<T> withEdit(boolean edit) {
@@ -96,7 +83,7 @@ public interface Char<T> {
         };
     }
 
-    default Char<T> withCharacter(Function<Style, StyledCharacter> character) {
+    default Char<T> withCharacter(char character) {
         return new Delegate<T>() {
             @Override
             public Char<T> delegate() {
@@ -104,8 +91,22 @@ public interface Char<T> {
             }
 
             @Override
-            public StyledCharacter character(Style style) {
-                return character.apply(style);
+            public char character() {
+                return character;
+            }
+        };
+    }
+
+    default Char<T> withStyle(String style) {
+        return new Delegate<T>() {
+            @Override
+            public Char<T> delegate() {
+                return Char.this;
+            }
+
+            @Override
+            public String style() {
+                return style;
             }
         };
     }
@@ -138,10 +139,6 @@ public interface Char<T> {
         };
     }
 
-    default Char<T> mapStyle(Function<Style, Style> function) {
-        return withCharacter(style -> character(function.apply(style)));
-    }
-
     default <A> Char<A> map(Function<T, A> map) {
         return modify(
             character -> insert(character).map(map),
@@ -162,8 +159,13 @@ public interface Char<T> {
             }
 
             @Override
-            public StyledCharacter character(Style style) {
-                return Char.this.character(style);
+            public char character() {
+                return Char.this.character();
+            }
+
+            @Override
+            public String style() {
+                return Char.this.style();
             }
 
             @Override
@@ -192,8 +194,13 @@ public interface Char<T> {
         }
 
         @Override
-        default StyledCharacter character(Style style) {
-            return delegate().character(style);
+        default char character() {
+            return delegate().character();
+        }
+
+        @Override
+        default String style() {
+            return delegate().style();
         }
 
         @Override

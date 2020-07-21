@@ -60,7 +60,7 @@ public interface Projection<T> {
             return concat(a.init().append(b.head()), b.tail());
         } else if (a.last().merge() && !b.head().edit()) {
             return concat(a.init().append(a.last()
-                .withCharacter(b.head()::character)
+                .withCharacter(b.head().character())
                 .withEdit(a.last().edit())
                 .withMerge(false)), b.tail());
         } else {

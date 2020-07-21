@@ -6,7 +6,6 @@ import io.vavr.control.Option;
 import java.awt.event.KeyEvent;
 
 public final class Editor<T> {
-    public final Style style;
     public final Projector<T> projector;
     public final int width;
     public final T tree;
@@ -14,12 +13,16 @@ public final class Editor<T> {
     public final int col;
     public final Vector<Char<T>> chars;
 
-    public Editor(Style style, Projector<T> projector, int width, T tree, int index) {
-        this(style, projector, width, tree, index, Option.none());
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Editor(T tree) {
+        this(Projector.get((Class) tree.getClass()), 0, tree, 0);
     }
 
-    public Editor(Style style, Projector<T> projector, int width, T tree, int index, Option<Integer> col) {
-        this.style = style;
+    public Editor(Projector<T> projector, int width, T tree, int index) {
+        this(projector, width, tree, index, Option.none());
+    }
+
+    public Editor(Projector<T> projector, int width, T tree, int index, Option<Integer> col) {
         this.projector = projector;
         this.width = width;
         this.tree = tree;
@@ -85,48 +88,48 @@ public final class Editor<T> {
         }
     }
 
-    public Editor<T> update(KeyEvent key) {
-        if (chars.isEmpty())
-            return this;
-        return switch (key.getKeyCode()) {
-            case KeyEvent.VK_LEFT -> new Editor<>(style, projector, width, tree, left(index));
-            case KeyEvent.VK_RIGHT -> new Editor<>(style, projector, width, tree, right(chars, index));
-            case KeyEvent.VK_UP -> new Editor<>(style, projector, width, tree, up(chars, index, col), Option.some(col));
-            case KeyEvent.VK_DOWN -> new Editor<>(style, projector, width, tree, down(chars, index, col), Option.some(col));
-            case KeyEvent.VK_DELETE -> delete();
-            case KeyEvent.VK_BACK_SPACE -> backspace();
-            case KeyEvent.VK_ENTER -> enter();
-            case KeyEvent.VK_SHIFT, KeyEvent.VK_ALT, KeyEvent.VK_CAPS_LOCK, KeyEvent.VK_ESCAPE, KeyEvent.VK_CONTROL -> this;
-            default -> insert(key.getKeyChar());
-        };
+    public Editor<T> left() {
+        return new Editor<>(projector, width, tree, left(index));
+    }
+
+    public Editor<T> right() {
+        return new Editor<>(projector, width, tree, right(chars, index));
+    }
+
+    public Editor<T> up() {
+        return new Editor<>(projector, width, tree, up(chars, index, col), Option.some(col));
+    }
+
+    public Editor<T> down() {
+        return new Editor<>(projector, width, tree, down(chars, index, col), Option.some(col));
     }
 
     public Editor<T> select(int dot) {
         if (dot >= chars.length()) {
             return this;
         } else {
-            return new Editor<>(style, projector, width, tree, chars.take(dot).filter(Char::edit).length());
+            return new Editor<>(projector, width, tree, chars.take(dot).filter(Char::edit).length());
         }
     }
 
     public Editor<T> delete() {
-        return new Editor<>(style, projector, width, selected(chars, index).delete().getOrElse(tree), index);
+        return new Editor<>(projector, width, selected(chars, index).delete().getOrElse(tree), index);
     }
 
     public Editor<T> backspace() {
         if (index == 0) {
             return this;
         } else {
-            return new Editor<>(style, projector, width, selected(chars, index - 1).delete().getOrElse(tree), index - 1);
+            return new Editor<>(projector, width, selected(chars, index - 1).delete().getOrElse(tree), index - 1);
         }
     }
 
     public Editor<T> enter() {
         var t = selected(chars, index).insert('\n').getOrElse(tree);
-        return new Editor<>(style, projector, width, t, down(projector.project(t).chars(width), index, col));
+        return new Editor<>(projector, width, t, down(projector.project(t).chars(width), index, col));
     }
 
     public Editor<T> insert(char c) {
-        return new Editor<>(style, projector, width, selected(chars, index).insert(c).getOrElse(tree), index + 1);
+        return new Editor<>(projector, width, selected(chars, index).insert(c).getOrElse(tree), index + 1);
     }
 }
