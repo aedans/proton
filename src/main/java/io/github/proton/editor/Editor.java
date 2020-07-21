@@ -7,29 +7,31 @@ public final class Editor<T> {
     public final Projector<T> projector;
     public final int width;
     public final T tree;
-    public final int index;
+    public final int dot;
+    public final int mark;
     public final int col;
     public final Vector<Char<T>> chars;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Editor(T tree) {
-        this(Projector.get((Class) tree.getClass()), 0, tree, 0);
+        this(Projector.get((Class) tree.getClass()), 0, tree, 0, 0);
     }
 
-    public Editor(Projector<T> projector, int width, T tree, int index) {
-        this(projector, width, tree, index, Option.none());
+    public Editor(Projector<T> projector, int width, T tree, int dot, int mark) {
+        this(projector, width, tree, dot, mark, Option.none());
     }
 
-    public Editor(Projector<T> projector, int width, T tree, int index, Option<Integer> col) {
+    public Editor(Projector<T> projector, int width, T tree, int dot, int mark, Option<Integer> col) {
         this.projector = projector;
         this.width = width;
         this.tree = tree;
-        this.index = index;
+        this.dot = dot;
+        this.mark = mark;
         this.chars = projector.project(tree).chars(width);
-        this.col = col.getOrElse(() -> position(chars, index).col());
+        this.col = col.getOrElse(() -> position(chars, dot).col());
     }
 
-    public static <T> int selectedLength(Vector<Char<T>> chars) {
+    private static <T> int selectedLength(Vector<Char<T>> chars) {
         return chars.filter(Char::edit).length();
     }
 
@@ -42,27 +44,27 @@ public final class Editor<T> {
         }
     }
 
-    public static <T> Char<T> selected(Vector<Char<T>> chars, int index) {
+    private static <T> Char<T> selected(Vector<Char<T>> chars, int index) {
         return chars.get(selectedIndex(chars, index));
     }
 
-    public static <T> Position position(Vector<Char<T>> chars, int index) {
+    private static <T> Position position(Vector<Char<T>> chars, int index) {
         var i = selectedIndex(chars, index);
         var row = chars.take(i).filter(x -> x.character() == '\n').length();
         var col = chars.take(i).reverse().takeUntil(x -> x.character() == '\n').size();
         return new Position(row, col);
     }
 
-    public static int left(int index) {
+    private static int left(int index) {
         return index <= 1 ? 0 : index - 1;
     }
 
-    public static <T> int right(Vector<Char<T>> chars, int index) {
+    private static <T> int right(Vector<Char<T>> chars, int index) {
         var size = selectedLength(chars) - 1;
         return index >= size ? size : index + 1;
     }
 
-    public static <T> int up(Vector<Char<T>> chars, int index, int col) {
+    private static <T> int up(Vector<Char<T>> chars, int index, int col) {
         var target = position(chars, index).withRelativeRow(-1).withCol(col);
         while (true) {
             index--;
@@ -76,7 +78,7 @@ public final class Editor<T> {
         }
     }
 
-    public static <T> int down(Vector<Char<T>> chars, int index, int col) {
+    private static <T> int down(Vector<Char<T>> chars, int index, int col) {
         var target = position(chars, index).withRelativeRow(1).withCol(col);
         var size = selectedLength(chars) - 1;
         while (true) {
@@ -91,48 +93,105 @@ public final class Editor<T> {
         }
     }
 
+    private static <T> T deleteRange(T tree, Projector<T> projector, int width, int start, int end) {
+        for (int i = end - 1; i >= start; --i) {
+            var chars = projector.project(tree).chars(width);
+            tree = selected(chars, i).delete().getOrElse(tree);
+        }
+        return tree;
+    }
+
+    private static <T> T delete(T tree, Projector<T> projector, int width, int dot, int mark) {
+        if (dot < mark) {
+            return deleteRange(tree, projector, width, dot, mark);
+        } else if (dot > mark) {
+            return deleteRange(tree, projector, width, mark, dot);
+        } else {
+            return tree;
+        }
+    }
+
     public Editor<T> left() {
-        return new Editor<>(projector, width, tree, left(index));
+        int left;
+        if (dot == mark) {
+            left = left(dot);
+        } else {
+            left = Math.min(dot, mark);
+        }
+        return new Editor<>(projector, width, tree, left, left);
     }
 
     public Editor<T> right() {
-        return new Editor<>(projector, width, tree, right(chars, index));
+        int right;
+        if (dot == mark) {
+            right = right(chars, dot);
+        } else {
+            right = Math.max(dot, mark);
+        }
+        return new Editor<>(projector, width, tree, right, right);
     }
 
     public Editor<T> up() {
-        return new Editor<>(projector, width, tree, up(chars, index, col), Option.some(col));
+        int up = up(chars, dot, col);
+        return new Editor<>(projector, width, tree, up, up, Option.some(col));
     }
 
     public Editor<T> down() {
-        return new Editor<>(projector, width, tree, down(chars, index, col), Option.some(col));
+        int down = down(chars, dot, col);
+        return new Editor<>(projector, width, tree, down, down, Option.some(col));
     }
 
-    public Editor<T> select(int dot) {
-        if (dot >= chars.length()) {
+    public Editor<T> select(int dot, int mark) {
+        if (dot >= chars.length() || mark >= chars.length()) {
             return this;
         } else {
-            return new Editor<>(projector, width, tree, chars.take(dot).filter(Char::edit).length());
+            return new Editor<>(projector, width, tree,
+                chars.take(dot).filter(Char::edit).length(),
+                chars.take(mark).filter(Char::edit).length());
+        }
+    }
+
+    public Editor<T> backspace() {
+        if (dot == mark) {
+            if (dot == 0) {
+                return this;
+            } else {
+                var left = left(dot);
+                return new Editor<>(projector, width, selected(chars, left).delete().getOrElse(tree), left, left);
+            }
+        } else {
+            var t = delete(tree, projector, width, dot, mark);
+            var left = Math.min(dot, mark);
+            return new Editor<>(projector, width, t, left, left);
         }
     }
 
     public Editor<T> delete() {
-        return new Editor<>(projector, width, selected(chars, index).delete().getOrElse(tree), index);
-    }
-
-    public Editor<T> backspace() {
-        if (index == 0) {
-            return this;
+        if (dot == mark) {
+            return new Editor<>(projector, width, selected(chars, dot).delete().getOrElse(tree), dot, dot);
         } else {
-            return new Editor<>(projector, width, selected(chars, index - 1).delete().getOrElse(tree), index - 1);
+            var t = delete(tree, projector, width, dot, mark);
+            var left = Math.min(dot, mark);
+            return new Editor<>(projector, width, t, left, left);
         }
     }
 
     public Editor<T> enter() {
-        var t = selected(chars, index).insert('\n').getOrElse(tree);
-        return new Editor<>(projector, width, t, down(projector.project(t).chars(width), index, 0));
+        var inserted = insert('\n');
+        var down = down(inserted.chars, Math.min(dot, mark), 0);
+        return new Editor<>(projector, width, inserted.tree, down, down);
     }
 
     public Editor<T> insert(char c) {
-        return new Editor<>(projector, width, selected(chars, index).insert(c).getOrElse(tree), index + 1);
+        if (dot == mark) {
+            var t = selected(chars, dot).insert(c).getOrElse(tree);
+            var right = right(projector.project(t).chars(width), dot);
+            return new Editor<>(projector, width, t, right, right);
+        } else {
+            var t = delete(tree, projector, width, dot, mark);
+            t = selected(projector.project(t).chars(width), Math.min(dot, mark)).insert(c).getOrElse(t);
+            var right = right(projector.project(t).chars(width), Math.min(dot, mark));
+            return new Editor<>(projector, width, t, right, right);
+        }
     }
 }

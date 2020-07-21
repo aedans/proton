@@ -17,11 +17,15 @@ public final class EditorComponent extends JTextPane {
     }
 
     {
+        for (Object o : getActionMap().allKeys()) {
+            System.out.println(o);
+        }
+
         getActionMap().put(getInputMap().get(KeyStroke.getKeyStroke(' ')), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 var c = e.getActionCommand().charAt(0);
-                if (!(c < 32)) {
+                if (c >= ' ' && c != 127) {
                     setEditor(editor.insert(e.getActionCommand().charAt(0)));
                 }
             }
@@ -69,6 +73,29 @@ public final class EditorComponent extends JTextPane {
             }
         });
 
+        getActionMap().put("delete-previous-word", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getActionMap().get("selection-previous-word").actionPerformed(e);
+                getActionMap().get("delete-previous").actionPerformed(e);
+            }
+        });
+
+        getActionMap().put("delete-next", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditor(editor.delete());
+            }
+        });
+
+        getActionMap().put("delete-next-word", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getActionMap().get("selection-next-word").actionPerformed(e);
+                getActionMap().get("delete-next").actionPerformed(e);
+            }
+        });
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -76,13 +103,14 @@ public final class EditorComponent extends JTextPane {
                     editor.projector,
                     ((getWidth() - 2) / Math.max(1, width)) - 2,
                     editor.tree,
-                    editor.index
+                    editor.dot,
+                    editor.mark
                 ));
             }
         });
 
         addCaretListener(e -> {
-            editor = editor.select(e.getDot());
+            editor = editor.select(e.getDot(), e.getMark());
         });
     }
 
@@ -100,7 +128,7 @@ public final class EditorComponent extends JTextPane {
     private void render() {
         var editor = this.editor;
         setText(editor.chars.init().map(Char::character).mkString());
-        setCaretPosition(Editor.selectedIndex(editor.chars, editor.index));
+        setCaretPosition(Editor.selectedIndex(editor.chars, editor.dot));
         setCaretColor(Color.WHITE);
 
         var theme = Plugins.getTheme();
