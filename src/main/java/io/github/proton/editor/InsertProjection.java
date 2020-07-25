@@ -28,8 +28,7 @@ public record InsertProjection<T>(Vector<T>vector,
             .intersperse(separator)
             .reduceOption(Projection::combine)
             .getOrElse(projector.apply(terminator).map(vector::append).mapChars(c -> c
-                .withDelete(Option::none)
-                .withStyle("comment.ignored")))
+                .withDelete(Option::none)))
             .map(x -> x.headOption()
                 .map(h -> isEmpty().test(h) ? Vector.<T>empty() : x)
                 .getOrElse(x));

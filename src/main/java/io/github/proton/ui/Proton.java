@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 import static javax.swing.ScrollPaneConstants.*;
 
-public final class Proton<T> extends JFrame {
+public final class Proton extends JFrame {
     public Proton(Path path) throws IOException {
         var editor = new EditorComponent(new Editor<>(new JavaFile(new JavaPackageDeclaration(new JavaIdentifier("")), Vector.of(), Vector.of())));
         var paths = new PathComponent(path, editor);
@@ -37,7 +37,7 @@ public final class Proton<T> extends JFrame {
         UIManager.setLookAndFeel(new ProtonLookAndFeel(Plugins.getTheme()));
         SwingUtilities.invokeLater(() -> {
             try {
-                new Proton<>(Path.of(args.length == 0 ? "." : args[0]));
+                new Proton(Path.of(args.length == 0 ? "." : args[0]));
             } catch (IOException e) {
                 e.printStackTrace();
             }

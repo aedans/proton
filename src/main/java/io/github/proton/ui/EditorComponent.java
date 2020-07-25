@@ -2,10 +2,12 @@ package io.github.proton.ui;
 
 import io.github.proton.editor.*;
 import io.github.proton.plugins.Plugins;
+import io.vavr.collection.Vector;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 
 public final class EditorComponent extends JTextPane {
@@ -17,16 +19,13 @@ public final class EditorComponent extends JTextPane {
     }
 
     {
-        for (Object o : getActionMap().allKeys()) {
-            System.out.println(o);
-        }
-
-        getActionMap().put(getInputMap().get(KeyStroke.getKeyStroke(' ')), new AbstractAction() {
+        var insertKey = getInputMap().get(KeyStroke.getKeyStroke(' '));
+        getActionMap().put(insertKey, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 var c = e.getActionCommand().charAt(0);
                 if (c >= ' ' && c != 127) {
-                    setEditor(editor.insert(e.getActionCommand().charAt(0)));
+                    setEditor(editor.insert(c));
                 }
             }
         });
@@ -96,6 +95,18 @@ public final class EditorComponent extends JTextPane {
             }
         });
 
+        getActionMap().put("paste-from-clipboard", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+                    Vector.ofAll(data.toCharArray()).forEach(c -> setEditor(editor.insert(c)));
+                } catch (Exception exception) {
+                    throw new RuntimeException(exception);
+                }
+            }
+        });
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -109,9 +120,7 @@ public final class EditorComponent extends JTextPane {
             }
         });
 
-        addCaretListener(e -> {
-            editor = editor.select(e.getDot(), e.getMark());
-        });
+        addCaretListener(e -> editor = editor.select(e.getDot(), e.getMark()));
     }
 
     @Override
