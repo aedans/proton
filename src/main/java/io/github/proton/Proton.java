@@ -1,8 +1,9 @@
-package io.github.proton.ui;
+package io.github.proton;
 
-import io.github.proton.editor.*;
+import io.github.proton.editor.Editor;
 import io.github.proton.plugins.Plugins;
 import io.github.proton.plugins.java.tree.*;
+import io.github.proton.ui.*;
 import io.vavr.collection.Vector;
 
 import javax.swing.*;

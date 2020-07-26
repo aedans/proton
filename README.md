@@ -66,7 +66,7 @@ Using Proton
 ------------
 
 Proton can be run easily by cloning this repository and building it with
-gradle. Note that Proton requires Java 15 to run.
+gradle. Note that Proton requires Java 14 to run.
 
     git clone https://github.com/aedans/proton.git
     cd proton

@@ -7,7 +7,7 @@ import io.vavr.collection.Vector;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.*;
 
 public final class EditorComponent extends JTextPane {

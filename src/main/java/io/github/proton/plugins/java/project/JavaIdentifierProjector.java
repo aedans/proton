@@ -14,7 +14,7 @@ public final class JavaIdentifierProjector implements Projector<JavaIdentifier> 
 
     @Override
     public Projection<JavaIdentifier> project(JavaIdentifier identifier) {
-        return TextProjection.text(new Text(identifier.chars()), "").mapChars(c -> c.modify(
+        return TextProjection.text(new Text(identifier.chars()), "").mapChar(c -> c.modify(
             character -> JavaIdentifier.isValid(character)
                 ? c.insert(character).map(JavaIdentifier::new)
                 : Option.none(),

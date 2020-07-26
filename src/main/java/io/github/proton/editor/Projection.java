@@ -61,6 +61,7 @@ public interface Projection<T> {
         } else if (a.last().merge() && !b.head().edit()) {
             return concat(a.init().append(a.last()
                 .withCharacter(b.head().character())
+                .withStyle(b.head().style())
                 .withEdit(a.last().edit())
                 .withMerge(false)), b.tail());
         } else {
@@ -88,7 +89,11 @@ public interface Projection<T> {
         return (width, fit, space, position, indent) -> project(width, fit, space, position, indent).map(f);
     }
 
-    default <A> Projection<A> mapChars(Function<Char<T>, Char<A>> f) {
+    default <A> Projection<A> mapChar(Function<Char<T>, Char<A>> f) {
+        return (width, fit, space, position, indent) -> project(width, fit, space, position, indent).mapChar(f);
+    }
+
+    default <A> Projection<A> mapChars(Function<Vector<Char<T>>, Vector<Char<A>>> f) {
         return (width, fit, space, position, indent) -> project(width, fit, space, position, indent).mapChars(f);
     }
 
@@ -110,8 +115,12 @@ public interface Projection<T> {
             return new Result<>(space, position, chars.map(c -> c.map(f)));
         }
 
-        public <A> Result<A> mapChars(Function<Char<T>, Char<A>> f) {
-            return new Result<>(space, position, chars.map(f));
+        public <A> Result<A> mapChar(Function<Char<T>, Char<A>> f) {
+            return mapChars(chars -> chars.map(f));
+        }
+
+        public <A> Result<A> mapChars(Function<Vector<Char<T>>, Vector<Char<A>>> f) {
+            return new Result<>(space, position, f.apply(chars));
         }
     }
 }

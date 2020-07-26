@@ -19,22 +19,22 @@ public final class JavaMemberProjector implements Projector<JavaMember> {
     public Projection<JavaMember> project(JavaMember member) {
         if (member instanceof JavaFieldMember fieldMember) {
             return Projector.get(JavaFieldMember.class).project(fieldMember).map(x -> x)
-                .mapChars(c -> methodChar(c, fieldMember))
-                .mapChars(c -> setFieldChar(c, fieldMember));
+                .mapChar(c -> methodChar(c, fieldMember))
+                .mapChar(c -> setFieldChar(c, fieldMember));
         } else if (member instanceof JavaSetFieldMember setFieldMember) {
             return Projector.get(JavaSetFieldMember.class).project(setFieldMember).map(x -> x)
-                .mapChars(c -> setFieldMember.expression().isEmpty()
+                .mapChar(c -> setFieldMember.expression().isEmpty()
                     ? methodChar(c, setFieldMember.fieldMember())
                     : c.map(x -> x))
-                .mapChars(c -> setFieldMember.expression().isEmpty()
+                .mapChar(c -> setFieldMember.expression().isEmpty()
                     ? fieldChar(c, setFieldMember.fieldMember())
                     : c.map(x -> x));
         } else if (member instanceof JavaMethodMember methodMember) {
             return Projector.get(JavaMethodMember.class).project(methodMember).map(x -> x)
-                .mapChars(c -> methodMember.statements().isEmpty()
+                .mapChar(c -> methodMember.statements().isEmpty()
                     ? setFieldChar(c, new JavaFieldMember(methodMember.type(), methodMember.name()))
                     : c.map(x -> x))
-                .mapChars(c -> methodMember.statements().isEmpty()
+                .mapChar(c -> methodMember.statements().isEmpty()
                     ? fieldChar(c, new JavaFieldMember(methodMember.type(), methodMember.name()))
                     : c.map(x -> x));
         } else {

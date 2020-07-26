@@ -27,7 +27,7 @@ public final class JavaStatementProjector implements Projector<JavaStatement> {
                 .map(x -> (JavaStatement) new JavaReturnStatement(x));
             var ret = TextProjection.text("return", "keyword")
                 .map(JavaIdentifier::new)
-                .mapChars(JavaExpressionProjector::identifierChar)
+                .mapChar(JavaExpressionProjector::identifierChar)
                 .map(x -> (JavaStatement) x);
             return ret
                 .combine(TextProjection.space.of(r))
@@ -38,29 +38,33 @@ public final class JavaStatementProjector implements Projector<JavaStatement> {
                 .project(f.condition())
                 .map(c -> (JavaStatement) new JavaIfStatement(c, f.trueBlock(), f.falseBlock()));
             Projector<JavaStatement> statementProjector = Projector.get(JavaStatement.class);
-            var trueBlock = new AppendProjection<>(
+            var trueBlock = new VectorProjection<>(
                 f.trueBlock(),
-                x -> Projection.<JavaStatement>newline().combine(statementProjector.project(x)).indent(2),
+                statementProjector::project,
                 new JavaIdentifierExpression(""),
-                JavaStatement::isEmpty
+                Projection.newline(),
+                JavaStatement::isEmpty,
+                x -> x == '\n'
             ).map(ts -> new JavaIfStatement(f.condition(), ts, f.falseBlock()));
-            var falseBlock = new AppendProjection<>(
+            var falseBlock = new VectorProjection<>(
                 f.falseBlock(),
-                x -> Projection.<JavaStatement>newline().combine(statementProjector.project(x)).indent(2),
+                statementProjector::project,
                 new JavaIdentifierExpression(""),
-                JavaStatement::isEmpty
+                Projection.newline(),
+                JavaStatement::isEmpty,
+                x -> x == '\n'
             ).map(fs -> new JavaIfStatement(f.condition(), f.trueBlock(), fs));
             var iff = TextProjection.text("if", "keyword")
                 .map(JavaIdentifier::new)
-                .mapChars(JavaExpressionProjector::identifierChar)
+                .mapChar(JavaExpressionProjector::identifierChar)
                 .map(x -> (JavaStatement) x);
             return iff
                 .combine(TextProjection.space.of(f))
                 .combine(condition.group())
-                .combine(trueBlock.map(x -> x))
+                .combine(Projection.<JavaStatement>newline().combine(trueBlock.map(x -> x)).indent(2))
                 .combine(Projection.trailingNewline())
                 .combine(TextProjection.label("else", "keyword").of(f))
-                .combine(falseBlock.map(x -> x));
+                .combine(Projection.<JavaStatement>newline().combine(falseBlock.map(x -> x)).indent(2));
         } else if (statement instanceof JavaExpression expression) {
             return Projector.get(JavaExpression.class).project(expression).map(x -> x);
         } else {

@@ -1,6 +1,6 @@
 package io.github.proton.plugins.style;
 
-import io.github.proton.editor.*;
+import io.github.proton.editor.Theme;
 import org.pf4j.Extension;
 
 import java.awt.*;

@@ -21,12 +21,14 @@ public final class JavaMethodMemberProjector implements Projector<JavaMethodMemb
         var name = Projector.get(JavaIdentifier.class)
             .project(methodMember.name())
             .map(n -> new JavaMethodMember(methodMember.type(), n, methodMember.statements()));
-        Projector<JavaStatement> statementProjector = Projector.get(JavaStatement.class);
-        var statements = new AppendProjection<>(
+        var statementProjector = Projector.get(JavaStatement.class);
+        var statements = new VectorProjection<>(
             methodMember.statements(),
-            x -> Projection.<JavaStatement>newline().combine(statementProjector.project(x).group()).indent(2),
+            x -> statementProjector.project(x).group(),
             new JavaIdentifierExpression(""),
-            JavaStatement::isEmpty
+            Projection.newline(),
+            JavaStatement::isEmpty,
+            x -> x == '\n'
         ).map(es -> new JavaMethodMember(methodMember.type(), methodMember.name(), es));
         return type
             .combine(TextProjection.space.of(methodMember))
@@ -34,6 +36,6 @@ public final class JavaMethodMemberProjector implements Projector<JavaMethodMemb
             .combine(TextProjection.openParen.of(methodMember))
             .combine(TextProjection.closeParen.of(methodMember))
             .combine(TextProjection.space.of(methodMember))
-            .combine(statements);
+            .combine(Projection.<JavaMethodMember>newline().combine(statements).indent(2));
     }
 }

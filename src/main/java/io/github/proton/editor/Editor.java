@@ -25,9 +25,9 @@ public final class Editor<T> {
         this.projector = projector;
         this.width = width;
         this.tree = tree;
-        this.dot = dot;
-        this.mark = mark;
         this.chars = projector.project(tree).chars(width);
+        this.dot = constrain(chars, dot);
+        this.mark = constrain(chars, mark);
         this.col = col.getOrElse(() -> position(chars, dot).col());
     }
 
@@ -55,13 +55,9 @@ public final class Editor<T> {
         return new Position(row, col);
     }
 
-    private static int left(int index) {
-        return index <= 1 ? 0 : index - 1;
-    }
-
-    private static <T> int right(Vector<Char<T>> chars, int index) {
+    private static <T> int constrain(Vector<Char<T>> chars, int index) {
         var size = selectedLength(chars) - 1;
-        return index >= size ? size : index + 1;
+        return index <= 0 ? 0 : Math.min(index, size);
     }
 
     private static <T> int up(Vector<Char<T>> chars, int index, int col) {
@@ -114,7 +110,7 @@ public final class Editor<T> {
     public Editor<T> left() {
         int left;
         if (dot == mark) {
-            left = left(dot);
+            left = dot - 1;
         } else {
             left = Math.min(dot, mark);
         }
@@ -124,7 +120,7 @@ public final class Editor<T> {
     public Editor<T> right() {
         int right;
         if (dot == mark) {
-            right = right(chars, dot);
+            right = dot + 1;
         } else {
             right = Math.max(dot, mark);
         }
@@ -156,7 +152,7 @@ public final class Editor<T> {
             if (dot == 0) {
                 return this;
             } else {
-                var left = left(dot);
+                var left = dot - 1;
                 return new Editor<>(projector, width, selected(chars, left).delete().getOrElse(tree), left, left);
             }
         } else {
@@ -168,7 +164,8 @@ public final class Editor<T> {
 
     public Editor<T> delete() {
         if (dot == mark) {
-            return new Editor<>(projector, width, selected(chars, dot).delete().getOrElse(tree), dot, dot);
+            var here = constrain(chars, dot);
+            return new Editor<>(projector, width, selected(chars, dot).delete().getOrElse(tree), here, here);
         } else {
             var t = delete(tree, projector, width, dot, mark);
             var left = Math.min(dot, mark);
@@ -185,12 +182,12 @@ public final class Editor<T> {
     public Editor<T> insert(char c) {
         if (dot == mark) {
             var t = selected(chars, dot).insert(c).getOrElse(tree);
-            var right = right(projector.project(t).chars(width), dot);
+            var right = dot + 1;
             return new Editor<>(projector, width, t, right, right);
         } else {
             var t = delete(tree, projector, width, dot, mark);
             t = selected(projector.project(t).chars(width), Math.min(dot, mark)).insert(c).getOrElse(t);
-            var right = right(projector.project(t).chars(width), Math.min(dot, mark));
+            var right = Math.min(dot, mark) + 1;
             return new Editor<>(projector, width, t, right, right);
         }
     }
