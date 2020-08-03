@@ -3,7 +3,7 @@ package io.github.proton.plugins.java.tree;
 import io.github.proton.editor.Text;
 import io.vavr.collection.Vector;
 
-public record JavaIdentifier(Vector<Character>chars) {
+public record JavaIdentifier(Vector<Character> chars) {
     public JavaIdentifier(String name) {
         this(new Text(name));
     }

@@ -110,7 +110,7 @@ public interface Projection<T> {
         Projection<T> delegate();
     }
 
-    record Result<T>(int space, int position, Vector<Char<T>>chars) {
+    record Result<T>(int space, int position, Vector<Char<T>> chars) {
         public <A> Result<A> map(Function<T, A> f) {
             return new Result<>(space, position, chars.map(c -> c.map(f)));
         }

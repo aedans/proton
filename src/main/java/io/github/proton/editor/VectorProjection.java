@@ -5,12 +5,27 @@ import io.vavr.control.Option;
 
 import java.util.function.*;
 
-public record VectorProjection<T>(Vector<T>vector,
-                                  Function<T, Projection<T>>projector,
+public record VectorProjection<T>(Vector<T> vector,
+                                  Function<T, Projection<T>> projector,
                                   T empty,
-                                  Projection<Vector<T>>separator,
-                                  Predicate<T>isEmpty,
-                                  Predicate<Character>insert) implements Projection.Delegate<Vector<T>> {
+                                  Projection<?> separator,
+                                  Predicate<T> isEmpty,
+                                  Predicate<Character> insert) implements Projection.Delegate<Vector<T>> {
+    public Projection<Vector<T>> withAppend() {
+        return withAppend(separator);
+    }
+
+    public Projection<Vector<T>> withAppend(Projection<?> separator) {
+        return this
+            .combine(separator.of(vector))
+            .combine((Delegate<Vector<T>>) () -> projector.apply(empty).map(vector::append));
+    }
+
+    @Override
+    public VectorProjection<T> indent(int i) {
+        return new VectorProjection<>(vector, x -> projector.apply(x).indent(i), empty, separator.indent(i), isEmpty, insert);
+    }
+
     @Override
     public Projection<Vector<T>> delegate() {
         var vector = this.vector.isEmpty() ? Vector.of(empty) : this.vector;
@@ -38,7 +53,7 @@ public record VectorProjection<T>(Vector<T>vector,
                                 ? Option.some(vector.removeAt(i + 1))
                                 : Option.none())));
                 }))
-            .intersperse(separator)
+            .intersperse(separator.of(vector))
             .reduce(Projection::combine)
             .map(x -> x.size() == 1 && isEmpty.test(x.head()) ? Vector.empty() : x);
     }

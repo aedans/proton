@@ -28,10 +28,14 @@ public final class JavaClassDeclarationProjector implements Projector<JavaClassD
             Projection.newline(),
             JavaMember::isEmpty,
             x -> x == '\n'
-        ).map(ms -> new JavaClassDeclaration(classDeclaration.name(), ms));
+        ).indent(2)
+            .withAppend(Projection.<Text>newline().combine(TextProjection.closeBracket))
+            .map(ms -> new JavaClassDeclaration(classDeclaration.name(), ms));
         return label
             .combine(TextProjection.space.of(classDeclaration))
             .combine(name)
-            .combine(Projection.<JavaClassDeclaration>newline().combine(members).indent(2));
+            .combine(TextProjection.space.of(classDeclaration))
+            .combine(TextProjection.openBracket.of(classDeclaration))
+            .combine(Projection.<JavaClassDeclaration>newline().indent(2).combine(members));
     }
 }

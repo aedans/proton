@@ -29,13 +29,16 @@ public final class JavaMethodMemberProjector implements Projector<JavaMethodMemb
             Projection.newline(),
             JavaStatement::isEmpty,
             x -> x == '\n'
-        ).map(es -> new JavaMethodMember(methodMember.type(), methodMember.name(), es));
+        ).indent(2)
+            .withAppend(Projection.<Text>newline().combine(TextProjection.closeBracket))
+            .map(es -> new JavaMethodMember(methodMember.type(), methodMember.name(), es));
         return type
             .combine(TextProjection.space.of(methodMember))
             .combine(name)
             .combine(TextProjection.openParen.of(methodMember))
             .combine(TextProjection.closeParen.of(methodMember))
             .combine(TextProjection.space.of(methodMember))
-            .combine(Projection.<JavaMethodMember>newline().combine(statements).indent(2));
+            .combine(TextProjection.openBracket.of(methodMember))
+            .combine(Projection.<JavaMethodMember>newline().indent(2).combine(statements));
     }
 }

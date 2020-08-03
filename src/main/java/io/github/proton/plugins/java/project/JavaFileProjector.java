@@ -30,9 +30,9 @@ public final class JavaFileProjector implements Projector<JavaFile> {
             javaFile.classDeclarations(),
             Projector.get(JavaClassDeclaration.class)::project,
             new JavaClassDeclaration(new JavaIdentifier(""), Vector.empty()),
-            Projection.newline(),
+            Projection.trailingNewline().combine(Projection.newline()),
             JavaClassDeclaration::isEmpty,
-            x -> false
+            x -> x == '\n'
         ).map(x -> new JavaFile(javaFile.packageDeclaration(), javaFile.importDeclarations(), x));
         return packageProjection
             .combine(Projection.trailingNewline())
