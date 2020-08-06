@@ -1,6 +1,7 @@
 package io.github.proton.editor;
 
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
 import java.util.function.Function;
 
@@ -95,6 +96,14 @@ public interface Projection<T> {
 
     default <A> Projection<A> mapChars(Function<Vector<Char<T>>, Vector<Char<A>>> f) {
         return (width, fit, space, position, indent) -> project(width, fit, space, position, indent).mapChars(f);
+    }
+
+    default Projection<T> updateFirstChar(Function<Char<T>, Char<T>> f) {
+        return mapChars(chars -> chars.update(chars.zipWithIndex().find(x -> x._1.edit()).get()._2, f));
+    }
+
+    default Projection<T> updateLastChar(Function<Char<T>, Char<T>> f) {
+        return mapChars(chars -> chars.update(chars.zipWithIndex().findLast(x -> x._1.edit()).get()._2, f));
     }
 
     default <A> Projection<A> of(A a) {

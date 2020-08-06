@@ -2,6 +2,7 @@ package io.github.proton.ui;
 
 import io.github.proton.editor.Editor;
 import io.github.proton.io.PathReader;
+import io.github.proton.plugins.Plugins;
 import io.vavr.collection.Vector;
 
 import javax.swing.*;
@@ -14,12 +15,14 @@ public final class PathComponent extends JTree {
         super(load(path));
 
         addTreeSelectionListener(e -> {
-            Path p = Path.of(Vector.range(0, e.getPath().getPathCount())
+            var p = Path.of(Vector.range(0, e.getPath().getPathCount())
                 .map(i -> e.getPath().getPathComponent(i).toString())
                 .mkString("", "/", ""));
             try {
                 if (!Files.isDirectory(p)) {
-                    editor.setEditor(new Editor<>(PathReader.readStatic(p)));
+                    @SuppressWarnings("unchecked")
+                    var tree = Plugins.getExtension(PathReader.class).read(p).getOrNull();
+                    editor.setEditor(new Editor<>(tree));
                 }
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -30,9 +33,8 @@ public final class PathComponent extends JTree {
     private static MutableTreeNode load(Path path) throws IOException {
         var node = new DefaultMutableTreeNode(path.getFileName());
         if (Files.isDirectory(path)) {
-            Vector<Path> paths = Vector.ofAll(Files.list(path));
-            paths
-                .filter(x -> Files.isDirectory(x))
+            var paths = Vector.ofAll(Files.list(path));
+            paths.filter(Files::isDirectory)
                 .appendAll(paths.filter(x -> !Files.isDirectory(x)))
                 .forEach(p -> {
                     try {

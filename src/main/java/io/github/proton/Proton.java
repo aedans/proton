@@ -1,10 +1,8 @@
 package io.github.proton;
 
-import io.github.proton.editor.Editor;
+import io.github.proton.editor.*;
 import io.github.proton.plugins.Plugins;
-import io.github.proton.plugins.java.tree.*;
 import io.github.proton.ui.*;
-import io.vavr.collection.Vector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +13,7 @@ import static javax.swing.ScrollPaneConstants.*;
 
 public final class Proton extends JFrame {
     public Proton(Path path) throws IOException {
-        var editor = new EditorComponent(new Editor<>(new JavaFile(new JavaPackageDeclaration(new JavaIdentifier("")), Vector.of(), Vector.of())));
+        var editor = new EditorComponent(new Editor<>(new Text("")));
         var paths = new PathComponent(path, editor);
         var pane = new JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT,
@@ -35,7 +33,7 @@ public final class Proton extends JFrame {
 
     public static void main(String[] args) throws Exception {
         Plugins.start();
-        UIManager.setLookAndFeel(new ProtonLookAndFeel(Plugins.getTheme()));
+        UIManager.setLookAndFeel(new ProtonLookAndFeel(Plugins.getExtensions(Theme.class).get(0)));
         SwingUtilities.invokeLater(() -> {
             try {
                 new Proton(Path.of(args.length == 0 ? "." : args[0]));

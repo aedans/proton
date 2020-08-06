@@ -140,7 +140,7 @@ public final class EditorComponent extends JTextPane {
         setCaretPosition(Editor.selectedIndex(editor.chars, editor.dot));
         setCaretColor(Color.WHITE);
 
-        var theme = Plugins.getTheme();
+        var theme = Plugins.getExtensions(Theme.class).get(0);
         for (int i = 0; i < editor.chars.size(); i++) {
             var c = editor.chars.get(i);
             AttributeSet attributeSet = StyleContext.getDefaultStyleContext().addAttribute(

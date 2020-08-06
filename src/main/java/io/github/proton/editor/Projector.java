@@ -1,26 +1,13 @@
 package io.github.proton.editor;
 
-import io.github.proton.plugins.Plugins;
-import io.vavr.Tuple2;
-import io.vavr.collection.Map;
-import io.vavr.control.Option;
+import io.github.proton.plugins.*;
 import org.pf4j.ExtensionPoint;
 
-public interface Projector<T> extends ExtensionPoint {
-    @SuppressWarnings("rawtypes")
-    Map<Class, Projector> instances = Plugins.getExtensions(Projector.class)
-        .toMap(projector -> new Tuple2<>(projector.clazz(), projector));
-
-    static <T> Projector<T> get(Class<T> clazz) {
-        return getOption(clazz).getOrElseThrow(() -> new RuntimeException("Could not find projector for " + clazz));
-    }
-
+public interface Projector<T> extends ExtensionPoint, ForClass<T> {
     @SuppressWarnings("unchecked")
-    static <T> Option<Projector<T>> getOption(Class<T> clazz) {
-        return instances.get(clazz).map(projector -> (Projector<T>) projector);
+    static <T> Projector<T> get(Class<T> clazz) {
+        return Plugins.getExtensionFor(Projector.class, clazz);
     }
-
-    Class<T> clazz();
 
     Projection<T> project(T t);
 }
