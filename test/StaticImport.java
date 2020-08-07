@@ -1,1 +1,1 @@
-import static empty.*;
+import static io.github.empty;

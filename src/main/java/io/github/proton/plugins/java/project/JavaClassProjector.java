@@ -14,7 +14,7 @@ public final class JavaClassProjector implements Projector<JavaClass> {
     @Override
     public Projection<JavaClass> project(JavaClass javaClass) {
         var label = TextProjection.label("class", "keyword").of(javaClass);
-        var name = Projector.get(JavaName.class)
+        var name = Projector.get(JavaSimpleName.class)
             .project(javaClass.name())
             .map(JavaClass::new);
         return label

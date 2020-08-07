@@ -17,13 +17,13 @@ public final class JavaCompilationUnitProjector implements Projector<JavaCompila
         var packageProjection = new OptionProjection<>(
             compilationUnit.packageDeclaration(),
             Projector.get(JavaPackage.class)::project,
-            new JavaPackage(new JavaQualifiedIdentifier(Vector.empty())),
+            new JavaPackage(new JavaName(Vector.empty())),
             JavaPackage::isEmpty
         ).map(x -> new JavaCompilationUnit(x, compilationUnit.importDeclarations(), compilationUnit.classDeclarations()));
         var importsProjection = new VectorProjection<>(
             compilationUnit.importDeclarations(),
             Projector.get(JavaImport.class)::project,
-            new JavaImport(new JavaQualifiedIdentifier(Vector.empty()), false),
+            new JavaImport(new JavaName(Vector.empty()), false),
             Projection.newline(),
             JavaImport::isEmpty,
             x -> x == '\n'
@@ -31,7 +31,7 @@ public final class JavaCompilationUnitProjector implements Projector<JavaCompila
         var classesProjection = new VectorProjection<>(
             compilationUnit.classDeclarations(),
             Projector.get(JavaClass.class)::project,
-            new JavaClass(new JavaName("")),
+            new JavaClass(new JavaSimpleName("")),
             Projection.trailingNewline().combine(Projection.newline()),
             JavaClass::isEmpty,
             x -> false

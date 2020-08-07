@@ -1,13 +1,15 @@
 package io.github.proton.plugins.java.tree;
 
-import com.sun.source.tree.ImportTree;
+import com.github.javaparser.ast.ImportDeclaration;
 
-public record JavaImport(JavaQualifiedIdentifier identifier, boolean isStatic) {
-    public static JavaImport from(ImportTree tree) {
-        return new JavaImport(JavaQualifiedIdentifier.from(tree.getQualifiedIdentifier()), tree.isStatic());
+public record JavaImport(JavaName name, boolean isStatic) {
+    public static JavaImport from(ImportDeclaration tree) {
+        var name = JavaName.from(tree.getName());
+        var n = tree.isAsterisk() ? new JavaName(name.names().append(new JavaSimpleName("*"))) : name;
+        return new JavaImport(n, tree.isStatic());
     }
 
     public boolean isEmpty() {
-        return identifier.isEmpty();
+        return name.isEmpty();
     }
 }

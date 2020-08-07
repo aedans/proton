@@ -1,13 +1,13 @@
 package io.github.proton.plugins.java.tree;
 
-import com.sun.source.tree.PackageTree;
+import com.github.javaparser.ast.PackageDeclaration;
 
-public record JavaPackage(JavaQualifiedIdentifier identifier) {
-    public static JavaPackage from(PackageTree tree) {
-        return new JavaPackage(JavaQualifiedIdentifier.from(tree.getPackageName()));
+public record JavaPackage(JavaName name) {
+    public static JavaPackage from(PackageDeclaration tree) {
+        return new JavaPackage(JavaName.from(tree.getName()));
     }
 
     public boolean isEmpty() {
-        return identifier.isEmpty();
+        return name.isEmpty();
     }
 }

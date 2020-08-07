@@ -1,8 +1,7 @@
 package io.github.proton.plugins.java.project;
 
 import io.github.proton.editor.*;
-import io.github.proton.plugins.java.tree.JavaName;
-import io.vavr.control.Option;
+import io.github.proton.plugins.java.tree.*;
 import org.pf4j.Extension;
 
 @Extension
@@ -14,10 +13,13 @@ public final class JavaNameProjector implements Projector<JavaName> {
 
     @Override
     public Projection<JavaName> project(JavaName name) {
-        return TextProjection.text(new Text(name.chars()), "").mapChar(c -> c.modify(
-            character -> JavaName.isValid(character)
-                ? c.insert(character).map(JavaName::new)
-                : Option.none(),
-            () -> c.delete().map(JavaName::new)));
+        return new VectorProjection<>(
+            name.names(),
+            Projector.get(JavaSimpleName.class)::project,
+            new JavaSimpleName(""),
+            TextProjection.dot,
+            JavaSimpleName::isEmpty,
+            x -> x == '.'
+        ).map(JavaName::new);
     }
 }
