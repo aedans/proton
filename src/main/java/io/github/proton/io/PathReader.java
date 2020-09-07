@@ -1,14 +1,14 @@
 package io.github.proton.io;
 
-import io.github.proton.editor.Text;
-import io.github.proton.plugins.*;
+import io.github.proton.editor.*;
+import io.github.proton.plugins.Combinable;
 import io.vavr.control.Option;
 import org.pf4j.*;
 
 import java.io.IOException;
 import java.nio.file.*;
 
-public interface PathReader<T> extends ExtensionPoint, Combinable<PathReader<T>> {
+public interface PathReader<T extends Tree<T>> extends ExtensionPoint, Combinable<PathReader<T>> {
     Option<T> read(Path path) throws IOException;
 
     @Override
@@ -23,9 +23,9 @@ public interface PathReader<T> extends ExtensionPoint, Combinable<PathReader<T>>
     }
 
     @Extension
-    final class Default implements PathReader<Object> {
+    final class Default implements PathReader<Text> {
         @Override
-        public Option<Object> read(Path path) throws IOException {
+        public Option<Text> read(Path path) throws IOException {
             try {
                 return Option.some(new Text(String.join("\n", Files.readAllLines(path))));
             } catch (IOException e) {

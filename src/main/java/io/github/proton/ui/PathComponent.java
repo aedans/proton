@@ -1,6 +1,6 @@
 package io.github.proton.ui;
 
-import io.github.proton.editor.Editor;
+import io.github.proton.editor.*;
 import io.github.proton.io.PathReader;
 import io.github.proton.plugins.Plugins;
 import io.vavr.collection.Vector;
@@ -22,7 +22,7 @@ public final class PathComponent extends JTree {
                 if (!Files.isDirectory(p)) {
                     @SuppressWarnings("unchecked")
                     var tree = Plugins.getExtension(PathReader.class).read(p).getOrNull();
-                    editor.setEditor(new Editor<>(tree));
+                    editor.setEditor(new Editor<>((Tree) tree));
                 }
             } catch (IOException ioException) {
                 ioException.printStackTrace();

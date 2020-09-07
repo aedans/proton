@@ -11,10 +11,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.event.*;
 
 public final class EditorComponent extends JTextPane {
-    private Editor<Object> editor;
+    private Editor editor;
     private int width = 0;
 
-    public EditorComponent(Editor<Object> editor) {
+    public EditorComponent(Editor editor) {
         this.editor = editor;
     }
 
@@ -111,7 +111,6 @@ public final class EditorComponent extends JTextPane {
             @Override
             public void componentResized(ComponentEvent e) {
                 setEditor(new Editor<>(
-                    editor.projector,
                     ((getWidth() - 2) / Math.max(1, width)) - 2,
                     editor.tree,
                     editor.dot,
@@ -129,20 +128,21 @@ public final class EditorComponent extends JTextPane {
         super.paint(g);
     }
 
-    public void setEditor(Editor<Object> editor) {
+    public void setEditor(Editor editor) {
         this.editor = editor;
         render();
     }
 
     private void render() {
         var editor = this.editor;
-        setText(editor.chars.init().map(Char::character).mkString());
+        Vector<Char> chars = editor.chars;
+        setText(chars.init().map(Char::character).mkString());
         setCaretPosition(Editor.selectedIndex(editor.chars, editor.dot));
         setCaretColor(Color.WHITE);
 
         var theme = Plugins.getExtensions(Theme.class).get(0);
         for (int i = 0; i < editor.chars.size(); i++) {
-            var c = editor.chars.get(i);
+            var c = chars.get(i);
             AttributeSet attributeSet = StyleContext.getDefaultStyleContext().addAttribute(
                 StyleContext.getDefaultStyleContext().getEmptySet(), StyleConstants.Foreground, theme.color(c.style())
             );

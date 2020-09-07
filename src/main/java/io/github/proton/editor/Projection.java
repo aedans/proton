@@ -1,7 +1,6 @@
 package io.github.proton.editor;
 
 import io.vavr.collection.Vector;
-import io.vavr.control.Option;
 
 import java.util.function.Function;
 

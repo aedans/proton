@@ -1,10 +1,11 @@
 package io.github.proton.plugins.java.tree;
 
 import com.github.javaparser.ast.expr.SimpleName;
-import io.github.proton.editor.Text;
+import io.github.proton.editor.*;
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
-public record JavaSimpleName(Vector<Character> chars) {
+public record JavaSimpleName(Vector<Character> chars) implements Tree<JavaSimpleName> {
     public JavaSimpleName(String name) {
         this(new Text(name));
     }
@@ -23,6 +24,15 @@ public record JavaSimpleName(Vector<Character> chars) {
 
     public boolean isEmpty() {
         return chars.isEmpty();
+    }
+
+    @Override
+    public Projection<JavaSimpleName> project() {
+        return TextProjection.text(new Text(chars), "").mapChar(c -> c.modify(
+            character -> JavaSimpleName.isValid(character)
+                ? c.insert(character).map(JavaSimpleName::new)
+                : Option.none(),
+            () -> c.delete().map(JavaSimpleName::new)));
     }
 
     @Override
