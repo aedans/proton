@@ -22,6 +22,7 @@ public record JavaSimpleName(Vector<Character> chars) implements Tree<JavaSimple
         return !Character.isWhitespace(c);
     }
 
+    @Override
     public boolean isEmpty() {
         return chars.isEmpty();
     }

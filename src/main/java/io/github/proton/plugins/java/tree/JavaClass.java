@@ -8,6 +8,7 @@ public record JavaClass(JavaSimpleName name) implements Tree<JavaClass> {
         return new JavaClass(JavaSimpleName.from(tree.getName()));
     }
 
+    @Override
     public boolean isEmpty() {
         return name.isEmpty();
     }

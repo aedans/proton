@@ -8,10 +8,10 @@ public record JavaPackage(JavaName name) implements Tree<JavaPackage> {
         return new JavaPackage(JavaName.from(tree.getName()));
     }
 
+    @Override
     public boolean isEmpty() {
         return name.isEmpty();
     }
-
 
     @Override
     public Projection<JavaPackage> project() {

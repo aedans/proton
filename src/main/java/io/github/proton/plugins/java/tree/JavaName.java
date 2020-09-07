@@ -14,6 +14,7 @@ public record JavaName(Vector<JavaSimpleName> names) implements Tree<JavaName> {
             .append(new JavaSimpleName(name.getIdentifier())));
     }
 
+    @Override
     public boolean isEmpty() {
         return names.isEmpty() || names.get().isEmpty();
     }
@@ -24,7 +25,6 @@ public record JavaName(Vector<JavaSimpleName> names) implements Tree<JavaName> {
             names,
             new JavaSimpleName(""),
             TextProjection.dot,
-            JavaSimpleName::isEmpty,
             x -> x == '.'
         ).map(JavaName::new);
     }

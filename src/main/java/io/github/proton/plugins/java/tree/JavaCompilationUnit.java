@@ -17,24 +17,26 @@ public record JavaCompilationUnit(Option<JavaPackage> packageDeclaration,
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public Projection<JavaCompilationUnit> project() {
         var packageProjection = new OptionProjection<>(
             packageDeclaration,
-            new JavaPackage(new JavaName(Vector.empty())),
-            JavaPackage::isEmpty
+            new JavaPackage(new JavaName(Vector.empty()))
         ).map(x -> new JavaCompilationUnit(x, importDeclarations, classDeclarations));
         var importsProjection = new VectorProjection<>(
             importDeclarations,
             new JavaImport(new JavaName(Vector.empty()), false),
             Projection.newline(),
-            JavaImport::isEmpty,
             x -> x == '\n'
         ).map(x -> new JavaCompilationUnit(packageDeclaration, x, classDeclarations));
         var classesProjection = new VectorProjection<>(
             classDeclarations,
             new JavaClass(new JavaSimpleName("")),
             Projection.trailingNewline().combine(Projection.newline()),
-            JavaClass::isEmpty,
             x -> false
         ).map(x -> new JavaCompilationUnit(packageDeclaration, importDeclarations, x));
         return packageProjection

@@ -10,8 +10,9 @@ public record JavaImport(JavaName name, boolean isStatic) implements Tree<JavaIm
         return new JavaImport(n, tree.isStatic());
     }
 
+    @Override
     public boolean isEmpty() {
-        return name.isEmpty();
+        return name.isEmpty() && !isStatic;
     }
 
     @Override

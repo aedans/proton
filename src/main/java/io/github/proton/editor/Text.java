@@ -8,6 +8,11 @@ public record Text(Vector<Character> chars) implements Tree<Text> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return chars.isEmpty();
+    }
+
+    @Override
     public Projection<Text> project() {
         return TextProjection.text(this, "");
     }
