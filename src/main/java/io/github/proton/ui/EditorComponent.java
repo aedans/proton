@@ -111,8 +111,8 @@ public final class EditorComponent extends JTextPane {
             @Override
             public void componentResized(ComponentEvent e) {
                 setEditor(new Editor<>(
+                    editor.chars,
                     ((getWidth() - 2) / Math.max(1, width)) - 2,
-                    editor.tree,
                     editor.dot,
                     editor.mark
                 ));

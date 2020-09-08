@@ -4,25 +4,27 @@ import io.vavr.collection.Vector;
 import io.vavr.control.Option;
 
 public final class Editor<T extends Tree<T>> {
+    public final Vector<Char<T>> chars;
     public final int width;
-    public final T tree;
     public final int dot;
     public final int mark;
     public final int col;
-    public final Vector<Char<T>> chars;
 
-    public Editor(T tree) {
-        this(0, tree, 0, 0);
+    public Editor(T tree)  {
+        this(tree, 0, 0, 0);
     }
 
-    public Editor(int width, T tree, int dot, int mark) {
-        this(width, tree, dot, mark, Option.none());
+    public Editor(T tree, int width, int dot, int mark) {
+        this(tree.project().chars(width), width, dot, mark, Option.none());
     }
 
-    public Editor(int width, T tree, int dot, int mark, Option<Integer> col) {
+    public Editor(Vector<Char<T>> chars, int width, int dot, int mark) {
+        this(chars, width, dot, mark, Option.none());
+    }
+
+    public Editor(Vector<Char<T>> chars, int width, int dot, int mark, Option<Integer> col) {
+        this.chars = chars;
         this.width = width;
-        this.tree = tree;
-        this.chars = tree.project().chars(width);
         this.dot = constrain(chars, dot);
         this.mark = constrain(chars, mark);
         this.col = col.getOrElse(() -> position(chars, dot).col());
@@ -34,11 +36,7 @@ public final class Editor<T extends Tree<T>> {
 
     public static <T> int selectedIndex(Vector<Char<T>> chars, int index) {
         var filter = chars.zipWithIndex().filter(x -> x._1.edit());
-        if (index >= filter.length()) {
-            return filter.length();
-        } else {
-            return filter.get(index)._2;
-        }
+        return index >= filter.length() ? filter.length() : filter.get(index)._2;
     }
 
     private static <T> Char<T> selected(Vector<Char<T>> chars, int index) {
@@ -86,59 +84,48 @@ public final class Editor<T extends Tree<T>> {
         }
     }
 
-    private static <T extends Tree<T>> T deleteRange(T tree, int width, int start, int end) {
+    private static <T extends Tree<T>> Vector<Char<T>> deleteRange(Vector<Char<T>> chars, int width, int start, int end) {
         for (int i = end - 1; i >= start; --i) {
-            var chars = tree.project().chars(width);
-            tree = selected(chars, i).delete().getOrElse(tree);
+            chars = selected(chars, i).delete().map(x -> x.project().chars(width)).getOrElse(chars);
         }
-        return tree;
+        return chars;
     }
 
-    private static <T extends Tree<T>> T delete(T tree, int width, int dot, int mark) {
+    private static <T extends Tree<T>> Vector<Char<T>> delete(Vector<Char<T>> chars, int width, int dot, int mark) {
         if (dot < mark) {
-            return deleteRange(tree, width, dot, mark);
+            return deleteRange(chars, width, dot, mark);
         } else if (dot > mark) {
-            return deleteRange(tree, width, mark, dot);
+            return deleteRange(chars, width, mark, dot);
         } else {
-            return tree;
+            return chars;
         }
     }
 
     public Editor<T> left() {
-        int left;
-        if (dot == mark) {
-            left = dot - 1;
-        } else {
-            left = Math.min(dot, mark);
-        }
-        return new Editor<>(width, tree, left, left);
+        var left = dot == mark ? dot - 1 : Math.min(dot, mark);
+        return new Editor<>(chars, width, left, left);
     }
 
     public Editor<T> right() {
-        int right;
-        if (dot == mark) {
-            right = dot + 1;
-        } else {
-            right = Math.max(dot, mark);
-        }
-        return new Editor<>(width, tree, right, right);
+        var right = dot == mark ? dot + 1 : Math.max(dot, mark);
+        return new Editor<>(chars, width, right, right);
     }
 
     public Editor<T> up() {
-        int up = up(chars, dot, col);
-        return new Editor<>(width, tree, up, up, Option.some(col));
+        var up = up(chars, dot, col);
+        return new Editor<>(chars, width, up, up, Option.some(col));
     }
 
     public Editor<T> down() {
-        int down = down(chars, dot, col);
-        return new Editor<>(width, tree, down, down, Option.some(col));
+        var down = down(chars, dot, col);
+        return new Editor<>(chars, width, down, down, Option.some(col));
     }
 
     public Editor<T> select(int dot, int mark) {
         if (dot >= chars.length() || mark >= chars.length()) {
             return this;
         } else {
-            return new Editor<>(width, tree,
+            return new Editor<>(chars, width,
                 chars.take(dot).filter(Char::edit).length(),
                 chars.take(mark).filter(Char::edit).length());
         }
@@ -150,42 +137,46 @@ public final class Editor<T extends Tree<T>> {
                 return this;
             } else {
                 var left = dot - 1;
-                return new Editor<>(width, selected(chars, left).delete().getOrElse(tree), left, left);
+                return selected(chars, left).delete()
+                    .map(chars -> new Editor<>(chars, width, left, left))
+                    .getOrElse(new Editor<>(chars, width, left, left));
             }
         } else {
-            var t = delete(tree, width, dot, mark);
+            var cs = delete(chars, width, dot, mark);
             var left = Math.min(dot, mark);
-            return new Editor<>(width, t, left, left);
+            return new Editor<>(cs, width, left, left);
         }
     }
 
     public Editor<T> delete() {
         if (dot == mark) {
             var here = constrain(chars, dot);
-            return new Editor<>(width, selected(chars, dot).delete().getOrElse(tree), here, here);
+            return selected(chars, dot).delete()
+                .map(chars -> new Editor<>(chars, width, here, here))
+                .getOrElse(new Editor<>(chars, width, here, here));
         } else {
-            var t = delete(tree, width, dot, mark);
+            var cs = delete(chars, width, dot, mark);
             var left = Math.min(dot, mark);
-            return new Editor<>(width, t, left, left);
+            return new Editor<>(cs, width, left, left);
         }
     }
 
     public Editor<T> enter() {
         var inserted = insert('\n');
         var down = down(inserted.chars, Math.min(dot, mark), 0);
-        return new Editor<>(width, inserted.tree, down, down);
+        return new Editor<>(inserted.chars, width, down, down);
     }
 
     public Editor<T> insert(char c) {
         if (dot == mark) {
-            var t = selected(chars, dot).insert(c).getOrElse(tree);
+            var cs = selected(chars, dot).insert(c).map(x -> x.project().chars(width)).getOrElse(chars);
             var right = dot + 1;
-            return new Editor<>(width, t, right, right);
+            return new Editor<>(cs, width, right, right);
         } else {
-            var t = delete(tree, width, dot, mark);
-            t = selected(t.project().chars(width), Math.min(dot, mark)).insert(c).getOrElse(t);
+            var cs = delete(chars, width, dot, mark);
+            cs = selected(cs, Math.min(dot, mark)).insert(c).map(x -> x.project().chars(width)).getOrElse(cs);
             var right = Math.min(dot, mark) + 1;
-            return new Editor<>(width, t, right, right);
+            return new Editor<>(cs, width, right, right);
         }
     }
 }
