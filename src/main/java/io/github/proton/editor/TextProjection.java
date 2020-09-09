@@ -9,6 +9,7 @@ public record TextProjection(Text text, String style, boolean edit) implements P
     public static Projection<Text> closeParen = label(")", "punctuation.paren");
     public static Projection<Text> openBracket = label("{", "punctuation.bracket");
     public static Projection<Text> closeBracket = label("}", "punctuation.bracket");
+    public static Projection<Text> semicolon = label(";", "punctuation.semicolon");
     public static Projection<Text> dot = label(".", "punctuation.dot");
     public static Projection<Text> comma = label(",", "punctuation.comma");
 

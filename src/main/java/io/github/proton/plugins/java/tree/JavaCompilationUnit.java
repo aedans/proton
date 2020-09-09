@@ -35,7 +35,7 @@ public record JavaCompilationUnit(Option<JavaPackage> packageDeclaration,
         ).map(x -> new JavaCompilationUnit(packageDeclaration, x, classDeclarations));
         var classesProjection = new VectorProjection<>(
             classDeclarations,
-            new JavaClass(new JavaSimpleName("")),
+            new JavaClass(new JavaSimpleName(""), Vector.empty()),
             Projection.trailingNewline().combine(Projection.newline()),
             x -> false
         ).map(x -> new JavaCompilationUnit(packageDeclaration, importDeclarations, x));

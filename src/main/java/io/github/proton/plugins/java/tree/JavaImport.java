@@ -12,7 +12,7 @@ public record JavaImport(JavaName name, boolean isStatic) implements Tree<JavaIm
 
     @Override
     public boolean isEmpty() {
-        return name.isEmpty() && !isStatic;
+        return name.isEmpty();
     }
 
     @Override
@@ -23,6 +23,7 @@ public record JavaImport(JavaName name, boolean isStatic) implements Tree<JavaIm
         return importLabel
             .combine(TextProjection.space.of(this))
             .combine(isStatic ? staticLabel.combine(TextProjection.space.of(this)) : Projection.empty())
-            .combine(nameProjection);
+            .combine(nameProjection)
+            .combine(TextProjection.semicolon.of(this));
     }
 }

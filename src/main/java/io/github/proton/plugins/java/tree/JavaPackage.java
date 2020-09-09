@@ -19,6 +19,7 @@ public record JavaPackage(JavaName name) implements Tree<JavaPackage> {
         var projection = name.project().map(JavaPackage::new);
         return label
             .combine(TextProjection.space.of(this))
-            .combine(projection);
+            .combine(projection)
+            .combine(TextProjection.semicolon.of(this));
     }
 }

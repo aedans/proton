@@ -11,7 +11,7 @@ public final class Editor<T extends Tree<T>> {
     public final int col;
 
     public Editor(T tree)  {
-        this(tree, 0, 0, 0);
+        this(tree, 80, 0, 0);
     }
 
     public Editor(T tree, int width, int dot, int mark) {
@@ -34,7 +34,7 @@ public final class Editor<T extends Tree<T>> {
         return chars.filter(Char::edit).length();
     }
 
-    public static <T> int selectedIndex(Vector<Char<T>> chars, int index) {
+    private static <T> int selectedIndex(Vector<Char<T>> chars, int index) {
         var filter = chars.zipWithIndex().filter(x -> x._1.edit());
         return index >= filter.length() ? filter.length() : filter.get(index)._2;
     }
@@ -178,5 +178,9 @@ public final class Editor<T extends Tree<T>> {
             var right = Math.min(dot, mark) + 1;
             return new Editor<>(cs, width, right, right);
         }
+    }
+
+    public int selected() {
+        return selectedIndex(chars, dot);
     }
 }

@@ -19,7 +19,7 @@ public record JavaSimpleName(Vector<Character> chars) implements Tree<JavaSimple
     }
 
     public static boolean isValid(char c) {
-        return !Character.isWhitespace(c);
+        return Character.isJavaIdentifierPart(c);
     }
 
     @Override

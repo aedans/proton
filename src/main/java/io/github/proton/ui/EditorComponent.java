@@ -137,7 +137,7 @@ public final class EditorComponent extends JTextPane {
         var editor = this.editor;
         Vector<Char> chars = editor.chars;
         setText(chars.init().map(Char::character).mkString());
-        setCaretPosition(Editor.selectedIndex(editor.chars, editor.dot));
+        setCaretPosition(editor.selected());
         setCaretColor(Color.WHITE);
 
         var theme = Plugins.getExtensions(Theme.class).get(0);
