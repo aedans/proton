@@ -10,6 +10,7 @@ import javax.swing.tree.*;
 import java.io.IOException;
 import java.nio.file.*;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public final class PathComponent extends JTree {
     public PathComponent(Path path, EditorComponent editor) throws IOException {
         super(load(path));

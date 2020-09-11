@@ -1,10 +1,11 @@
-package io.github.proton.plugins.java.tree;
+package io.github.proton.plugins.java.tree.type;
 
 import com.github.javaparser.ast.type.PrimitiveType;
 import io.github.proton.editor.*;
+import io.github.proton.plugins.java.tree.*;
 
 public enum JavaPrimitiveType implements JavaType {
-    BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE;
+    BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, VOID, VAR;
 
     public static JavaPrimitiveType from(PrimitiveType type) {
         return switch (type.getType()) {

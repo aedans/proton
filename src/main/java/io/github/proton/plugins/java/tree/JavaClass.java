@@ -2,6 +2,8 @@ package io.github.proton.plugins.java.tree;
 
 import com.github.javaparser.ast.body.TypeDeclaration;
 import io.github.proton.editor.*;
+import io.github.proton.plugins.java.tree.declaration.JavaFieldDeclaration;
+import io.github.proton.plugins.java.tree.type.JavaClassOrInterfaceType;
 import io.vavr.collection.Vector;
 
 public record JavaClass(JavaSimpleName name,
@@ -14,7 +16,7 @@ public record JavaClass(JavaSimpleName name,
 
     @Override
     public boolean isEmpty() {
-        return name.isEmpty();
+        return name.isEmpty() && declarations.isEmpty();
     }
 
     @Override
@@ -32,11 +34,8 @@ public record JavaClass(JavaSimpleName name,
             .combine(n)
             .combine(TextProjection.space.of(this))
             .combine(TextProjection.openBracket.of(this))
-            .combine(Projection.<JavaClass>newline()
-                .combine(decls)
-                .indent(2)
-                .group()
-                .combine(Projection.newline()))
+            .combine(Projection.<JavaClass>newline().combine(decls).indent(2).group())
+            .combine(Projection.newline())
             .combine(TextProjection.closeBracket.of(this));
     }
 }

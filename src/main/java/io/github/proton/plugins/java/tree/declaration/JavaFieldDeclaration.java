@@ -1,8 +1,10 @@
-package io.github.proton.plugins.java.tree;
+package io.github.proton.plugins.java.tree.declaration;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import io.github.proton.editor.*;
+import io.github.proton.plugins.java.tree.*;
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
 public record JavaFieldDeclaration(JavaType type, Vector<JavaVariableDeclarator> variables) implements Tree<JavaBodyDeclaration>, JavaBodyDeclaration {
     public static JavaFieldDeclaration from(FieldDeclaration field) {
@@ -19,13 +21,19 @@ public record JavaFieldDeclaration(JavaType type, Vector<JavaVariableDeclarator>
 
     @Override
     public Projection<JavaBodyDeclaration> project() {
-        var typeProjection = type.project().map(type -> new JavaFieldDeclaration(type, variables));
-        var variablesProjection = new VectorProjection<>(
+        Projection<JavaBodyDeclaration> typeProjection = type.project().map(type -> new JavaFieldDeclaration(type, variables));
+        Projection<JavaBodyDeclaration> variablesProjection = new VectorProjection<>(
             variables,
             new JavaVariableDeclarator(new JavaSimpleName("")),
             TextProjection.comma.combine(TextProjection.space),
             x -> x == ','
         ).map(variables -> new JavaFieldDeclaration(type, variables));
+        if (variables.size() == 1) {
+            variablesProjection = variablesProjection.mapChar(c ->
+                c.withInsert(character -> character == '('
+                    ? Option.some(new JavaMethodDeclaration(type, variables.get().name(), Vector.empty()))
+                    : c.insert(character)));
+        }
         return typeProjection
             .combine(TextProjection.space.of(this))
             .combine(variablesProjection)

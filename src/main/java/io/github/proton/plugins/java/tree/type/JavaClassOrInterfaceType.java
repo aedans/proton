@@ -1,7 +1,8 @@
-package io.github.proton.plugins.java.tree;
+package io.github.proton.plugins.java.tree.type;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.proton.editor.Projection;
+import io.github.proton.plugins.java.tree.*;
 
 public record JavaClassOrInterfaceType(JavaSimpleName name) implements JavaType {
     public static JavaClassOrInterfaceType from(ClassOrInterfaceType type) {

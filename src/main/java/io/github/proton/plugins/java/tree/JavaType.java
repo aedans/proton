@@ -2,6 +2,7 @@ package io.github.proton.plugins.java.tree;
 
 import com.github.javaparser.ast.type.*;
 import io.github.proton.editor.Tree;
+import io.github.proton.plugins.java.tree.type.*;
 import io.vavr.collection.Vector;
 
 public interface JavaType extends Tree<JavaType> {
@@ -10,6 +11,10 @@ public interface JavaType extends Tree<JavaType> {
             return JavaClassOrInterfaceType.from(classOrInterfaceType);
         } else if (type instanceof PrimitiveType primitive) {
             return JavaPrimitiveType.from(primitive);
+        } else if (type instanceof VoidType) {
+            return JavaPrimitiveType.VOID;
+        } else if (type instanceof VarType) {
+            return JavaPrimitiveType.VAR;
         } else {
             throw new IllegalArgumentException();
         }

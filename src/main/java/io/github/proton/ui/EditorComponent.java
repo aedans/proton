@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.*;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public final class EditorComponent extends JTextPane {
     private Editor editor;
     private int width = 0;
