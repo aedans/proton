@@ -14,8 +14,7 @@ public record JavaMethodDeclaration(JavaType type,
         return new JavaMethodDeclaration(
             JavaType.from(method.getType()),
             JavaSimpleName.from(method.getName()),
-            Vector.ofAll(method.getParameters()).map(JavaParameter::from)
-        );
+            Vector.ofAll(method.getParameters()).map(JavaParameter::from));
     }
 
     @Override

@@ -12,6 +12,7 @@ public final class SolarizedTheme implements Theme {
     Color base0 = new Color(0x839496);
     Color green = new Color(0x859900);
     Color cyan = new Color(0x2aa198);
+    Color red = new Color(0xdc322f);
 
     @Override
     public Color background() {
@@ -28,6 +29,9 @@ public final class SolarizedTheme implements Theme {
         }
         if (style.startsWith("constant.numeric")) {
             return cyan;
+        }
+        if (style.startsWith("invalid.illegal")) {
+            return red;
         }
         return base0;
     }

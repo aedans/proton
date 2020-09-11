@@ -5,8 +5,11 @@ import static io.github.proton.*;
 
 class Class {
     String name;
-    int x, y;
+    boolean a, b;
 
     void run();
     int combine(int x, int y);
+
+    boolean a = b;
+    int x = 1, y = 1;
 }

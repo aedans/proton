@@ -10,8 +10,7 @@ public record JavaFieldDeclaration(JavaType type, Vector<JavaVariableDeclarator>
     public static JavaFieldDeclaration from(FieldDeclaration field) {
         return new JavaFieldDeclaration(
             JavaType.from(field.getVariable(0).getType()),
-            Vector.ofAll(field.getVariables()).map(JavaVariableDeclarator::from)
-        );
+            Vector.ofAll(field.getVariables()).map(JavaVariableDeclarator::from));
     }
 
     @Override
@@ -28,7 +27,7 @@ public record JavaFieldDeclaration(JavaType type, Vector<JavaVariableDeclarator>
             TextProjection.comma.combine(TextProjection.space),
             x -> x == ','
         ).map(variables -> new JavaFieldDeclaration(type, variables));
-        if (variables.size() == 1) {
+        if (variables.size() == 1 && variables.get().expression().isEmpty()) {
             variablesProjection = variablesProjection.mapChar(c ->
                 c.withInsert(character -> character == '('
                     ? Option.some(new JavaMethodDeclaration(type, variables.get().name(), Vector.empty()))

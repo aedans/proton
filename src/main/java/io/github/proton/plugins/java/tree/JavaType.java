@@ -1,7 +1,7 @@
 package io.github.proton.plugins.java.tree;
 
 import com.github.javaparser.ast.type.*;
-import io.github.proton.editor.Tree;
+import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.type.*;
 import io.vavr.collection.Vector;
 
@@ -16,7 +16,17 @@ public interface JavaType extends Tree<JavaType> {
         } else if (type instanceof VarType) {
             return JavaPrimitiveType.VAR;
         } else {
-            throw new IllegalArgumentException();
+            return new JavaType() {
+                @Override
+                public boolean isEmpty() {
+                    return false;
+                }
+
+                @Override
+                public Projection<JavaType> project() {
+                    return TextProjection.text("invalid type", "invalid.illegal").of(this);
+                }
+            };
         }
     }
 
