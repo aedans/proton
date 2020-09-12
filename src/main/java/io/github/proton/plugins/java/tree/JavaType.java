@@ -24,17 +24,17 @@ public interface JavaType extends Tree<JavaType> {
 
                 @Override
                 public Projection<JavaType> project() {
-                    return TextProjection.text("invalid type", "invalid.illegal").of(this);
+                    return TextProjection.text(type.getClass().getSimpleName(), "invalid.illegal").of(this);
                 }
             };
         }
     }
 
-    static JavaType from(JavaSimpleName name) {
-        if (Vector.of(JavaPrimitiveType.values()).exists(t -> new JavaSimpleName(t.name().toLowerCase()).equals(name))) {
-            return JavaPrimitiveType.valueOf(name.toString().toUpperCase());
+    static JavaType from(String string) {
+        if (Vector.of(JavaPrimitiveType.values()).exists(t -> t.name().toLowerCase().equals(string))) {
+            return JavaPrimitiveType.valueOf(string.toUpperCase());
         } else {
-            return new JavaClassOrInterfaceType(name);
+            return new JavaClassOrInterfaceType(new JavaSimpleName(string));
         }
     }
 }

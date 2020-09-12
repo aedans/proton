@@ -19,17 +19,17 @@ public interface JavaExpression extends Tree<JavaExpression> {
 
                 @Override
                 public Projection<JavaExpression> project() {
-                    return TextProjection.text("invalid expression", "invalid.illegal").of(this);
+                    return TextProjection.text(expression.getClass().getSimpleName(), "invalid.illegal").of(this);
                 }
             };
         }
     }
 
-    static JavaExpression from(JavaSimpleName name) {
+    static JavaExpression from(String string) {
         try {
-            return new JavaIntegerLiteralExpression(Long.parseLong(name.toString()));
+            return new JavaIntegerLiteralExpression(Long.parseLong(string));
         } catch (NumberFormatException e) {
-            return new JavaNameExpression(name);
+            return new JavaNameExpression(new JavaSimpleName(string));
         }
     }
 }

@@ -30,7 +30,7 @@ public record JavaFieldDeclaration(JavaType type, Vector<JavaVariableDeclarator>
         if (variables.size() == 1 && variables.get().expression().isEmpty()) {
             variablesProjection = variablesProjection.mapChar(c ->
                 c.withInsert(character -> character == '('
-                    ? Option.some(new JavaMethodDeclaration(type, variables.get().name(), Vector.empty()))
+                    ? Option.some(new JavaMethodDeclaration(type, variables.get().name(), Vector.empty(), Option.none()))
                     : c.insert(character)));
         }
         return typeProjection

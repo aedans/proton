@@ -16,6 +16,6 @@ public record JavaNameExpression(JavaSimpleName name) implements JavaExpression 
 
     @Override
     public Projection<JavaExpression> project() {
-        return name.project().map(JavaExpression::from);
+        return name.project().map(name -> JavaExpression.from(name.toString()));
     }
 }

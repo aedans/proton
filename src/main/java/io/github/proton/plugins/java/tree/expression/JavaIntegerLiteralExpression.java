@@ -18,6 +18,6 @@ public record JavaIntegerLiteralExpression(long l) implements JavaExpression {
     public Projection<JavaExpression> project() {
         return new JavaSimpleName(Long.toString(l)).project()
             .mapChar(c -> c.withStyle("constant.numeric"))
-            .map(JavaExpression::from);
+            .map(name -> JavaExpression.from(name.toString()));
     }
 }

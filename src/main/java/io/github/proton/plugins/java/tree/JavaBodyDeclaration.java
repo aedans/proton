@@ -21,7 +21,7 @@ public interface JavaBodyDeclaration extends Tree<JavaBodyDeclaration> {
 
                 @Override
                 public Projection<JavaBodyDeclaration> project() {
-                    return TextProjection.text("invalid declaration", "invalid.illegal").of(this);
+                    return TextProjection.text(declaration.getClass().getSimpleName(), "invalid.illegal").of(this);
                 }
             };
         }

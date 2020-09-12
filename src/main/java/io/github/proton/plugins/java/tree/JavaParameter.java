@@ -7,8 +7,7 @@ public record JavaParameter(JavaType type, JavaSimpleName name) implements Tree<
     public static JavaParameter from(Parameter parameter) {
         return new JavaParameter(
             JavaType.from(parameter.getType()),
-            JavaSimpleName.from(parameter.getName())
-        );
+            JavaSimpleName.from(parameter.getName()));
     }
 
     @Override

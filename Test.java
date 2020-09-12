@@ -12,4 +12,8 @@ class Class {
 
     boolean a = b;
     int x = 1, y = 1;
+
+    int identity(int x) {
+        return x;
+    }
 }
