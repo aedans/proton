@@ -23,11 +23,14 @@ public record JavaReturnStatement(Option<JavaExpression> expression) implements 
             .map(name -> JavaStatement.from(name.toString()));
         return expression.map(expr -> {
             Projection<JavaStatement> expressionProjection = expr.project().map(expression -> new JavaReturnStatement(Option.some(expression)));
-            return label.combine(TextProjection.space.of(this)).combine(expressionProjection);
+            return label.combine(TextProjection.space.of(this))
+                .mapChar(c -> c.withDelete(() -> expr.isEmpty() ? Option.some(new JavaReturnStatement(Option.none())) : Option.some(this)))
+                .combine(expressionProjection);
         }).getOrElse(() ->
-            label.mapChar(c -> c.withInsert(character -> character == ' '
-                ? Option.some(new JavaReturnStatement(Option.some(new JavaNameExpression(new JavaSimpleName("")))))
-                : c.insert(character))))
+            label.mapChar(c -> c
+                .withInsert(character -> character == ' '
+                    ? Option.some(new JavaReturnStatement(Option.some(new JavaNameExpression(new JavaSimpleName("")))))
+                    : c.insert(character))))
             .combine(TextProjection.semicolon.of(this));
     }
 }
