@@ -4,8 +4,20 @@ import com.github.javaparser.ast.type.*;
 import io.github.proton.editor.*;
 import io.github.proton.plugins.java.tree.type.*;
 import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 
 public interface JavaType extends Tree<JavaType> {
+    Projection<JavaType> projectType();
+
+    @Override
+    default Projection<JavaType> project() {
+        return projectType()
+            .mapChar(c -> c.withInsert(character ->
+                character == '['
+                    ? Option.some(new JavaArrayType(this))
+                    : c.insert(character)));
+    }
+
     static JavaType from(Type type) {
         if (type instanceof ClassOrInterfaceType classOrInterfaceType) {
             return JavaClassOrInterfaceType.from(classOrInterfaceType);
@@ -15,6 +27,8 @@ public interface JavaType extends Tree<JavaType> {
             return JavaPrimitiveType.VOID;
         } else if (type instanceof VarType) {
             return JavaPrimitiveType.VAR;
+        } else if (type instanceof ArrayType array) {
+            return JavaArrayType.from(array);
         } else {
             return new JavaType() {
                 @Override
@@ -23,7 +37,7 @@ public interface JavaType extends Tree<JavaType> {
                 }
 
                 @Override
-                public Projection<JavaType> project() {
+                public Projection<JavaType> projectType() {
                     return TextProjection.text(type.getClass().getSimpleName(), "invalid.illegal").of(this);
                 }
             };

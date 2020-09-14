@@ -26,7 +26,7 @@ public enum JavaPrimitiveType implements JavaType {
     }
 
     @Override
-    public Projection<JavaType> project() {
+    public Projection<JavaType> projectType() {
         return new JavaSimpleName(name().toLowerCase()).project()
             .mapChar(c -> c.withStyle("keyword"))
             .map(name -> JavaType.from(name.toString()));

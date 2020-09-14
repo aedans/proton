@@ -15,7 +15,7 @@ public record JavaClassOrInterfaceType(JavaSimpleName name) implements JavaType 
     }
 
     @Override
-    public Projection<JavaType> project() {
+    public Projection<JavaType> projectType() {
         return name.project().map(name -> JavaType.from(name.toString()));
     }
 }
