@@ -1,0 +1,88 @@
+.root {
+    -fx-base: #1E1E1E;
+}
+
+.text {
+    -fx-fill: #D4D4D4;
+    -fx-font-family: Monospaced;
+    -fx-font-size: 12;
+}
+
+.styled-text-area {
+    -fx-background-color: #1E1E1E;
+}
+
+.caret {
+    -fx-stroke: white;
+}
+
+.main-selection {
+    -fx-fill: #333a40;
+}
+
+.popup {
+    -fx-background-color: #252526;
+}
+
+.tree-view {
+    -fx-background-color: #252526;
+}
+
+.tree-cell {
+    -fx-background-color: #252526;
+}
+
+.list-view {
+    -fx-background-color: #252526;
+}
+
+.list-cell {
+    -fx-background-color: #1E1E1E;
+}
+
+.label {
+    -fx-background-color: #252526;
+    -fx-padding: 6;
+}
+
+.list-cell:selected {
+    -fx-background-color: #333a40;
+}
+
+.error {
+    -rtfx-underline-color: #f44747;
+    -rtfx-underline-width: 1px;
+}
+
+.warning {
+    -rtfx-underline-color: #f4eb47;
+    -rtfx-underline-width: 1px;
+}
+
+#keyword {
+    -fx-fill: #CC7832;
+}
+
+#string {
+    -fx-fill: #6A8759;
+}
+
+#char {
+    -fx-fill: #6A8759;
+}
+
+#comment {
+    -fx-fill: #629755;
+}
+
+#number {
+    -fx-fill: #6897BB;
+}
+
+#call {
+    -fx-fill: #FFC66D;
+}
+
+#annotation {
+    -fx-fill: #BBB529;
+}

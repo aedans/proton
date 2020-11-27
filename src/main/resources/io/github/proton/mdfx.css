@@ -1,0 +1,27 @@
+* {
+    -fx-padding: 2;
+    -fx-background-color: #252526;
+    -mdfx-font-color: #D4D4D4;
+    -mdfx-border-color-1: #252526;
+    -mdfx-bg-color-1: #252526;
+    -mdfx-bg-color-2: #252526;
+    -mdfx-bg-color-3: #252526;
+}
+
+.markdown-text {
+    -fx-font-family: Monospaced;
+    -fx-font-size: 12;
+}
+
+.markdown-italic {
+    -fx-font-style: italic;
+}
+
+.markdown-bold {
+    -fx-font-weight: bold;
+}
+
+.markdown-codeblock-box, .markdown-code {
+    -fx-padding: 0 2 0 2;
+    -fx-background-color: #1E1E1E;
+}

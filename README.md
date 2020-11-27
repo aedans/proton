@@ -57,7 +57,7 @@ it.
 2. The projection is automatically generated without human input. Anyone who's
    used an auto-formatter has run into a situation where it has formatted code
    in an ugly or unintuitive way, and the only way to fix it is by adding edge
-   case rules to the projection.
+   case parsers to the projection.
 
 Though these downsides (and others) certainly exist, they are easily outweighed 
 by the benefits.
