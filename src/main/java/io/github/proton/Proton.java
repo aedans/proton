@@ -1,6 +1,6 @@
 package io.github.proton;
 
-import io.github.proton.api.Plugins;
+import io.github.proton.plugin.Plugins;
 import io.github.proton.plugin.java.JavaLanguageServer;
 import io.github.proton.ui.WorkspaceUI;
 import javafx.application.Application;

@@ -1,4 +1,4 @@
-package io.github.proton.api;
+package io.github.proton.api.highlight;
 
 public final class Highlight {
     public final String type;

@@ -1,4 +1,4 @@
-package io.github.proton.api;
+package io.github.proton.api.parse;
 
 import org.reactfx.util.*;
 

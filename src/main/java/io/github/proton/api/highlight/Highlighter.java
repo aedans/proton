@@ -1,4 +1,4 @@
-package io.github.proton.api;
+package io.github.proton.api.highlight;
 
 import java.util.Collection;
 

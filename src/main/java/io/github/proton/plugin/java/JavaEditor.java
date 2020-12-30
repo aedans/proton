@@ -2,6 +2,9 @@ package io.github.proton.plugin.java;
 
 import io.github.proton.api.*;
 import io.github.proton.api.Position;
+import io.github.proton.api.editor.Editor;
+import io.github.proton.api.highlight.Highlight;
+import io.github.proton.api.map.PositionMap;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.reactfx.EventStream;

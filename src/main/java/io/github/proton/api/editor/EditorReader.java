@@ -1,5 +1,6 @@
-package io.github.proton.api;
+package io.github.proton.api.editor;
 
+import io.github.proton.plugin.Plugins;
 import io.github.proton.plugin.text.TextEditorReader;
 import org.pf4j.ExtensionPoint;
 

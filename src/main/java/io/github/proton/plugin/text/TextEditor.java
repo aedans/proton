@@ -2,6 +2,8 @@ package io.github.proton.plugin.text;
 
 import io.github.proton.api.Change;
 import io.github.proton.api.*;
+import io.github.proton.api.editor.Editor;
+import io.github.proton.api.highlight.Highlight;
 import org.eclipse.lsp4j.Diagnostic;
 import org.reactfx.*;
 

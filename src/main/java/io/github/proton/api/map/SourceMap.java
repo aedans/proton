@@ -1,4 +1,4 @@
-package io.github.proton.api;
+package io.github.proton.api.map;
 
 public interface SourceMap {
     int src(int index);

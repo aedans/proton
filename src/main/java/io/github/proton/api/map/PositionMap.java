@@ -1,4 +1,6 @@
-package io.github.proton.api;
+package io.github.proton.api.map;
+
+import io.github.proton.api.Position;
 
 import java.util.List;
 import java.util.stream.Collectors;

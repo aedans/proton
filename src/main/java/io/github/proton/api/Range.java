@@ -1,5 +1,7 @@
 package io.github.proton.api;
 
+import io.github.proton.api.map.*;
+
 public final class Range {
     public final Position start;
     public final Position end;

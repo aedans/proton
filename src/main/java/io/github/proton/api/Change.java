@@ -1,5 +1,6 @@
 package io.github.proton.api;
 
+import io.github.proton.api.map.*;
 import org.eclipse.lsp4j.*;
 
 public final class Change {

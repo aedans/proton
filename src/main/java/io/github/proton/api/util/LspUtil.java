@@ -1,4 +1,4 @@
-package io.github.proton.api;
+package io.github.proton.api.util;
 
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;

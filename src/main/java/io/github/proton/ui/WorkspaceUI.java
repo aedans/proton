@@ -1,6 +1,6 @@
 package io.github.proton.ui;
 
-import io.github.proton.api.EditorReader;
+import io.github.proton.api.editor.EditorReader;
 import io.github.proton.plugin.text.TextEditor;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;

@@ -1,5 +1,7 @@
 package io.github.proton.api;
 
+import io.github.proton.api.map.*;
+
 public final class Position {
     public final int index;
     public final int line;

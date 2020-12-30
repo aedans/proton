@@ -1,33 +1,33 @@
-package io.github.proton.api;
+package io.github.proton.api.map;
 
 import java.util.*;
 
-public final class SourceMapBuilder implements SourceMap {
+public abstract class AbstractSourceMap implements SourceMap {
     private final StringBuilder string = new StringBuilder();
     private final List<Integer> map = new ArrayList<>();
     private int position;
 
-    private SourceMapBuilder append(char c) {
+    private AbstractSourceMap append(char c) {
         string.append(c);
         map.add(position);
         return this;
     }
 
-    public SourceMapBuilder append(String s) {
+    public AbstractSourceMap append(String s) {
         for (int i = 0; i < s.length(); i++) {
             append(s.charAt(i));
         }
         return this;
     }
 
-    public SourceMapBuilder append(String s, int start, int end) {
+    public AbstractSourceMap append(String s, int start, int end) {
         if (start > position) {
             position = start;
         }
-        float ratio = ((float) (end - start)) / s.length();
+        float ratio = (float) (end - start) / s.length();
         for (int i = 0; i < s.length(); i++) {
             append(s.charAt(i));
-            position = (int) (start + (i * ratio));
+            position = (int) (start + i * ratio);
         }
         position = end;
         return this;

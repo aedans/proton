@@ -1,13 +1,13 @@
-package io.github.proton.api;
+package io.github.proton.api.highlight;
 
 import java.util.*;
 import java.util.regex.*;
 
-public final class PatternHighlighter implements Highlighter {
+public abstract class AbstractHighlighter implements Highlighter {
     private final Set<String> set;
     private final Pattern pattern;
 
-    public PatternHighlighter(Map<String, String> patterns) {
+    public AbstractHighlighter(Map<String, String> patterns) {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : patterns.entrySet()) {
             builder.append("(?<").append(entry.getKey()).append(">").append(entry.getValue()).append(")").append("|");

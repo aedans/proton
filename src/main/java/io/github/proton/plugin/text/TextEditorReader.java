@@ -1,6 +1,6 @@
 package io.github.proton.plugin.text;
 
-import io.github.proton.api.*;
+import io.github.proton.api.editor.*;
 import org.pf4j.Extension;
 
 import java.io.File;

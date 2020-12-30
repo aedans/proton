@@ -1,4 +1,7 @@
-package io.github.proton.api;
+package io.github.proton.api.util;
+
+import io.github.proton.api.Change;
+import io.github.proton.api.map.PositionMap;
 
 import java.util.*;
 
