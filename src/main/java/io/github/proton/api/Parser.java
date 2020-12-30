@@ -1,6 +1,5 @@
-package io.github.proton.api.parse;
+package io.github.proton.api;
 
-import io.github.proton.api.Positioned;
 import io.vavr.*;
 import io.vavr.collection.Array;
 import io.vavr.control.Option;
@@ -13,6 +12,40 @@ public interface Parser<V> {
     Either<V, Error> parse(Parse parse);
 
     String name();
+
+    final class Error {
+        private final Supplier<String> name;
+
+        public Error(Supplier<String> name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name.get();
+        }
+    }
+
+    final class Parse {
+        public final CharSequence input;
+        public int pos = 0;
+
+        public Parse(CharSequence input) {
+            this.input = input;
+        }
+
+        public char consume(char c) {
+            return consume(x -> x == c);
+        }
+
+        public char consume(Predicate<Character> p) {
+            if (input.length() > pos && p.test(input.charAt(pos))) {
+                pos++;
+                return input.charAt(pos - 1);
+            }
+            return 0;
+        }
+    }
 
     default Either<V, Error> parse(CharSequence input) {
         return parse(new Parse(input));

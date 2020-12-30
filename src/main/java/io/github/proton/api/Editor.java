@@ -2,9 +2,9 @@ package io.github.proton.api;
 
 import io.github.proton.api.Highlighter.Highlight;
 import org.eclipse.lsp4j.*;
-import org.reactfx.EventStream;
+import org.reactfx.*;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public interface Editor {

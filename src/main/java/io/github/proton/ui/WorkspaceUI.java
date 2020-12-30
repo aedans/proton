@@ -1,7 +1,7 @@
 package io.github.proton.ui;
 
-import io.github.proton.plugin.java.*;
-import io.github.proton.plugin.lisp.LispEditor;
+import io.github.proton.api.*;
+import io.github.proton.plugin.text.TextEditor;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
@@ -9,14 +9,14 @@ import java.io.*;
 import java.nio.file.Files;
 
 public final class WorkspaceUI extends BorderPane {
-    public WorkspaceUI(File file) {
-        FileTreeUI fileTreeUI = new FileTreeUI(file);
+    public WorkspaceUI(File workspace) {
+        FileTreeUI fileTreeUI = new FileTreeUI(workspace);
 
-        fileTreeUI.opened.subscribe((f) -> {
+        fileTreeUI.opened.subscribe(file -> {
             try {
                 setCenter(new VirtualizedScrollPane<>(new EditorUI(
-                    new JavaEditor(JavaLanguageServer.INSTANCE, f),
-                    Files.readString(f.toPath())
+                    EditorReader.instance.read(file).getOrElse(new TextEditor()),
+                    Files.readString(file.toPath())
                 )));
             } catch (IOException e) {
                 e.printStackTrace();

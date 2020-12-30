@@ -17,7 +17,7 @@ public class Highlighter {
 
         @Override
         public String toString() {
-            return type + " " + "(" + start + "," + end + ")";
+            return type + "(" + start + "," + end + ")";
         }
     }
 

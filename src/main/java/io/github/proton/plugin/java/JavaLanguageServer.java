@@ -31,7 +31,7 @@ public final class JavaLanguageServer implements AutoCloseable {
         logger.info("Launcher jar is " + launcherJar);
     }
 
-    public static JavaLanguageServer INSTANCE;
+    public static JavaLanguageServer instance;
 
     public final LanguageServer server;
     public final EventSource<List<Diagnostic>> diagnostics = new EventSource<>();
