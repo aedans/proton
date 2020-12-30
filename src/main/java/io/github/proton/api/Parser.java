@@ -1,9 +1,6 @@
 package io.github.proton.api;
 
-import io.vavr.*;
-import io.vavr.collection.Array;
-import io.vavr.control.Option;
-import org.reactfx.util.Either;
+import org.reactfx.util.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -213,7 +210,7 @@ public interface Parser<V> {
         };
     }
 
-    default <V2, V3, V4> Parser<V4> then2(Parser<V2> a, Parser<V3> b, Function3<V, V2, V3, V4> f) {
+    default <V2, V3, V4> Parser<V4> then2(Parser<V2> a, Parser<V3> b, TriFunction<V, V2, V3, V4> f) {
         return new Parser<>() {
             @Override
             public Either<V4, Error> parse(Parse parse) {
@@ -239,108 +236,6 @@ public interface Parser<V> {
         };
     }
 
-    default <V2, V3, V4, V5> Parser<V5> then3(Parser<V2> a, Parser<V3> b, Parser<V4> c, Function4<V, V2, V3, V4, V5> f) {
-        return new Parser<>() {
-            @Override
-            public Either<V5, Error> parse(Parse parse) {
-                Either<V, Error> fst = Parser.this.parse(parse);
-                if (fst.isRight()) {
-                    return Either.right(fst.getRight());
-                }
-                Either<V2, Error> snd = a.parse(parse);
-                if (snd.isRight()) {
-                    return Either.right(snd.getRight());
-                }
-                Either<V3, Error> trd = b.parse(parse);
-                if (trd.isRight()) {
-                    return Either.right(trd.getRight());
-                }
-                Either<V4, Error> frt = c.parse(parse);
-                if (frt.isRight()) {
-                    return Either.right(frt.getRight());
-                }
-                return Either.left(f.apply(fst.getLeft(), snd.getLeft(), trd.getLeft(), frt.getLeft()));
-            }
-
-            @Override
-            public String name() {
-                return Parser.this.name() + ", " + a.name() + ", " + b.name();
-            }
-        };
-    }
-
-    default <V2, V3, V4, V5, V6> Parser<V6> then4(Parser<V2> a, Parser<V3> b, Parser<V4> c, Parser<V5> d, Function5<V, V2, V3, V4, V5, V6> f) {
-        return new Parser<>() {
-            @Override
-            public Either<V6, Error> parse(Parse parse) {
-                Either<V, Error> fst = Parser.this.parse(parse);
-                if (fst.isRight()) {
-                    return Either.right(fst.getRight());
-                }
-                Either<V2, Error> snd = a.parse(parse);
-                if (snd.isRight()) {
-                    return Either.right(snd.getRight());
-                }
-                Either<V3, Error> trd = b.parse(parse);
-                if (trd.isRight()) {
-                    return Either.right(trd.getRight());
-                }
-                Either<V4, Error> frt = c.parse(parse);
-                if (frt.isRight()) {
-                    return Either.right(frt.getRight());
-                }
-                Either<V5, Error> fth = d.parse(parse);
-                if (fth.isRight()) {
-                    return Either.right(fth.getRight());
-                }
-                return Either.left(f.apply(fst.getLeft(), snd.getLeft(), trd.getLeft(), frt.getLeft(), fth.getLeft()));
-            }
-
-            @Override
-            public String name() {
-                return Parser.this.name() + ", " + a.name() + ", " + b.name();
-            }
-        };
-    }
-
-    default <V2, V3, V4, V5, V6, V7> Parser<V7> then5(Parser<V2> a, Parser<V3> b, Parser<V4> c, Parser<V5> d, Parser<V6> e, Function6<V, V2, V3, V4, V5, V6, V7> f) {
-        return new Parser<>() {
-            @Override
-            public Either<V7, Error> parse(Parse parse) {
-                Either<V, Error> fst = Parser.this.parse(parse);
-                if (fst.isRight()) {
-                    return Either.right(fst.getRight());
-                }
-                Either<V2, Error> snd = a.parse(parse);
-                if (snd.isRight()) {
-                    return Either.right(snd.getRight());
-                }
-                Either<V3, Error> trd = b.parse(parse);
-                if (trd.isRight()) {
-                    return Either.right(trd.getRight());
-                }
-                Either<V4, Error> frt = c.parse(parse);
-                if (frt.isRight()) {
-                    return Either.right(frt.getRight());
-                }
-                Either<V5, Error> fth = d.parse(parse);
-                if (fth.isRight()) {
-                    return Either.right(fth.getRight());
-                }
-                Either<V6, Error> sxt = e.parse(parse);
-                if (sxt.isRight()) {
-                    return Either.right(sxt.getRight());
-                }
-                return Either.left(f.apply(fst.getLeft(), snd.getLeft(), trd.getLeft(), frt.getLeft(), fth.getLeft(), sxt.getLeft()));
-            }
-
-            @Override
-            public String name() {
-                return Parser.this.name() + ", " + a.name() + ", " + b.name();
-            }
-        };
-    }
-
     default Parser<V> thenL(Parser<?> parser) {
         return then(parser, (a, b) -> a);
     }
@@ -349,15 +244,15 @@ public interface Parser<V> {
         return then(parser, (a, b) -> b);
     }
 
-    default Parser<Option<V>> option() {
+    default Parser<Optional<V>> option() {
         return new Parser<>() {
             @Override
-            public Either<Option<V>, Error> parse(Parse parse) {
+            public Either<Optional<V>, Error> parse(Parse parse) {
                 Either<V, Error> cst = Parser.this.parse(parse);
                 if (cst.isLeft()) {
-                    return Either.left(Option.of(cst.getLeft()));
+                    return Either.left(Optional.of(cst.getLeft()));
                 } else {
-                    return Either.left(Option.none());
+                    return Either.left(Optional.empty());
                 }
             }
 
@@ -389,11 +284,11 @@ public interface Parser<V> {
         };
     }
 
-    default Parser<Array<V>> many() {
+    default Parser<List<V>> many() {
         return new Parser<>() {
             @Override
-            public Either<Array<V>, Error> parse(Parse parse) {
-                Collection<V> ans = new ArrayList<>();
+            public Either<List<V>, Error> parse(Parse parse) {
+                List<V> ans = new ArrayList<>();
                 while (true) {
                     int origPos = parse.pos;
                     Either<V, Error> cst = Parser.this.parse(parse);
@@ -404,7 +299,7 @@ public interface Parser<V> {
                         break;
                     }
                 }
-                return Either.left(Array.ofAll(ans));
+                return Either.left(ans);
             }
 
             @Override
@@ -414,11 +309,17 @@ public interface Parser<V> {
         };
     }
 
-    default Parser<Array<V>> many1() {
-        return then(many(), (first, rest) -> rest.prepend(first));
+    default Parser<List<V>> many1() {
+        return then(many(), (first, rest) -> {
+            rest.add(0, first);
+            return rest;
+        });
     }
 
-    default Parser<Array<V>> sepBy(Parser<?> sep) {
-        return then(sep.thenR(many1()), (first, rest) -> rest.prepend(first));
+    default Parser<List<V>> sepBy(Parser<?> sep) {
+        return then(sep.thenR(many1()), (first, rest) -> {
+            rest.add(0, first);
+            return rest;
+        });
     }
 }

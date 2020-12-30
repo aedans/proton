@@ -1,7 +1,5 @@
 package io.github.proton.api;
 
-import io.vavr.collection.Stream;
-
 import java.util.*;
 
 public class SourceMap {
@@ -43,7 +41,7 @@ public class SourceMap {
     }
 
     public int dest(int index) {
-        return Stream.ofAll(map).takeWhile(x -> x < index).size();
+        return (int) map.stream().takeWhile(x -> x < index).count();
     }
 
     @Override

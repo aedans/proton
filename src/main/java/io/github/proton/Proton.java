@@ -1,13 +1,12 @@
 package io.github.proton;
 
-import io.github.proton.api.*;
+import io.github.proton.api.Plugins;
 import io.github.proton.plugin.java.JavaLanguageServer;
 import io.github.proton.ui.WorkspaceUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.eclipse.lsp4j.InitializeParams;
-import org.pf4j.Plugin;
 
 import java.io.*;
 import java.util.concurrent.ExecutionException;

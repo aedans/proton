@@ -15,7 +15,7 @@ public final class WorkspaceUI extends BorderPane {
         fileTreeUI.opened.subscribe(file -> {
             try {
                 setCenter(new VirtualizedScrollPane<>(new EditorUI(
-                    EditorReader.instance.read(file).getOrElse(new TextEditor()),
+                    EditorReader.instance.read(file).orElseGet(TextEditor::new),
                     Files.readString(file.toPath())
                 )));
             } catch (IOException e) {

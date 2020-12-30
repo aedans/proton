@@ -25,3 +25,18 @@
     -fx-padding: 0 2 0 2;
     -fx-background-color: #1E1E1E;
 }
+
+.markdown-hbox1 {
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.markdown-vbox1 {
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.markdown-listitem-dot {
+    -fx-padding: 0;
+    -fx-opacity: 0;
+}
