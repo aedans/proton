@@ -1,7 +1,7 @@
 package io.github.proton.plugin.text;
 
-import io.github.proton.api.*;
 import io.github.proton.api.Change;
+import io.github.proton.api.*;
 import org.eclipse.lsp4j.Diagnostic;
 import org.reactfx.*;
 
@@ -15,7 +15,7 @@ public final class TextEditor implements Editor {
     }
 
     @Override
-    public Collection<Highlighter.Highlight> highlight() {
+    public Collection<Highlighter.Highlight> highlights() {
         return Collections.emptyList();
     }
 

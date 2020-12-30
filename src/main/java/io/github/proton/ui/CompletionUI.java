@@ -2,7 +2,6 @@ package io.github.proton.ui;
 
 import io.github.proton.api.Completion;
 import javafx.scene.control.*;
-import org.eclipse.lsp4j.CompletionItem;
 import org.reactfx.EventSource;
 
 public final class CompletionUI extends ListView<Completion> {

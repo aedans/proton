@@ -6,7 +6,6 @@ import io.github.proton.ui.WorkspaceUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.eclipse.lsp4j.InitializeParams;
 
 import java.io.*;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +14,7 @@ public final class Proton extends Application {
     private static File home = new File(".");
 
     public Proton() throws InterruptedException, ExecutionException, IOException {
-        JavaLanguageServer.instance = new JavaLanguageServer(new InitializeParams());
+        JavaLanguageServer.init();
     }
 
     @Override
@@ -30,9 +29,8 @@ public final class Proton extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
-        JavaLanguageServer.instance.close();
-        super.stop();
+    public void stop() {
+        JavaLanguageServer.server.exit();
     }
 
     public static void main(String[] args) {

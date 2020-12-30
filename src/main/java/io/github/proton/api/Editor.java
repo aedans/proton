@@ -1,16 +1,15 @@
 package io.github.proton.api;
 
-import io.github.proton.api.Highlighter.Highlight;
-import org.eclipse.lsp4j.*;
-import org.reactfx.*;
+import org.eclipse.lsp4j.Diagnostic;
+import org.reactfx.EventStream;
 
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 public interface Editor {
     void update(Change change);
 
-    Collection<Highlight> highlight();
+    Collection<Highlighter.Highlight> highlights();
 
     EventStream<Collection<Diagnostic>> diagnostics();
 

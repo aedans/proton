@@ -1,10 +1,10 @@
 package io.github.proton.plugin.java;
 
-import io.github.proton.api.Highlighter;
+import io.github.proton.api.PatternHighlighter;
 
 import java.util.*;
 
-public final class JavaHighlighter extends Highlighter {
+public final class JavaPatternHighlighter extends PatternHighlighter {
     public static final String[] KEYWORDS = new String[]{
         "abstract", "assert", "boolean", "break", "byte",
         "case", "catch", "char", "class", "const",
@@ -38,7 +38,7 @@ public final class JavaHighlighter extends Highlighter {
         patterns.put("annotation", "((@)\\s*([^\\s(]+))");
     }
 
-    public JavaHighlighter() {
+    public JavaPatternHighlighter() {
         super(patterns);
     }
 }

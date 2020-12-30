@@ -1,6 +1,6 @@
 package io.github.proton.api;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public final class PositionMap {
@@ -12,7 +12,7 @@ public final class PositionMap {
 
         if (chars.length() == 0) {
             positions[0] = new Position(0, 0, 0);
-            indices = new int[] { 0 };
+            indices = new int[]{0};
             return;
         }
 

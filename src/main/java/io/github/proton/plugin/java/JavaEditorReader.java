@@ -11,7 +11,7 @@ public final class JavaEditorReader implements EditorReader {
     @Override
     public Optional<Editor> read(File file) {
         if (file.getName().endsWith(".java")) {
-            return Optional.of(new JavaEditor(JavaLanguageServer.instance, file));
+            return Optional.of(new JavaEditor(file));
         } else {
             return Optional.empty();
         }

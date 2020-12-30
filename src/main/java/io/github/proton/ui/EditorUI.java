@@ -3,15 +3,12 @@ package io.github.proton.ui;
 import com.sandec.mdfx.MDFXNode;
 import io.github.proton.Proton;
 import io.github.proton.api.*;
-import io.github.proton.api.Position;
-import io.github.proton.api.Range;
-import io.github.proton.api.Highlighter.Highlight;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.*;
 import javafx.stage.Popup;
-import org.eclipse.lsp4j.*;
+import org.eclipse.lsp4j.Diagnostic;
 import org.fxmisc.richtext.*;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.*;
@@ -183,7 +180,7 @@ public final class EditorUI extends GenericStyledArea<String, EditorUI.Segment, 
         });
 
         plainTextChanges().subscribe(change -> {
-            Collection<Highlight> highlights = editor.highlight();
+            Collection<Highlighter.Highlight> highlights = editor.highlights();
 
             if (highlights.isEmpty()) {
                 return;
@@ -191,7 +188,7 @@ public final class EditorUI extends GenericStyledArea<String, EditorUI.Segment, 
 
             int lastEnd = 0;
             StyleSpansBuilder<String> spansBuilder = new StyleSpansBuilder<>();
-            for (Highlight highlight : highlights) {
+            for (Highlighter.Highlight highlight : highlights) {
                 spansBuilder.add("", highlight.start - lastEnd);
                 spansBuilder.add(highlight.type.toLowerCase(), highlight.end - highlight.start);
                 lastEnd = highlight.end;

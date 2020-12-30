@@ -1,6 +1,7 @@
-package io.github.proton.ui;
+package io.github.proton.api;
 
-import org.eclipse.lsp4j.*;
+import org.eclipse.lsp4j.Position;
+import org.eclipse.lsp4j.Range;
 
 public final class LspUtil {
     public static boolean inRange(Position position, Range range) {
