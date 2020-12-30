@@ -180,7 +180,7 @@ public final class EditorUI extends GenericStyledArea<String, EditorUI.Segment, 
         });
 
         plainTextChanges().subscribe(change -> {
-            Collection<Highlighter.Highlight> highlights = editor.highlights();
+            Collection<Highlight> highlights = editor.highlights();
 
             if (highlights.isEmpty()) {
                 return;
@@ -188,7 +188,7 @@ public final class EditorUI extends GenericStyledArea<String, EditorUI.Segment, 
 
             int lastEnd = 0;
             StyleSpansBuilder<String> spansBuilder = new StyleSpansBuilder<>();
-            for (Highlighter.Highlight highlight : highlights) {
+            for (Highlight highlight : highlights) {
                 spansBuilder.add("", highlight.start - lastEnd);
                 spansBuilder.add(highlight.type.toLowerCase(), highlight.end - highlight.start);
                 lastEnd = highlight.end;

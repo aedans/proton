@@ -36,7 +36,7 @@ public final class JavaEditor implements Editor {
     }
 
     @Override
-    public Collection<Highlighter.Highlight> highlights() {
+    public Collection<Highlight> highlights() {
         return highlighter.highlights(string);
     }
 

@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 public interface Editor {
     void update(Change change);
 
-    Collection<Highlighter.Highlight> highlights();
+    Collection<Highlight> highlights();
 
     EventStream<Collection<Diagnostic>> diagnostics();
 

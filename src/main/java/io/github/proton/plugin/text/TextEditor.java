@@ -15,7 +15,7 @@ public final class TextEditor implements Editor {
     }
 
     @Override
-    public Collection<Highlighter.Highlight> highlights() {
+    public Collection<Highlight> highlights() {
         return Collections.emptyList();
     }
 
